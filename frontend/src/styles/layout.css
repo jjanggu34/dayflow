@@ -1,0 +1,40 @@
+.mobile-shell {
+  width: 375px;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.page {
+  min-height: calc(100vh - 32px);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.app-card {
+  background: var(--color-card);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: 0 6px 24px rgba(45, 36, 86, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.center {
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+}
