@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DAYFLOW — 감정 선택</title>
+    <link rel="stylesheet" href="../../assets/css/main.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <!-- <div id="headerWrap"><header id="header"></header></div> -->
+      <div id="bodyWrap" class="emotion bg-none">
+        <main>
+          <div>
+            <section class="text-content" aria-labelledby="emotion-screen-title">
+              <div class="text-group">
+                <p id="emotion-screen-sub">가장 가까운 감정을 골라주세요</p>
+                <h2 id="emotion-screen-title">지금 기분이 어때요?</h2>
+              </div>
+            </section>
+            <section class="emotion-content" aria-label="선택한 감정 미리보기">
+              <div id="emotionPreview" class="emotion-preview-card" aria-live="polite">
+                <p class="emotion-preview-caption" id="emotionPreviewCaption">• • •</p>
+
+                <div class="emotion-preview-emoji" id="emotionPreviewEmoji" aria-hidden="true">
+                  <span class="emotion-preview-emoji__icon">
+                    <img class="emotion-preview-image" src="../../assets/img/emotion/img-none.png" alt="감정선택전" />
+                  </span>
+                </div>
+              </div>
+            </section>
+          </div>
+          <section class="btn-content">
+            <div id="emotionBtnGroup" class="btn-group" role="group" aria-labelledby="emotion-screen-title">
+              <button type="button" class="emotion-option" data-emotion-type="best" data-emotion-label="최고예요" data-weather-label="최고예요" aria-pressed="false">
+                <span class="emotion-option__label">최고예요</span>
+              </button>
+              <button type="button" class="emotion-option" data-emotion-type="good" data-emotion-label="좋아요" data-weather-label="조금흐림" aria-pressed="false">
+                <span class="emotion-option__label">좋아요</span>
+              </button>
+              <button type="button" class="emotion-option" data-emotion-type="normal" data-emotion-label="보통이에요" data-weather-label="흐림" aria-pressed="false">
+                <span class="emotion-option__label">보통이에요</span>
+              </button>
+              <button type="button" class="emotion-option" data-emotion-type="bad" data-emotion-label="별로에요" data-weather-label="별로에요" aria-pressed="false">
+                <span class="emotion-option__label">별로에요</span>
+              </button>
+              <button type="button" class="emotion-option" data-emotion-type="worst" data-emotion-label="최악이에요" data-weather-label="최악이에요" aria-pressed="false">
+                <span class="emotion-option__label">최악이에요</span>
+              </button>
+            </div>
+          </section>
+        </main>
+        <footer>
+          <div id="emotionFooterPointer" class="emotion-footer-pointer" aria-hidden="true"></div>
+          <section class="btn-content">
+            <div class="text-group">
+              <p>오늘의 감정톡</p>
+              <p>감정 선택하고 대화 시작하기</p>
+            </div>
+            <button type="button" id="startChatBtn" class="btn-ctp" disabled>시작하기</button>
+          </section>
+        </footer>
+      </div>
+    </div>
+    <script src="../../assets/js/domain/emotionChatData.js"></script>
+    <script src="../../assets/js/view/emotion.js"></script>
+  </body>
+</html>

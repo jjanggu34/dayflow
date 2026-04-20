@@ -1,0 +1,347 @@
+/* CSS 변수, reset, 공통 유틸 */
+@charset "utf-8";
+
+@font-face {
+  font-family: "Pretendard";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Thin.woff2") format("woff2");
+  font-weight: 100;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pretendard";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-ExtraLight.woff2") format("woff2");
+  font-weight: 200;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pretendard";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Light.woff2") format("woff2");
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pretendard";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pretendard";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pretendard";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pretendard";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pretendard";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-ExtraBold.woff2") format("woff2");
+  font-weight: 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pretendard";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Black.woff2") format("woff2");
+  font-weight: 900;
+  font-display: swap;
+}
+
+/*---------------------------------------------
+	#디폴트
+---------------------------------------------*/
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-text-size-adjust: none;
+  word-break: keep-all;
+  word-wrap: break-word;
+  transition: all 0.2s;
+}
+html {
+  font-size: 16px;
+  overflow-y: auto;
+  height: 100%;
+} /*  기본 폰트 사이즈 18px */
+body {
+  height: 100%;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: normal;
+  font-family: "Noto Sans KR", "Pretendard", "Spoqa Han Sans Neo", "Apple SD Gothic Neo", sans-serif;
+  color: var(--default-color);
+}
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+dl,
+dt,
+dd,
+ul,
+li,
+ol,
+li,
+table,
+caption,
+th,
+td,
+form,
+fieldset,
+legend,
+address,
+div,
+p,
+span,
+a {
+  margin: 0;
+  padding: 0;
+}
+ul,
+ol,
+li,
+dl,
+dt,
+dd {
+  list-style: none;
+}
+form,
+fieldset,
+legend,
+input,
+button,
+textarea,
+label {
+  color: var(--default-color);
+}
+div,
+img,
+form,
+fieldset,
+button,
+blockquote,
+p,
+hr,
+select,
+input {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font-size: 1rem;
+}
+img,
+table {
+  width: 100%;
+}
+legend,
+caption {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  border: 0;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+} /*21.1.28 웹접근성*/
+input,
+textarea,
+select,
+address {
+  font-family: "Pretendard", "Spoqa Han Sans Neo", "Apple SD Gothic Neo", sans-serif;
+}
+input,
+button,
+select,
+textarea {
+  font-family: inherit;
+}
+input,
+textarea,
+select {
+  display: inline-block;
+  vertical-align: middle;
+  color: var(--default-color);
+}
+
+img {
+  line-height: 0;
+  font-size: 0;
+  vertical-align: top;
+}
+table {
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+address,
+em {
+  font-style: normal;
+}
+button {
+  background-color: var(--white);
+  text-align: center;
+  cursor: pointer;
+}
+a {
+  display: block;
+  color: var(--default-color);
+}
+a,
+a:hover,
+a:focus,
+a:active {
+  text-decoration: none;
+  cursor: pointer;
+}
+.tal {
+  text-align: left !important;
+}
+.tac {
+  text-align: center !important;
+}
+.tar {
+  text-align: right !important;
+}
+
+p {
+  color: var(--color-45);
+}
+
+.bor-l {
+  border-left: 1px solid var(--color-d);
+}
+.bor-l-0 {
+  border-left: 0 !important;
+}
+.pd-l-0 {
+  padding-left: 0 !important;
+}
+.bor-r {
+  border-right: 1px solid var(--color-d);
+}
+.bor-r-0 {
+  border-right: 0;
+}
+/*---------------------------------------------
+	#인풋 리셋
+---------------------------------------------*/
+input,
+.se-select select {
+  display: block;
+  width: 100%;
+  line-height: initial;
+  box-sizing: border-box;
+  border: none;
+  border-radius: 0;
+  background-color: none;
+  -o-appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  white-space: nowrap;
+  overflow: hidden;
+  outline: none;
+  cursor: pointer;
+}
+input:disabled {
+  cursor: initial;
+}
+/** Firefox Browser **/
+input[type="number"],
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+/** Webkit Browser (예: Chrome, Safari) **/
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+/** Edge Browser **/
+input[type="password"]::-ms-reveal {
+  display: none;
+}
+input[type="radio"],
+input[type="checkbox"] {
+  box-sizing: border-box;
+  padding: 0;
+}
+input::-ms-clear,
+input::-ms-reveal {
+  display: none;
+}
+/* Chrome의 autofill 관련 기본 스타일 제거 */
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:focus,
+textarea:-webkit-autofill:hover {
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+  box-shadow: 0 0 0 1000px #ffffff inset !important;
+}
+
+/*---------------------------------------------
+	#변수 선언
+---------------------------------------------*/
+:root {
+  --font12: 0.75rem;
+  --font14: 0.875rem;
+  --font16: 1rem;
+  --font18: 1.125rem;
+  --font20: 1.25rem;
+  --font22: 1.375rem;
+  --font24: 1.5rem;
+  --font26: 1.625rem;
+  --font28: 1.75rem;
+  --font30: 1.875rem;
+  --font32: 2rem;
+  --font34: 2.125rem;
+  --font36: 2.25rem;
+  --font38: 2.375rem;
+  --font40: 2.5rem;
+  --font42: 2.625rem;
+}
+
+/**디자인 컬러**/
+body {
+  --dim: rgba(0, 0, 0, 0.5);
+  --primary: #4283f3;
+  --primary-light: #41c7f4;
+  --secondary: #bad1ec;
+  --white: #fff;
+  --border: #dddddd;
+  --title: #222222;
+  --text-default: #454545;
+  --text-sub: #666666;
+  --text-disabled: #999999;
+  --bg-disabled: #e9e7e7;
+  --color-f7: #f7f7f7;
+  /* 감정 선택 emotion.css */
+  --emotion-bg-none-start: #d0dff8;
+  --emotion-bg-none-end: #fbfbfb;
+  --emotion-stage-pager-bg: rgba(255, 255, 255, 0.7);
+  --emotion-preview-drop-shadow: rgba(15, 23, 42, 0.08);
+}

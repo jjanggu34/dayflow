@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>DAYFLOW — 오늘의 분석</title>
+    <link rel="stylesheet" href="/assets/css/main.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <div id="bodyWrap" class="result-page">
+        <header class="result-header" role="banner">
+          <button type="button" class="result-header__back" id="resultBackBtn" aria-label="이전 화면으로">
+            <span class="result-header__back-icon" aria-hidden="true"></span>
+          </button>
+          <h1 class="result-header__title">오늘의 분석</h1>
+          <p class="result-header__date" id="resultHeaderDate" aria-label="오늘 날짜"></p>
+        </header>
+
+        <main class="result-main" id="resultMain">
+          <section class="result-card result-summary" aria-labelledby="resultSummaryTitle">
+            <h2 id="resultSummaryTitle" class="result-summary__heading">감정 종합</h2>
+            <div class="result-summary__body">
+              <div class="result-summary__ring">
+                <span class="result-summary__score" id="resultTotalScore">72</span>
+                <span class="result-summary__mood" id="resultMoodLabel">평온함</span>
+              </div>
+              <div class="result-summary__copy">
+                <p id="resultHeadline" class="result-summary__headline">안정적이고 균형 잡힌 하루</p>
+                <p id="resultSubline" class="result-summary__sub">평온한 에너지가 하루를 차분하게 이끌어요!</p>
+              </div>
+            </div>
+            <div class="result-tags" id="resultTags"></div>
+          </section>
+
+          <section class="result-card result-metrics-card" aria-labelledby="resultMetricsTitle">
+            <h3 id="resultMetricsTitle" class="result-card__title">감정 세부 분석</h3>
+            <ul class="result-metrics" id="resultMetricsList"></ul>
+          </section>
+
+          <section class="result-insight-panel" aria-labelledby="resultInsightsTitle">
+            <h3 id="resultInsightsTitle" class="result-insight-panel__title">AI 인사이트</h3>
+            <ul class="result-insights" id="resultInsightsList"></ul>
+          </section>
+
+          <section class="result-card result-diary" aria-labelledby="resultDiaryTitle">
+            <h3 id="resultDiaryTitle" class="result-card__title">오늘의 일기</h3>
+            <p class="result-diary__hint">채팅에서 기록한 내용이에요.</p>
+            <p class="result-diary__body" id="resultDiaryBody"></p>
+          </section>
+
+          <section class="result-status-grid" aria-label="날씨·쾌적도·운세">
+            <div class="result-status-card">
+              <span class="result-status-card__value" id="resultStatWeatherVal">—</span>
+              <span class="result-status-card__label">기온</span>
+              <span class="result-status-card__sub" id="resultStatWeatherSub">연동 예정</span>
+            </div>
+            <div class="result-status-card">
+              <span class="result-status-card__value" id="resultStatComfortVal">—</span>
+              <span class="result-status-card__label">불쾌지수</span>
+              <span class="result-status-card__sub" id="resultStatComfortSub">연동 예정</span>
+            </div>
+            <div class="result-status-card">
+              <span class="result-status-card__value" id="resultStatLuckVal">—</span>
+              <span class="result-status-card__label">오늘의 운</span>
+              <span class="result-status-card__sub" id="resultStatLuckSub">연동 예정</span>
+            </div>
+          </section>
+
+          <section class="result-disclaimer" aria-label="AI 서비스 안내">
+            <p>클로드 AI가 대화·날씨·운세 등을 조합해 조언을 만들 수 있어요. 날씨·운세는 연동 시 반영됩니다.</p>
+          </section>
+        </main>
+
+        <footer class="result-footer">
+          <a href="/home" class="btn-ctp result-footer__home">홈으로</a>
+        </footer>
+      </div>
+    </div>
+    <script src="/assets/js/domain/emotionChatData.js"></script>
+    <script src="https://unpkg.com/dexie@3.2.4/dist/dexie.min.js"></script>
+    <script src="/assets/js/config/db-config.js"></script>
+    <script src="/assets/js/domain/diaryStore.js"></script>
+    <script src="/assets/js/domain/resultWeather.js"></script>
+    <script src="/assets/js/view/result.js"></script>
+  </body>
+</html>

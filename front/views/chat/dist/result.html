@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>DAYFLOW — 오늘의 분석</title>
+    <link rel="stylesheet" href="../../assets/css/main.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="headerWrap" role="banner">
+        <button type="button" class="back" id="resultBackBtn" aria-label="이전 화면으로">이전 화면으로</button>
+        <h1>오늘의 분석</h1>
+        <p class="result-header__date" id="resultHeaderDate" aria-label="오늘 날짜"></p>
+      </header>
+      <div id="bodyWrap" class="result-page">
+        <main class="result-main" id="resultMain">
+          <section class="result-card result-summary" aria-labelledby="resultSummaryTitle">
+            <h2>
+              <em id="resultHeadline" class="result-summary__headline">안정적이고 균형 잡힌 하루</em>
+              <span id="resultSubline" class="result-summary__sub">평온한 에너지가 하루를 차분하게 이끌어요!</span>
+            </h2>
+            <div class="result-summary__body result-summary__body--gauge">
+              <div class="result-gauge" id="resultGauge" style="--gauge-score: 0">
+                <!-- 원형에 하단만 좁게 비운 호 (~318°). pathLength=100으로 점수 채움 유지 -->
+                <svg class="result-gauge__svg" viewBox="0 0 280 196" width="280" height="196" aria-hidden="true" focusable="false">
+                  <defs>
+                    <linearGradient id="resultGaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" class="result-gauge__grad-stop result-gauge__grad-stop--a" stop-color="#b8d9ff" />
+                      <stop offset="100%" class="result-gauge__grad-stop result-gauge__grad-stop--b" stop-color="#2f6feb" />
+                    </linearGradient>
+                  </defs>
+                  <path class="result-gauge__track" d="M 108.46 178.16 A 88 88 0 1 1 171.54 178.16" fill="none" stroke="#d8dde3" stroke-width="16" stroke-linecap="round" pathLength="100" />
+                  <path
+                    id="resultGaugeArc"
+                    class="result-gauge__arc"
+                    d="M 108.46 178.16 A 88 88 0 1 1 171.54 178.16"
+                    fill="none"
+                    stroke="url(#resultGaugeGrad)"
+                    stroke-width="16"
+                    stroke-linecap="round"
+                    pathLength="100"
+                    stroke-dasharray="100"
+                    stroke-dashoffset="100"
+                  />
+                </svg>
+                <div class="result-gauge__center">
+                  <p class="result-gauge__mood" id="resultMoodLabel">평온함</p>
+                  <p class="result-gauge__score" id="resultTotalScore">0</p>
+                  <div class="result-tags result-tags--gauge" id="resultTags"></div>
+                </div>
+              </div>
+              <div class="result-summary__copy">
+                <ul class="result-metrics result-metrics--grid" id="resultMetricsList"></ul>
+              </div>
+            </div>
+          </section>
+
+          <section class="result-insight-panel" aria-labelledby="resultInsightsTitle">
+            <h3 id="resultInsightsTitle" class="result-insight-panel__title">AI 인사이트</h3>
+            <ul class="result-insights" id="resultInsightsList"></ul>
+            <div class="result-card result-diary">
+              <h4 id="resultDiaryTitle">채팅요약</h4>
+              <p class="result-diary__body" id="resultDiaryBody"></p>
+              <p class="result-diary__actions">
+                <a href="chat.html" class="result-diary__link">다시 이야기하러 가기</a>
+              </p>
+            </div>
+          </section>
+
+          <section class="result-status-grid" aria-label="날씨·쾌적도·운세">
+            <div class="result-status-card">
+              <span class="result-status-card__value" id="resultStatWeatherVal">—</span>
+              <span class="result-status-card__label">기온</span>
+              <span class="result-status-card__sub" id="resultStatWeatherSub">연동 예정</span>
+            </div>
+            <div class="result-status-card">
+              <span class="result-status-card__value" id="resultStatComfortVal">—</span>
+              <span class="result-status-card__label">불쾌지수</span>
+              <span class="result-status-card__sub" id="resultStatComfortSub">연동 예정</span>
+            </div>
+            <div class="result-status-card">
+              <span class="result-status-card__value" id="resultStatLuckVal">—</span>
+              <span class="result-status-card__label">오늘의 운</span>
+              <span class="result-status-card__sub" id="resultStatLuckSub">연동 예정</span>
+            </div>
+          </section>
+
+          <section class="result-disclaimer" aria-label="AI 서비스 안내">
+            <p>클로드 AI가 대화·날씨·운세 등을 조합해 조언을 만들 수 있어요. 날씨·운세는 연동 시 반영됩니다.</p>
+          </section>
+        </main>
+
+        <footer class="result-footer">
+          <a href="emotion.html" class="btn-ctp result-footer__home">홈으로</a>
+        </footer>
+      </div>
+    </div>
+    <script src="../../assets/js/domain/emotionChatData.js"></script>
+    <script src="https://unpkg.com/dexie@3.2.4/dist/dexie.min.js"></script>
+    <script src="../../assets/js/config/db-config.js"></script>
+    <script src="../../assets/js/domain/diaryStore.js"></script>
+    <script src="../../assets/js/domain/resultWeather.js"></script>
+    <script src="../../assets/js/agents/apikeyManager.js"></script>
+    <script src="../../assets/js/agents/chatAgent.js"></script>
+    <script src="../../assets/js/view/result.js"></script>
+  </body>
+</html>
