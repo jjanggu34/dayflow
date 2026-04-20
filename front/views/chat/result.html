@@ -56,19 +56,43 @@
             </div>
           </section>
 
-          <section class="result-insight-panel" aria-labelledby="resultInsightsTitle">
-            <h3 id="resultInsightsTitle" class="result-insight-panel__title">AI 인사이트</h3>
-            <ul class="result-insights" id="resultInsightsList"></ul>
-            <div class="result-card result-diary">
-              <h4 id="resultDiaryTitle">채팅요약</h4>
-              <p class="result-diary__body" id="resultDiaryBody"></p>
-              <p class="result-diary__actions">
-                <a href="chat.html" class="result-diary__link">다시 이야기하러 가기</a>
+          <section class="card-content">
+            <div class="card-item" aria-labelledby="resultInsightsTitle">
+              <h3 id="resultInsightsTitle" class="result-insight-panel__title">
+                <span></span>
+                AI 인사이트 맞춤 조언
+              </h3>
+              <p class="result-insights" id="resultInsightsList">
+                평온한 에너지로 차분한 하루를 보내셨다니 참 좋습니다. 직장에서의 좋은 운을 살려 내일은 미뤄두었던 업무나 새로운 프로젝트에 도전해 보시면 어떨까요? 금전 운이 조금 낮은 만큼 불필요한
+                지출은 자제하고, 애정 운도 함께 상승 중이니 소중한 사람들과 따뜻한 시간을 나누며 오늘의 평온함을 내일까지 이어가시길 응원합니다.
               </p>
+              <div class="result-card result-diary">
+                <h4 id="resultDiaryTitle">채팅요약</h4>
+                <p class="result-diary__body" id="resultDiaryBody"></p>
+                <!--<p class="result-diary__actions">
+                  <a href="chat.html" class="result-diary__link">다시 이야기하러 가기</a>
+                </p>-->
+              </div>
+            </div>
+            <div class="card-item">
+              <h3>
+                <span></span>
+                내일을 위한 추천
+              </h3>
+              <ol id="resultRecoList">
+                <li>
+                  <em id="resultReco1Title">중요한 기획, 집중 작업</em>
+                  <p id="resultReco1Body">평온감이 이어지면 깊은 작업에 최적이에요</p>
+                </li>
+                <li>
+                  <em id="resultReco2Title">산책 & 마음 챙김</em>
+                  <p id="resultReco2Body">안정 무드로 내일도 좋은 흐름이에요.</p>
+                </li>
+              </ol>
             </div>
           </section>
 
-          <section class="result-status-grid" aria-label="날씨·쾌적도·운세">
+          <!--<section class="result-status-grid" aria-label="날씨·쾌적도·운세">
             <div class="result-status-card">
               <span class="result-status-card__value" id="resultStatWeatherVal">—</span>
               <span class="result-status-card__label">기온</span>
@@ -88,7 +112,7 @@
 
           <section class="result-disclaimer" aria-label="AI 서비스 안내">
             <p>클로드 AI가 대화·날씨·운세 등을 조합해 조언을 만들 수 있어요. 날씨·운세는 연동 시 반영됩니다.</p>
-          </section>
+          </section>-->
         </main>
 
         <footer class="result-footer">
