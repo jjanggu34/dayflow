@@ -1,12 +1,5 @@
 /* 조언 화면 — 모바일 시안 (포춘 배너 · 점수 행 · 컬러 카드 · AI 카드) */
 
-.wrap:has(> #bodyWrap.advice-page) > header.headerWrap .headerWrap__spacer {
-  flex: 0 0 38px;
-  width: 38px;
-  height: 38px;
-  pointer-events: none;
-}
-
 .wrap:has(> #bodyWrap.advice-page) {
   display: flex;
   flex-direction: column;
@@ -19,7 +12,8 @@
   min-height: 0;
   display: flex;
   flex-direction: column;
-  background: #eff2f3;
+  background: var(--white);
+  padding: 0;
 }
 
 #bodyWrap.advice-page .advice-main {
@@ -31,98 +25,40 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 12px 16px max(20px, env(safe-area-inset-bottom));
 }
 
-/* ----- 포춘쿠키 배너 ----- */
-#bodyWrap.advice-page .advice-fortune-banner {
-  margin: 0;
-}
+/* ----- 포춘쿠키 버튼----- */
 
-#bodyWrap.advice-page .advice-fortune-banner__btn {
+#bodyWrap.advice-page .importance-content .button-content button {
   display: flex;
   align-items: center;
   gap: 14px;
   width: 100%;
-  padding: 14px 16px;
+  min-height: 52px;
+  padding: 14px 16px 14px 52px;
   border: none;
   border-radius: 16px;
-  background: #e8ecee;
   cursor: pointer;
   text-align: left;
   font-family: inherit;
-  transition:
-    background 0.2s,
-    transform 0.15s;
+  border-radius: 16px;
+  background: #e8ecee url("../img/advice/ico_fortune.png") no-repeat 16px center / 32px 32px;
+  color: var(--text-default);
+  font-weight: 400;
 }
 
-#bodyWrap.advice-page .advice-fortune-banner__btn:active {
+#bodyWrap.advice-page .importance-content .button-content button:active {
   transform: scale(0.99);
   background: #dfe5e8;
 }
 
-#bodyWrap.advice-page .advice-fortune-banner__icon-wrap {
-  flex-shrink: 0;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: linear-gradient(145deg, #5b9cf7 0%, #2f6feb 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 8px rgba(47, 111, 235, 0.35);
-}
-
-#bodyWrap.advice-page .advice-fortune-banner__icon {
-  font-size: 1.5rem;
-  line-height: 1;
-}
-
-#bodyWrap.advice-page .advice-fortune-banner__label {
-  font-size: var(--font15, 0.9375rem);
-  font-weight: 600;
-  color: var(--title);
-  letter-spacing: -0.02em;
+#bodyWrap.advice-page .importance-content .text-content {
+  padding-right: 16px;
+  min-height: 110px;
+  background: url("../img/advice/bg_fortune.png") no-repeat right center / 110px;
 }
 
 /* ----- 날짜 · 헤드라인 · 점수 + 원형 이미지 ----- */
-#bodyWrap.advice-page .advice-hero {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 4px 0 8px;
-}
-
-#bodyWrap.advice-page .advice-hero__text {
-  flex: 1 1 auto;
-  min-width: 0;
-}
-
-#bodyWrap.advice-page .advice-hero__date {
-  margin: 0 0 6px;
-  font-size: var(--font13, 0.8125rem);
-  font-weight: 500;
-  color: var(--text-sub, #6b7280);
-}
-
-#bodyWrap.advice-page .advice-hero__headline {
-  margin: 0 0 10px;
-  font-size: clamp(1.05rem, 3.8vw, 1.125rem);
-  font-weight: 700;
-  color: var(--title);
-  line-height: 1.35;
-}
-
-#bodyWrap.advice-page .advice-hero__score {
-  margin: 0;
-  display: flex;
-  flex-direction: row;
-  align-items: baseline;
-  gap: 2px;
-}
-
 #bodyWrap.advice-page .advice-hero__score-num {
   font-size: clamp(2.75rem, 12vw, 3.25rem);
   font-weight: 800;
@@ -130,16 +66,6 @@
   line-height: 1;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.03em;
-}
-
-#bodyWrap.advice-page .advice-hero__score-unit {
-  font-size: var(--font18, 1.125rem);
-  font-weight: 600;
-  color: var(--title);
-}
-
-#bodyWrap.advice-page .advice-hero__visual {
-  flex-shrink: 0;
 }
 
 #bodyWrap.advice-page .advice-hero__cookie-circle {
@@ -278,8 +204,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: max(12px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right))
-    max(12px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  padding: 0;
   box-sizing: border-box;
 }
 
@@ -293,7 +218,6 @@
   margin: 0;
   padding: 0;
   border: 0;
-  background: rgba(0, 0, 0, 0.45);
   cursor: pointer;
 }
 
@@ -301,45 +225,238 @@
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 440px;
-  max-height: min(90dvh, 720px);
-  border-radius: 20px;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 0;
   overflow: hidden;
-  background: #f2f4f6;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.22);
-}
-
-.advice-fortune-popup__close {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 2;
-  width: 40px;
-  height: 40px;
-  margin: 0;
-  padding: 0;
-  border: none;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.95);
-  color: var(--title, #222);
-  font-size: 1.5rem;
-  line-height: 1;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.advice-fortune-popup__close:active {
-  transform: scale(0.96);
+  background: var(--white);
 }
 
 .advice-fortune-popup__frame {
   display: block;
   width: 100%;
-  height: min(85dvh, 640px);
-  border: 0;
-  vertical-align: top;
-  background: #f2f4f6;
+  height: 100%;
+  background: var(--white);
+}
+
+/* -------------------------------------------------------------------------- */
+/* fortune_popup.html 전용 (popup.css의 layerPopup 구조를 덮어씀)                  */
+/* -------------------------------------------------------------------------- */
+
+/* 페이지 기본값 */
+body.fortune-popup-page {
+  margin: 0;
+  min-height: 100%;
+  font-family:
+    "Pretendard",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    "Apple SD Gothic Neo",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  color: var(--title, #191f28);
+  background: var(--white);
+}
+
+/* 풀팝업 레이아웃: 본문은 스크롤, 푸터는 하단 고정 느낌 */
+.fortune-popup-page .layerPopup.full > .pop-area {
+  height: 100dvh;
+  border-radius: 0;
+}
+
+.fortune-popup-page .layerPopup.full .pop-body {
+  padding: 20px 20px 12px;
+  display: flex;
+  flex: 1 1 auto;
+  overflow-y: auto;
+}
+
+.fortune-popup-page .layerPopup.full .pop-content {
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.fortune-popup-page .layerPopup.full .pop-footer {
+  margin-top: auto;
+  padding: 12px 20px calc(20px + env(safe-area-inset-bottom));
+  background: linear-gradient(to top, #fff 75%, rgba(255, 255, 255, 0));
+}
+
+/* 인트로 영역 */
+.fortune-popup-page .fortune-intro {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 50px;
+}
+
+.fortune-popup-page .fortune-intro__inner {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.fortune-popup-page .title-tiles {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin: 8px 0 16px;
+}
+
+.fortune-popup-page .title-tile {
+  width: 42px;
+  height: 50px;
+  border-radius: 9px;
+  background: #1a2b4a;
+  color: #fff;
+  font-size: 1.15rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.15);
+}
+
+.fortune-popup-page .title-tile::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  right: 5px;
+  top: 50%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.22);
+  transform: translateY(-0.5px);
+}
+
+.fortune-popup-page .fortune-subtitle {
+  margin: 0 0 24px;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--text-sub, #4e5968);
+  text-align: center;
+  max-width: 22rem;
+}
+
+.fortune-popup-page .fortune-subtitle strong {
+  color: #2b7fff;
+  font-weight: 700;
+}
+
+/* 쿠키/결과 카드 영역 */
+.fortune-popup-page .fortune-cookie-block {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.fortune-popup-page .fortune-glow {
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  left: 50%;
+  top: 45%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(255, 220, 140, 0.65) 0%, rgba(255, 200, 100, 0.25) 45%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.fortune-popup-page .cookie-container {
+  position: relative;
+  z-index: 1;
+  width: 240px;
+  height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.fortune-popup-page .cookie-img {
+  width: 220px;
+  height: 220px;
+  object-fit: contain;
+  transition:
+    transform 0.2s ease,
+    opacity 0.3s ease;
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.08));
+}
+
+/* 결과 문구는 쿠키 이미지 자리에서 노출 */
+.fortune-popup-page .cookie-container .fortune-text {
+  margin: 0;
+  width: min(240px, 100%);
+  min-height: 180px;
+  padding: 24px 20px;
+  border-radius: 16px;
+  background-color: #faf9f6;
+  /*background-image: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0, 0, 0, 0.018) 3px, rgba(0, 0, 0, 0.018) 4px);*/
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: var(--font18);
+  font-weight: 500;
+  color: var(--title);
+  word-break: keep-all;
+}
+
+.fortune-popup-page .cookie-container .fortune-text[hidden] {
+  display: none !important;
+}
+
+/* 결과 노출 시 하단 안내카드는 감춤 */
+.fortune-popup-page.fortune-result-open .fortune-info-card {
+  opacity: 0;
+}
+
+/* 애니메이션 */
+@keyframes fortune-shake {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: rotate(3deg);
+  }
+  75% {
+    transform: rotate(-3deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+.fortune-popup-page .shaking {
+  animation: fortune-shake 0.15s infinite;
+}
+
+.fortune-popup-page .fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* 안내 카드 */
+.fortune-popup-page .fortune-info-card {
+  width: 100%;
+  margin-top: 12px;
+  padding: 16px 18px;
+  font-size: var(--font16);
+  color: var(--text-sub);
+  text-align: center;
 }

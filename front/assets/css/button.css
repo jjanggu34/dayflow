@@ -14,6 +14,8 @@ header > button.back {
   --border-radius8: 8px;
   --btn-primary-bg: var(--primary);
   --btn-primary-color: var(--white);
+
+  width: 100%;
 }
 
 .btn-ctp {
@@ -26,4 +28,14 @@ header > button.back {
 .btn-ctp:disabled {
   background-color: var(--bg-disabled);
   color: var(--text-disabled);
+}
+.btn-text {
+  width: 100%;
+  padding: 16px 20px;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 400;
 }

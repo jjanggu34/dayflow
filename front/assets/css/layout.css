@@ -110,7 +110,7 @@ main {
   flex-direction: column;
   flex: 1;
   min-height: 0;
-  padding: 40px 20px 0;
+  padding: 40px 0 0;
   gap: 30px;
   overflow: hidden;
   position: relative;
@@ -151,10 +151,135 @@ footer {
 .text-content .text-group h2 {
   margin: 0;
   color: var(--title);
-  font-size: var(--font22);
+  font-size: var(--font20);
   font-weight: 500;
 }
 
 .text-content .text-group h2 span {
   font-weight: normal;
+}
+
+/*---------------------------------------------
+    상단 강조
+---------------------------------------------*/
+
+.importance-content {
+  background: var(--white);
+  padding: 0 24px;
+}
+
+/*---------------------------------------------
+    카드 컨텐츠
+---------------------------------------------*/
+
+.card-content {
+  background: var(--card-content-bg);
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px 24px;
+}
+
+.card-content .card-item {
+  padding: 16px;
+  border: 1px solid #ebebeb;
+  border-radius: 16px;
+  background: #fff;
+  color: var(--text-default);
+}
+
+.card-content .card-item > h3,
+.card-content .card-item .result-insight-panel__title {
+  margin: 0 0 12px;
+  font-size: var(--font16);
+  font-weight: 700;
+  color: var(--title);
+  text-align: center;
+}
+
+.card-content .card-item > h3 span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  margin: 0 auto 10px;
+  width: 50px;
+  height: 50px;
+  background: #fff9ec;
+  border-radius: 20px;
+}
+
+.card-content .card-item:nth-child(2) > h3 span {
+  background: #f0f9f1;
+}
+
+.card-content .card-item > h3 span::before {
+  content: "";
+  display: block;
+  width: 24px;
+  height: 24px;
+  background: #ffa014;
+  mask-image: url("../img/result/ico-01.svg");
+  -webkit-mask-image: url("../img/result/ico-01.svg");
+  mask-repeat: no-repeat;
+  mask-size: 24px auto;
+  mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: 24px auto;
+  -webkit-mask-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.card-content .card-item:nth-child(2) > h3 span::before {
+  background: #7ac47d;
+}
+
+.card-content .card-item .card-tips {
+  --card-tips-bg-green: #f0f9f4;
+  --card-tips-text-green: #7ac47d;
+}
+
+.card-content .card-item .card-tips {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  gap: 8px;
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--card-tips-bg-green);
+}
+
+.card-content .card-item .card-tips > h4 {
+  display: inline-block;
+  background: var(--card-tips-text-green);
+  color: var(--card-tips-bg-green);
+  font-size: var(--font12);
+  font-weight: normal;
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+
+.card-content .card-item .card-tips > p {
+  margin: 0;
+  font-size: var(--font14);
+  font-weight: 400;
+  color: var(--text-sub);
+}
+
+/*---------------------------------------------
+    태그
+---------------------------------------------*/
+#bodyWrap.advice-page .advice-tags__item {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: var(--font13, 0.8125rem);
+  font-weight: 600;
+  color: var(--primary);
+  background: rgba(66, 131, 243, 0.12);
 }

@@ -366,66 +366,6 @@
 }
 
 /* ----- 카드 콘텐츠 묶음 (AI 인사이트 + 내일 추천) ----- */
-#bodyWrap.result-page .card-content {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 0 20px;
-}
-
-#bodyWrap.result-page .card-item {
-  padding: 16px;
-  border: 1px solid #ebebeb;
-  border-radius: 16px;
-  background: #fff;
-}
-
-#bodyWrap.result-page .card-item > h3,
-#bodyWrap.result-page .card-item .result-insight-panel__title {
-  margin: 0 0 12px;
-  font-size: var(--font16);
-  font-weight: 700;
-  color: var(--title);
-  text-align: center;
-}
-
-#bodyWrap.result-page .card-item > h3 span {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 10px;
-  width: 50px;
-  height: 50px;
-  background: #fff9ec;
-  border-radius: 20px;
-}
-
-#bodyWrap.result-page .card-item:nth-child(2) > h3 span {
-  background: #f0f9f1;
-}
-
-#bodyWrap.result-page .card-item > h3 span::before {
-  content: "";
-  display: block;
-  width: 24px;
-  height: 24px;
-  background: #ffa014;
-  mask-image: url("../img/result/ico-01.svg");
-  -webkit-mask-image: url("../img/result/ico-01.svg");
-  mask-repeat: no-repeat;
-  mask-size: 24px auto;
-  mask-position: center;
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-size: 24px auto;
-  -webkit-mask-position: center;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
-#bodyWrap.result-page .card-item:nth-child(2) > h3 span::before {
-  background: #7ac47d;
-}
 
 #bodyWrap.result-page .result-insights {
   margin: 0;

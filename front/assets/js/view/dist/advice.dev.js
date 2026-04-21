@@ -1,3 +1,5 @@
+"use strict";
+
 /* views/advice/advice.html — 포춘쿠키 배너 → fortune_popup.html 모달(iframe) */
 (function ($) {
   "use strict";
@@ -41,16 +43,23 @@
         reject(new Error("IndexedDB is not supported"));
         return;
       }
+
       var req = window.indexedDB.open(FORTUNE_DB_NAME, 1);
+
       req.onupgradeneeded = function (event) {
         var db = event.target.result;
+
         if (!db.objectStoreNames.contains(FORTUNE_STORE_NAME)) {
-          db.createObjectStore(FORTUNE_STORE_NAME, { keyPath: "id" });
+          db.createObjectStore(FORTUNE_STORE_NAME, {
+            keyPath: "id"
+          });
         }
       };
+
       req.onsuccess = function (event) {
         resolve(event.target.result);
       };
+
       req.onerror = function () {
         reject(req.error || new Error("Failed to open IndexedDB"));
       };
@@ -66,12 +75,14 @@
         store.put({
           id: FORTUNE_KEY,
           text: fortuneText,
-          savedAt: new Date().toISOString(),
+          savedAt: new Date().toISOString()
         });
+
         tx.oncomplete = function () {
           db.close();
           resolve();
         };
+
         tx.onerror = function () {
           db.close();
           reject(tx.error || new Error("Failed to save fortune cookie"));
@@ -81,26 +92,27 @@
   }
 
   function getSavedFortuneCookie() {
-    return openFortuneDb()
-      .then(function (db) {
-        return new Promise(function (resolve, reject) {
-          var tx = db.transaction(FORTUNE_STORE_NAME, "readonly");
-          var store = tx.objectStore(FORTUNE_STORE_NAME);
-          var req = store.get(FORTUNE_KEY);
-          req.onsuccess = function () {
-            resolve(req.result || null);
-          };
-          req.onerror = function () {
-            reject(req.error || new Error("Failed to read fortune cookie"));
-          };
-          tx.oncomplete = function () {
-            db.close();
-          };
-        });
-      })
-      .catch(function () {
-        return null;
+    return openFortuneDb().then(function (db) {
+      return new Promise(function (resolve, reject) {
+        var tx = db.transaction(FORTUNE_STORE_NAME, "readonly");
+        var store = tx.objectStore(FORTUNE_STORE_NAME);
+        var req = store.get(FORTUNE_KEY);
+
+        req.onsuccess = function () {
+          resolve(req.result || null);
+        };
+
+        req.onerror = function () {
+          reject(req.error || new Error("Failed to read fortune cookie"));
+        };
+
+        tx.oncomplete = function () {
+          db.close();
+        };
       });
+    })["catch"](function () {
+      return null;
+    });
   }
 
   function applyFortuneToAdvice(fortuneText) {
@@ -113,7 +125,9 @@
     if (typeof window.DAYFLOW_FORTUNE_POPUP_URL === "string" && window.DAYFLOW_FORTUNE_POPUP_URL.trim()) {
       return window.DAYFLOW_FORTUNE_POPUP_URL.trim();
     }
+
     var base = document.querySelector("base");
+
     if (base && base.href) {
       try {
         return new URL(POPUP_PATH, base.href).href;
@@ -121,12 +135,14 @@
         /* fall through */
       }
     }
+
     return POPUP_PATH;
   }
 
   function buildPopupUrl(initialFortuneText) {
     var rawUrl = resolvePopupUrl();
     if (!initialFortuneText) return rawUrl;
+
     try {
       var url = new URL(rawUrl, window.location.origin);
       url.searchParams.set("fortune", initialFortuneText);
@@ -161,14 +177,12 @@
   function onPopupMessage(event) {
     if (!event || !event.data || event.data.type !== FORTUNE_MESSAGE_TYPE) return;
     var fortuneText = event.data.fortuneText;
-    saveFortuneCookie(fortuneText)
-      .then(function () {
-        latestFortuneText = fortuneText || "";
-        applyFortuneToAdvice(fortuneText);
-      })
-      .finally(function () {
-        closeFortunePopup();
-      });
+    saveFortuneCookie(fortuneText).then(function () {
+      latestFortuneText = fortuneText || "";
+      applyFortuneToAdvice(fortuneText);
+    })["finally"](function () {
+      closeFortunePopup();
+    });
   }
 
   $(function () {
@@ -176,23 +190,20 @@
       e.preventDefault();
       openFortunePopup(latestFortuneText);
     });
-
     $("#fortunePopupOverlay .advice-fortune-popup__backdrop").on("click", closeFortunePopup);
     $("#fortunePopupOverlay .advice-fortune-popup__close").on("click", closeFortunePopup);
-
     $(document).on("keydown", function (e) {
       if (e.key !== "Escape") return;
       var el = document.getElementById("fortunePopupOverlay");
       if (el && !el.hasAttribute("hidden")) closeFortunePopup();
     });
-
     window.addEventListener("message", onPopupMessage);
-
     getSavedFortuneCookie().then(function (saved) {
       if (saved && saved.text) {
         latestFortuneText = saved.text;
         applyFortuneToAdvice(saved.text);
       }
+
       if (!saved && !hasAutoOpened && canAutoOpenToday()) {
         hasAutoOpened = true;
         markAutoOpenedToday();
@@ -201,3 +212,4 @@
     });
   });
 })(jQuery);
+//# sourceMappingURL=advice.dev.js.map

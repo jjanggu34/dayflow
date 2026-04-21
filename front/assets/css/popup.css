@@ -1,1 +1,134 @@
 /* overlay, modal, bottom-sheet, apikey-overlay */
+/* 팝업_콘텐츠 */
+.layerPopup > .pop-content {
+  position: fixed;
+  padding: 24px;
+  width: 100%;
+  height: auto;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: var(--white);
+}
+.layerPopup .pop-body {
+  width: auto;
+  padding: 0;
+  max-height: 508px;
+  height: 100%;
+  overflow-y: auto;
+}
+.layerPopup.on {
+  display: block;
+  visibility: visible;
+  opacity: 1;
+}
+.layerPopup .pop-header.on,
+.pop-btm-wrap.on {
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+} /*스크립트 :: 스크롤*/
+.layerPopup [class*="-content"] > [class*="-group"] {
+  margin-bottom: 46px;
+}
+.layerPopup [class*="-content"] > [class*="-group"]:last-of-type {
+  margin-bottom: 0;
+}
+
+.layerPopup .pop-footer {
+  margin-top: 48px;
+}
+.layerPopup .pop-footer .button-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+  text-align: center;
+}
+.layerPopup .alert .pop-footer .button-content .btn-pop-primary {
+  max-width: 100%;
+}
+
+/* 팝업_풀팝업 */
+.layerPopup .pop-area:focus-visible {
+  outline: 2px solid var(--outline);
+  outline-offset: -2px;
+}
+.layerPopup.full {
+  display: initial;
+  min-height: auto;
+}
+.layerPopup.full > .pop-area {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--white);
+  border-radius: 28px;
+}
+.layerPopup.full .pop-header {
+  padding: 44px 34px 12px;
+  margin-bottom: 0;
+}
+.layerPopup.full .pop-header h2 {
+  font-size: var(--font24);
+  font-weight: var(--font-w-b);
+  color: var(--color-2);
+}
+.layerPopup.full .pop-body {
+  padding: 24px 34px 20px;
+  flex: 1;
+  overflow-y: auto;
+}
+.layerPopup.full .pop-footer {
+  margin-top: 0;
+  padding: 28px 34px 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 팝업_모달팝업*/
+.layerPopup.modal .pop-content {
+  max-width: 400px;
+  padding: 32px 32px 28px 32px;
+  min-width: auto;
+  height: auto;
+  width: calc(100% - 40px);
+  border-radius: 20px;
+}
+.layerPopup.modal .pop-header {
+  padding: 0;
+}
+.layerPopup.modal .pop-body {
+  margin-bottom: 30px;
+  padding: 0;
+  max-height: 508px;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  font-size: var(--font18);
+}
+.layerPopup.modal .pop-body:focus {
+  border: 0;
+  outline: 0;
+}
+.layerPopup.modal .pop-body .tit {
+  margin-bottom: 12px;
+  font-size: 1.111rem;
+  font-weight: 500;
+}
+.layerPopup.modal .pop-body p {
+  font-size: 1rem;
+  text-align: center;
+}
+.layerPopup.modal .pop-body table {
+  min-width: unset;
+}
+.layerPopup.modal .pop-footer {
+  margin-top: 42px;
+}

@@ -333,12 +333,14 @@ body {
   --secondary: #bad1ec;
   --white: #fff;
   --border: #dddddd;
+  --card-content-bg: #fafafa;
   --title: #222222;
   --text-default: #454545;
   --text-sub: #666666;
   --text-disabled: #999999;
   --bg-disabled: #e9e7e7;
   --color-f7: #f7f7f7;
+  --color-f8: #f8f8f8;
   /* 감정 선택 emotion.css */
   --emotion-bg-none-start: #d0dff8;
   --emotion-bg-none-end: #fbfbfb;
