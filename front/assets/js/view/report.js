@@ -1,46 +1,30 @@
-/* views/report/report.html — IndexedDB 감정 집계 + 캘린더 */
+/* views/report/report.html — 월간 요일 바그래프 + 감정 버블 랭킹 */
 (function () {
   "use strict";
 
   var DOW = ["일", "월", "화", "수", "목", "금", "토"];
-  var BAR_COLORS = ["#FF8A65", "#66BB6A", "#42A5F5", "#AB47BC", "#FFCA28", "#26A69A", "#EF5350"];
-
-  var viewMode = "week";
-  var anchorDate = new Date();
-  anchorDate.setHours(12, 0, 0, 0);
-
-  var monthFp = null;
-  /** YYYY-MM-DD → 에너지(평균 score), 월간 달력·주간 행 표시용 */
-  var energyByYmdCache = {};
+  var BAR_COLORS = ["#d0d5dd", "#c8ced9", "#c2c8d5", "#bcc3d1", "#b6bdce", "#b0b8ca", "#aab2c6"];
+  var MOCK_SCORES = [42, 58, 60, 62, 77, 70, 54];
+  var MOCK_COUNTS = { best: 9, good: 8, normal: 5, bad: 3, worst: 3 };
 
   function pad2(n) {
     return n < 10 ? "0" + n : String(n);
   }
 
   function toYmd(d) {
-    var x = d instanceof Date ? d : new Date(d);
-    return x.getFullYear() + "-" + pad2(x.getMonth() + 1) + "-" + pad2(x.getDate());
+    return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate());
   }
 
-  function parseYmd(s) {
-    var p = String(s).split("-");
-    return new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]), 12, 0, 0, 0);
-  }
-
-  function sameYmd(a, b) {
-    return toYmd(a) === toYmd(b);
-  }
-
-  function sundayOfWeek(d) {
-    var x = new Date(d);
-    x.setHours(12, 0, 0, 0);
-    x.setDate(x.getDate() - x.getDay());
-    return x;
+  function currentMonthRange() {
+    var now = new Date();
+    var start = new Date(now.getFullYear(), now.getMonth(), 1, 12, 0, 0, 0);
+    var end = new Date(now.getFullYear(), now.getMonth() + 1, 0, 12, 0, 0, 0);
+    return { start: start, end: end };
   }
 
   function fetchEmotionsRange(startYmd, endYmd) {
     var db = window.DayflowDB;
-    if (!db) return Promise.resolve([]);
+    if (!db || !db.emotions) return Promise.resolve([]);
     return db.emotions
       .where("date")
       .between(startYmd, endYmd, true, true)
@@ -50,569 +34,234 @@
       });
   }
 
-  function scoresByDate(rows) {
-    var sums = {};
-    var counts = {};
-    rows.forEach(function (r) {
-      var k = r.date;
-      var sc = r.score != null ? r.score : 58;
-      sums[k] = (sums[k] || 0) + sc;
-      counts[k] = (counts[k] || 0) + 1;
-    });
-    var out = {};
-    Object.keys(sums).forEach(function (k) {
-      out[k] = Math.round(sums[k] / counts[k]);
-    });
-    return out;
-  }
-
   function pickLatestPerDay(rows) {
     var map = {};
-    rows.forEach(function (r) {
-      var k = r.date;
-      if (!map[k] || (r.createdAt || 0) > (map[k].createdAt || 0)) {
-        map[k] = r;
+    rows.forEach(function (row) {
+      var key = row.date;
+      if (!map[key] || (row.createdAt || 0) > (map[key].createdAt || 0)) {
+        map[key] = row;
       }
     });
     return map;
   }
 
-  function countTypesLatestPerDay(rows) {
+  function averageScoresByDow(rows) {
+    var sum = [0, 0, 0, 0, 0, 0, 0];
+    var cnt = [0, 0, 0, 0, 0, 0, 0];
+    rows.forEach(function (row) {
+      if (!row || !row.date) return;
+      var parts = String(row.date).split("-");
+      var dt = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]), 12, 0, 0, 0);
+      if (isNaN(dt.getTime())) return;
+      var dow = dt.getDay();
+      var score = row.score != null ? Number(row.score) : 58;
+      sum[dow] += score;
+      cnt[dow] += 1;
+    });
+    return sum.map(function (v, i) {
+      return cnt[i] ? Math.round(v / cnt[i]) : 0;
+    });
+  }
+
+  function countEmotionTypes(rows) {
     var latest = pickLatestPerDay(rows);
-    var c = { best: 0, good: 0, normal: 0, bad: 0, worst: 0 };
-    Object.keys(latest).forEach(function (k) {
-      var t = latest[k].type || "good";
-      if (Object.prototype.hasOwnProperty.call(c, t)) {
-        c[t]++;
-      }
+    var out = { best: 0, good: 0, normal: 0, bad: 0, worst: 0 };
+    Object.keys(latest).forEach(function (key) {
+      var t = latest[key].type || "good";
+      if (Object.prototype.hasOwnProperty.call(out, t)) out[t] += 1;
     });
-    return c;
+    return out;
   }
 
-  function typeLabel(t) {
-    var chat = window.DayflowEmotionChat;
-    if (!chat || !chat.CHAT_EMOTIONS) return t;
-    var idx = chat.getIdxFromType(t);
-    return chat.CHAT_EMOTIONS[idx] ? chat.CHAT_EMOTIONS[idx].name : t;
+  function typeLabel(type) {
+    var map = {
+      best: "설렘",
+      good: "평온함",
+      normal: "활기참",
+      bad: "무기력",
+      worst: "불안함",
+    };
+    return map[type] || type;
   }
 
-  function typeEmoji(t) {
-    var chat = window.DayflowEmotionChat;
-    if (!chat || !chat.CHAT_EMOTIONS) return "·";
-    var idx = chat.getIdxFromType(t);
-    return chat.CHAT_EMOTIONS[idx] ? chat.CHAT_EMOTIONS[idx].emoji : "·";
-  }
-
-  function typeColor(t) {
-    var chat = window.DayflowEmotionChat;
-    if (!chat || !chat.CHAT_EMOTIONS) return "#8b7fa8";
-    var idx = chat.getIdxFromType(t);
-    return chat.CHAT_EMOTIONS[idx] ? chat.CHAT_EMOTIONS[idx].color : "#8b7fa8";
-  }
-
-  function formatKoMonthYear(d) {
-    return d.getFullYear() + "년 " + (d.getMonth() + 1) + "월";
-  }
-
-  function formatRangeKo(a, b) {
-    var y1 = a.getFullYear();
-    var m1 = a.getMonth() + 1;
-    var d1 = a.getDate();
-    var y2 = b.getFullYear();
-    var m2 = b.getMonth() + 1;
-    var d2 = b.getDate();
-    if (y1 === y2 && m1 === m2) {
-      return y1 + "년 " + m1 + "월 " + d1 + "일–" + d2 + "일 기준";
-    }
-    return (
-      y1 +
-      "년 " +
-      m1 +
-      "월 " +
-      d1 +
-      "일–" +
-      y2 +
-      "년 " +
-      m2 +
-      "월 " +
-      d2 +
-      "일 기준"
-    );
-  }
-
-  function ensureMonthPicker() {
-    if (monthFp) return;
-    var fpOpts = window.flatpickr;
-    if (!fpOpts) {
-      console.warn("[Report] flatpickr 없음");
-      return;
-    }
-    if (window.flatpickr.l10ns && window.flatpickr.l10ns.ko && typeof window.flatpickr.localize === "function") {
-      try {
-        window.flatpickr.localize(window.flatpickr.l10ns.ko);
-      } catch (e) {}
-    }
-    var koLoc = { firstDayOfWeek: 0 };
-    try {
-      if (window.flatpickr.l10ns && window.flatpickr.l10ns.ko) {
-        koLoc = Object.assign({}, window.flatpickr.l10ns.ko, { firstDayOfWeek: 0 });
-      }
-    } catch (e) {}
-    monthFp = window.flatpickr("#monthPicker", {
-      inline: true,
-      locale: koLoc,
-      defaultDate: anchorDate,
-      onChange: function (selectedDates) {
-        if (selectedDates && selectedDates[0]) {
-          anchorDate = new Date(selectedDates[0]);
-          anchorDate.setHours(12, 0, 0, 0);
-          syncCalNavLabel();
-          buildPattern();
-        }
-      },
-      onMonthChange: function () {
-        syncCalNavLabel();
-        buildPattern();
-      },
-      onReady: function () {
-        syncCalNavLabel();
-      },
-      onDayCreate: function (_sd, _ds, _fp, dayElem) {
-        var old = dayElem.querySelector(".flatpickr-day__energy");
-        if (old) old.remove();
-        var dObj = dayElem.dateObj;
-        if (!dObj || isNaN(dObj.getTime())) return;
-        var ymd = toYmd(dObj);
-        var sub = document.createElement("span");
-        sub.className = "flatpickr-day__energy";
-        var sc = energyByYmdCache[ymd];
-        sub.textContent = sc != null ? String(sc) : "–";
-        dayElem.appendChild(sub);
-      },
-    });
-    syncCalNavLabel();
-  }
-
-  function syncCalNavLabel() {
-    var el = document.getElementById("calNavLabel");
-    if (!el) return;
-    if (viewMode === "week") {
-      el.textContent = formatKoMonthYear(anchorDate);
-      return;
-    }
-    if (monthFp) {
-      el.textContent = monthFp.currentYear + "년 " + (monthFp.currentMonth + 1) + "월";
-    } else {
-      el.textContent = formatKoMonthYear(anchorDate);
-    }
-  }
-
-  function updateNavButtonsAria() {
-    var prev = document.getElementById("calPrev");
-    var next = document.getElementById("calNext");
-    if (!prev || !next) return;
-    if (viewMode === "week") {
-      prev.setAttribute("aria-label", "이전 주");
-      next.setAttribute("aria-label", "다음 주");
-    } else {
-      prev.setAttribute("aria-label", "이전 달");
-      next.setAttribute("aria-label", "다음 달");
-    }
-  }
-
-  function renderWeekStrip(scoreMap) {
-    scoreMap = scoreMap || {};
-    var sun = sundayOfWeek(anchorDate);
-    var row = document.getElementById("weekDayRow");
-    if (!row) return;
-
-    var today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    row.innerHTML = "";
-    for (var i = 0; i < 7; i++) {
-      var dd = new Date(sun);
-      dd.setDate(sun.getDate() + i);
-      dd.setHours(0, 0, 0, 0);
-
-      var ymd = toYmd(dd);
-      var energy = Object.prototype.hasOwnProperty.call(scoreMap, ymd) ? scoreMap[ymd] : null;
-
-      var btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "report-day";
-
-      var num = document.createElement("span");
-      num.className = "report-day__num";
-      num.textContent = String(dd.getDate());
-      btn.appendChild(num);
-
-      var ev = document.createElement("span");
-      ev.className = "report-day__energy";
-      if (energy != null) {
-        ev.textContent = String(energy);
-      } else {
-        ev.classList.add("report-day__energy--empty");
-        ev.textContent = "–";
-      }
-      btn.appendChild(ev);
-
-      var labelTxt = dd.getMonth() + 1 + "월 " + dd.getDate() + "일";
-      if (energy != null) {
-        labelTxt += ", 에너지 " + energy;
-      }
-      btn.setAttribute("aria-label", labelTxt);
-
-      var isSel = sameYmd(anchorDate, dd);
-      var isFut = dd.getTime() > today.getTime();
-
-      if (isSel) {
-        btn.classList.add("is-selected");
-      } else if (isFut) {
-        btn.classList.add("is-muted");
-      } else {
-        btn.classList.add("is-past");
-      }
-
-      (function (dCopy) {
-        btn.addEventListener("click", function () {
-          anchorDate = new Date(dCopy);
-          anchorDate.setHours(12, 0, 0, 0);
-          buildPattern();
-        });
-      })(dd);
-
-      row.appendChild(btn);
-    }
-  }
-
-  /** 통합 캘린더 ‹ › : 주간 모드=이전·다음 주, 월간 모드=이전·다음 달 */
-  function navigateCal(delta) {
-    if (viewMode === "week") {
-      var sun = sundayOfWeek(anchorDate);
-      sun.setDate(sun.getDate() + delta * 7);
-      anchorDate = new Date(sun);
-      anchorDate.setHours(12, 0, 0, 0);
-      syncCalNavLabel();
-      buildPattern();
-      return;
-    }
-    ensureMonthPicker();
-    if (!monthFp) return;
-    monthFp.changeMonth(delta);
-    var lastD = new Date(monthFp.currentYear, monthFp.currentMonth + 1, 0).getDate();
-    var d = Math.min(anchorDate.getDate(), lastD);
-    anchorDate = new Date(monthFp.currentYear, monthFp.currentMonth, d, 12, 0, 0, 0);
-    syncCalNavLabel();
-    buildPattern();
-  }
-
-  function setCalMode(mode) {
-    viewMode = mode;
-    var wBtn = document.getElementById("calModeWeek");
-    var mBtn = document.getElementById("calModeMonth");
-    var wPanel = document.getElementById("calBodyWeek");
-    var mPanel = document.getElementById("calBodyMonth");
-    if (!wBtn || !mBtn || !wPanel || !mPanel) return;
-
-    var isWeek = mode === "week";
-    wBtn.setAttribute("aria-selected", isWeek ? "true" : "false");
-    mBtn.setAttribute("aria-selected", !isWeek ? "true" : "false");
-    wPanel.hidden = !isWeek;
-    mPanel.hidden = isWeek;
-    updateNavButtonsAria();
-
-    if (!isWeek) {
-      ensureMonthPicker();
-      if (monthFp) {
-        monthFp.setDate(anchorDate, false);
-      }
-      syncCalNavLabel();
-      buildPattern();
-    } else {
-      syncCalNavLabel();
-      buildPattern();
-    }
-  }
-
-  function renderWeekBars(scores7, meta) {
+  function renderWeekBars(scores7) {
     var host = document.getElementById("patWeekBars");
     if (!host) return;
     host.innerHTML = "";
-    var vals = scores7.map(function (s) {
-      return s == null ? 0 : s;
-    });
-    var localMax = Math.max.apply(null, vals.concat([1]));
 
-    scores7.forEach(function (score, i) {
-      var v = score == null ? 0 : score;
+    var max = Math.max.apply(null, scores7.concat([1]));
+    scores7.forEach(function (score, idx) {
       var col = document.createElement("div");
       col.className = "pat-week-bars__col";
 
       var wrap = document.createElement("div");
       wrap.className = "pat-week-bars__bar-wrap";
+
       var bar = document.createElement("div");
       bar.className = "pat-week-bars__bar";
-      bar.style.background = BAR_COLORS[i % BAR_COLORS.length];
-      bar.style.height = "4px";
+      bar.style.height = "6px";
+      bar.style.background = BAR_COLORS[idx];
       wrap.appendChild(bar);
 
-      var num = document.createElement("span");
-      num.className = "pat-week-bars__val";
-      num.textContent = String(v);
+      var val = document.createElement("span");
+      val.className = "pat-week-bars__val";
+      val.textContent = String(score);
 
       var dow = document.createElement("span");
       dow.className = "pat-week-bars__dow";
-      dow.textContent = DOW[i];
+      dow.textContent = DOW[idx];
 
       col.appendChild(wrap);
-      col.appendChild(num);
+      col.appendChild(val);
       col.appendChild(dow);
       host.appendChild(col);
 
       requestAnimationFrame(function () {
-        bar.style.height = Math.max(8, (v / localMax) * 72) + "px";
+        bar.style.height = Math.max(16, Math.round((score / max) * 88)) + "px";
       });
     });
-
-    host.setAttribute("aria-label", meta || "요일별 에너지 수치");
   }
 
-  function renderRanking(counts) {
+  function renderBubbleRanking(counts) {
     var host = document.getElementById("emotionRankList");
     if (!host) return;
     host.innerHTML = "";
 
-    var order = ["best", "good", "normal", "bad", "worst"];
-    var rows = order
-      .map(function (t) {
-        return { type: t, n: counts[t] || 0 };
+    var rows = Object.keys(counts)
+      .map(function (type) {
+        return { type: type, value: counts[type] || 0 };
       })
-      .filter(function (r) {
-        return r.n > 0;
+      .filter(function (item) {
+        return item.value > 0;
       })
       .sort(function (a, b) {
-        return b.n - a.n;
+        return b.value - a.value;
       })
-      .slice(0, 4);
+      .slice(0, 5);
 
-    var maxN = rows.length ? rows[0].n : 1;
+    if (!rows.length) return;
 
-    rows.forEach(function (row) {
-      var item = document.createElement("div");
-      item.className = "per-item";
-      var em = document.createElement("div");
-      em.className = "per-item__emoji";
-      em.textContent = typeEmoji(row.type);
-      em.setAttribute("aria-hidden", "true");
+    var max = rows[0].value || 1;
+    var palette = ["#6e9bf6", "#dfe7f8", "#e8edf8", "#eceff4", "#f2f4f8"];
+    var hostW = host.clientWidth || 320;
+    var hostH = host.clientHeight || 220;
+    var centerX = hostW / 2;
+    var centerY = hostH / 2;
+    var nodes = [];
 
-      var meta = document.createElement("div");
-      meta.className = "per-item__meta";
-      var labelEl = document.createElement("div");
-      labelEl.className = "per-item__name";
-      labelEl.textContent = typeLabel(row.type);
-      var track = document.createElement("div");
-      track.className = "per-item__track";
-      var fill = document.createElement("div");
-      fill.className = "per-item__fill";
-      fill.style.background = typeColor(row.type);
-      track.appendChild(fill);
-      meta.appendChild(labelEl);
-      meta.appendChild(track);
+    rows.forEach(function (row, idx) {
+      var bubble = document.createElement("div");
+      bubble.className = "emotion-bubble";
+      var size = Math.max(64, Math.round(74 + (row.value / max) * 42));
+      bubble.style.width = size + "px";
+      bubble.style.height = size + "px";
+      bubble.style.background = palette[idx] || "#e9edf5";
+      if (idx === 0) bubble.classList.add("is-top");
+      bubble.style.animationDelay = idx * 0.18 + "s";
 
-      var days = document.createElement("div");
-      days.className = "per-item__days";
-      days.textContent = row.n + "일";
+      var title = document.createElement("strong");
+      title.className = "emotion-bubble__name";
+      title.textContent = typeLabel(row.type);
 
-      item.appendChild(em);
-      item.appendChild(meta);
-      item.appendChild(days);
-      host.appendChild(item);
+      var day = document.createElement("span");
+      day.className = "emotion-bubble__days";
+      day.textContent = row.value + "일";
 
-      requestAnimationFrame(function () {
-        fill.style.width = Math.round((row.n / maxN) * 100) + "%";
+      bubble.appendChild(title);
+      bubble.appendChild(day);
+      host.appendChild(bubble);
+
+      var angle = (Math.PI * 2 * idx) / Math.max(rows.length, 1);
+      var radius = 22 + idx * 6;
+      nodes.push({
+        el: bubble,
+        r: size / 2,
+        x: centerX + Math.cos(angle) * radius,
+        y: centerY + Math.sin(angle) * radius,
       });
     });
 
-    if (!rows.length) {
-      host.innerHTML = '<p class="report-empty-hint" style="padding:0">기록된 감정 유형이 없습니다.</p>';
+    for (var t = 0; t < 140; t++) {
+      for (var i = 0; i < nodes.length; i++) {
+        var a = nodes[i];
+        a.x += (centerX - a.x) * 0.055;
+        a.y += (centerY - a.y) * 0.055;
+
+        for (var j = i + 1; j < nodes.length; j++) {
+          var b = nodes[j];
+          var dx = b.x - a.x;
+          var dy = b.y - a.y;
+          var dist = Math.sqrt(dx * dx + dy * dy) || 0.001;
+          var minDist = a.r + b.r - 6;
+          if (dist < minDist) {
+            var push = (minDist - dist) * 0.5;
+            var nx = dx / dist;
+            var ny = dy / dist;
+            a.x -= nx * push;
+            a.y -= ny * push;
+            b.x += nx * push;
+            b.y += ny * push;
+          }
+        }
+      }
     }
+
+    nodes.forEach(function (node) {
+      var px = Math.max(node.r + 4, Math.min(hostW - node.r - 4, node.x));
+      var py = Math.max(node.r + 4, Math.min(hostH - node.r - 4, node.y));
+      node.el.style.left = px + "px";
+      node.el.style.top = py + "px";
+    });
   }
 
-  function buildInsights(weekScores7, counts, periodHint) {
+  function renderInsights(scores7, counts, isMock) {
     var list = document.getElementById("insightList");
     if (!list) return;
     list.innerHTML = "";
 
-    var bullets = [];
-    var nums = weekScores7.map(function (x) {
-      return x == null ? 0 : x;
-    });
-    if (nums.some(function (x) {
-      return x > 0;
-    })) {
-      var hi = 0;
-      var lo = 0;
-      for (var i = 1; i < nums.length; i++) {
-        if (nums[i] > nums[hi]) hi = i;
-        if (nums[i] < nums[lo]) lo = i;
-      }
-      if (nums[hi] > nums[lo]) {
-        bullets.push(
-          DOW[hi] + "요일에 에너지가 가장 높게 나타나고, " + DOW[lo] + "요일은 상대적으로 낮아요."
-        );
-      }
+    var hi = 0;
+    var lo = 0;
+    for (var i = 1; i < scores7.length; i++) {
+      if (scores7[i] > scores7[hi]) hi = i;
+      if (scores7[i] < scores7[lo]) lo = i;
     }
 
-    var bestType = Object.keys(counts).sort(function (a, b) {
+    var topType = Object.keys(counts).sort(function (a, b) {
       return (counts[b] || 0) - (counts[a] || 0);
     })[0];
-    if (bestType && counts[bestType] > 0) {
-      bullets.push(
-        "가장 자주 기록한 감정은 「" + typeLabel(bestType) + "」예요."
-      );
+
+    var lines = [
+      DOW[hi] + "요일 에너지가 가장 높고, " + DOW[lo] + "요일이 가장 낮게 나타나요.",
+      "가장 자주 나타난 감정은 " + typeLabel(topType) + "입니다.",
+      "주 중반 이후 에너지가 내려갈 때 휴식 루틴을 넣으면 좋아요.",
+    ];
+    if (isMock) {
+      lines.unshift("아직 기록 데이터가 없어 샘플 데이터로 리포트를 보여드려요.");
     }
 
-    var badish = (counts.bad || 0) + (counts.worst || 0);
-    var denom =
-      (counts.best || 0) +
-      (counts.good || 0) +
-      (counts.normal || 0) +
-      badish;
-    if (denom > 0 && badish / denom >= 0.35) {
-      bullets.push(
-        "부정적인 감정 비중이 높은 편이에요. 수면과 휴식 리듬을 한 번 점검해 보세요."
-      );
-    } else if (denom > 0) {
-      bullets.push(
-        "전반적으로 감정 흐름이 비교적 안정적으로 유지된 기간이에요."
-      );
-    }
-
-    if (periodHint) {
-      bullets.unshift(periodHint);
-    }
-
-    if (!bullets.length) {
-      bullets.push("아직 분석할 데이터가 충분하지 않아요. 꾸준히 기록해 보세요.");
-    }
-
-    bullets.slice(0, 4).forEach(function (text) {
+    lines.forEach(function (line) {
       var li = document.createElement("li");
-      li.textContent = text;
+      li.textContent = line;
       list.appendChild(li);
     });
   }
 
-  /**
-   * IndexedDB 감정 데이터를 불러와 패턴 UI를 채웁니다.
-   */
-  function buildPattern() {
+  function buildReport() {
+    var range = currentMonthRange();
+    var monthLabel = range.start.getMonth() + 1 + "월";
     var sub = document.getElementById("patternSubLabel");
     var empty = document.getElementById("reportEmptyHint");
-    var startYmd;
-    var endYmd;
-    var scores7;
-    var metaBars = "";
-    var periodHint = "";
+    if (sub) sub.textContent = monthLabel + " 요일별 감정 점수 평균을 보여드려요.";
 
-    if (viewMode === "week") {
-      var sun = sundayOfWeek(anchorDate);
-      var sat = new Date(sun);
-      sat.setDate(sun.getDate() + 6);
-      startYmd = toYmd(sun);
-      endYmd = toYmd(sat);
-      if (sub) sub.textContent = formatRangeKo(sun, sat);
-      periodHint = "선택한 주의 요일별 기록을 보여드려요.";
-
-      return fetchEmotionsRange(startYmd, endYmd).then(function (rows) {
-        var bySc = scoresByDate(rows);
-        scores7 = [];
-        for (var i = 0; i < 7; i++) {
-          var dd = new Date(sun);
-          dd.setDate(sun.getDate() + i);
-          scores7.push(bySc[toYmd(dd)] != null ? bySc[toYmd(dd)] : 0);
-        }
-        var counts = countTypesLatestPerDay(rows);
-        var hasData = rows.length > 0;
-        if (empty) empty.hidden = hasData;
-
-        var weekScoreMap = {};
-        for (var w = 0; w < 7; w++) {
-          var ddw = new Date(sun);
-          ddw.setDate(sun.getDate() + w);
-          var k = toYmd(ddw);
-          if (Object.prototype.hasOwnProperty.call(bySc, k)) {
-            weekScoreMap[k] = bySc[k];
-          }
-        }
-        renderWeekStrip(weekScoreMap);
-        syncCalNavLabel();
-
-        renderWeekBars(scores7, metaBars);
-        renderRanking(counts);
-        buildInsights(scores7, counts, periodHint);
-        return null;
-      });
-    }
-
-    ensureMonthPicker();
-    var y;
-    var m;
-    if (monthFp) {
-      y = monthFp.currentYear;
-      m = monthFp.currentMonth;
-    } else {
-      y = anchorDate.getFullYear();
-      m = anchorDate.getMonth();
-    }
-    var first = new Date(y, m, 1);
-    var last = new Date(y, m + 1, 0);
-    startYmd = toYmd(first);
-    endYmd = toYmd(last);
-    if (sub) sub.textContent = formatKoMonthYear(first) + " 기준";
-
-    return fetchEmotionsRange(startYmd, endYmd).then(function (rows) {
-      var bySc = scoresByDate(rows);
-
-      energyByYmdCache = {};
-      for (var d = 1; d <= last.getDate(); d++) {
-        var cur2 = new Date(y, m, d, 12, 0, 0, 0);
-        var ymk = toYmd(cur2);
-        if (Object.prototype.hasOwnProperty.call(bySc, ymk)) {
-          energyByYmdCache[ymk] = bySc[ymk];
-        }
-      }
-
-      var sumsByDow = [0, 0, 0, 0, 0, 0, 0];
-      var nByDow = [0, 0, 0, 0, 0, 0, 0];
-      for (var d = 1; d <= last.getDate(); d++) {
-        var cur = new Date(y, m, d, 12, 0, 0, 0);
-        var ymdOne = toYmd(cur);
-        var wd = cur.getDay();
-        if (bySc[ymdOne] != null) {
-          sumsByDow[wd] += bySc[ymdOne];
-          nByDow[wd]++;
-        }
-      }
-      scores7 = sumsByDow.map(function (s, i) {
-        return nByDow[i] ? Math.round(s / nByDow[i]) : 0;
-      });
-
-      var counts = countTypesLatestPerDay(rows);
+    return fetchEmotionsRange(toYmd(range.start), toYmd(range.end)).then(function (rows) {
       var hasData = rows.length > 0;
+      var scores7 = hasData ? averageScoresByDow(rows) : MOCK_SCORES.slice();
+      var counts = hasData ? countEmotionTypes(rows) : Object.assign({}, MOCK_COUNTS);
+
       if (empty) empty.hidden = hasData;
-
-      if (monthFp && typeof monthFp.redraw === "function") {
-        monthFp.redraw();
-      }
-
-      metaBars =
-        formatKoMonthYear(first) + " 동안 요일별 평균 에너지입니다.";
-      renderWeekBars(scores7, metaBars);
-      renderRanking(counts);
-      buildInsights(scores7, counts, "이번 달은 요일마다 평균 에너지를 요약했어요.");
-      return null;
+      renderWeekBars(scores7);
+      renderBubbleRanking(counts);
+      renderInsights(scores7, counts, !hasData);
     });
   }
 
@@ -620,29 +269,10 @@
     var back = document.getElementById("reportBackBtn");
     if (back) {
       back.addEventListener("click", function () {
-        if (window.history.length > 1) {
-          window.history.back();
-        }
+        if (window.history.length > 1) window.history.back();
       });
     }
-
-    document.getElementById("calModeWeek").addEventListener("click", function () {
-      setCalMode("week");
-    });
-    document.getElementById("calModeMonth").addEventListener("click", function () {
-      setCalMode("month");
-    });
-
-    document.getElementById("calPrev").addEventListener("click", function () {
-      navigateCal(-1);
-    });
-    document.getElementById("calNext").addEventListener("click", function () {
-      navigateCal(1);
-    });
-
-    updateNavButtonsAria();
-    syncCalNavLabel();
-    buildPattern();
+    buildReport();
   }
 
   if (document.readyState === "loading") {
@@ -650,6 +280,4 @@
   } else {
     init();
   }
-
-  window.buildPattern = buildPattern;
 })();

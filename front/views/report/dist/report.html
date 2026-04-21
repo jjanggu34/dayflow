@@ -1,83 +1,77 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>DAYFLOW — 리포트</title>
-  <link rel="stylesheet" href="/assets/css/main.css" />
-  <link rel="stylesheet" href="/assets/css/report.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css" />
-</head>
-<body class="report-page">
-  <div class="report-wrap">
-    <header class="report-header" role="banner">
-      <button type="button" class="report-header__back" id="reportBackBtn" aria-label="이전 화면으로">
-        <span class="report-header__back-icon" aria-hidden="true"></span>
-      </button>
-      <h1 class="report-header__title">리포트</h1>
-    </header>
-
-    <main class="report-main" role="main">
-      <section class="report-cal-merged" aria-label="감정 캘린더">
-        <div class="report-cal-card">
-          <div class="report-cal-mode" role="tablist" aria-label="주간 또는 월간 보기">
-            <button type="button" class="report-cal-mode__btn" id="calModeWeek" role="tab" aria-selected="true" aria-controls="calBodyWeek" data-mode="week">주간</button>
-            <button type="button" class="report-cal-mode__btn" id="calModeMonth" role="tab" aria-selected="false" aria-controls="calBodyMonth" data-mode="month">월간</button>
-          </div>
-          <div class="report-cal-card__nav">
-            <button type="button" class="report-cal-card__nav-btn" id="calPrev" aria-label="이전 주">‹</button>
-            <span class="report-cal-card__label" id="calNavLabel"></span>
-            <button type="button" class="report-cal-card__nav-btn" id="calNext" aria-label="다음 주">›</button>
-          </div>
-
-          <div id="calBodyWeek" class="report-cal-body report-cal-body--week" role="tabpanel" aria-labelledby="calModeWeek">
-            <div class="report-dow" aria-hidden="true">
-              <span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>DAYFLOW — 리포트</title>
+    <link rel="stylesheet" href="/assets/css/main.css" />
+    <link rel="stylesheet" href="/assets/css/report.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css" />
+  </head>
+  <body class="report-page">
+    <div class="report-wrap">
+      <header class="report-header" role="banner">
+        <button type="button" class="report-header__back" id="reportBackBtn" aria-label="이전 화면으로">
+          <span class="report-header__back-icon" aria-hidden="true"></span>
+        </button>
+        <h1 class="report-header__title">리포트</h1>
+      </header>
+      <div id="bodyWrap" class="report-page">
+        <main class="report-main" role="main">
+          <section class="importance-content">
+            <div class="text-content">
+              <div class="text-group">
+                <p>4월의 감정은 어땠을까요?</p>
+                <h2>한 달의 마음 흐름을 돌아보세요!</h2>
+              </div>
             </div>
-            <div class="report-week-row" id="weekDayRow"></div>
-          </div>
+          </section>
 
-          <div id="calBodyMonth" class="report-cal-body report-cal-body--month" role="tabpanel" aria-labelledby="calModeMonth" hidden>
-            <div class="report-month-host" id="monthCalendarHost">
-              <input type="text" id="monthPicker" readonly tabindex="-1" class="report-month-input" aria-label="달력에서 날짜 선택" />
+          <section class="importance-content report-section report-section--chart">
+            <div class="bar-graph-content">
+              <div class="text-content sm report-panel">
+                <div class="text-group">
+                  <p class="report-hero__date">이번 달 요일별 평균</p>
+                  <h2 class="report-hero__headline">요일별 에너지</h2>
+                </div>
+                <p id="patternSubLabel" class="report-sub-label">요일별 감정 점수 평균을 보여드려요.</p>
+                <p id="reportEmptyHint" class="report-empty-hint" hidden>기록된 감정 데이터가 아직 없습니다.</p>
+                <div id="patWeekBars" class="bar-graph-content__graph" aria-label="요일별 에너지 막대"></div>
+              </div>
             </div>
-          </div>
-        </div>
-      </section>
+            <hr />
 
-      <div class="report-pattern-head">
-        <h2>이번 달 감정 패턴</h2>
-        <p id="patternSubLabel"></p>
+            <div class="bar-graph-content">
+              <div class="text-content sm report-panel">
+                <div class="text-group">
+                  <p>감정 리포트</p>
+                  <h2>이번달 감정 순위</h2>
+                </div>
+                <div class="bubble-graph-content__graph" id="emotionRankList">
+                  <div class="round-graph-content__graph-item"></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="card-content report-section">
+            <div class="card-item report-insight-card">
+              <h3>
+                <span></span>
+                패턴 인사이트
+              </h3>
+              <ul id="insightList">
+                <li>주초(월·화)에 에너지가 높고 주 중반 이후 낮아지는 패턴이 보여요.</li>
+                <li>평온함이 베이스 감정으로, 안정적인 흐름을 유지하고 있어요.</li>
+                <li>불쾌지수가 높은 날 무기력·불안이 동반되는 경향이 있어요.</li>
+              </ul>
+            </div>
+          </section>
+        </main>
       </div>
+    </div>
 
-      <div class="report-pattern-board">
-        <section class="report-card" aria-labelledby="energyTitle">
-          <h3 id="energyTitle" class="report-card__title">요일별 에너지</h3>
-          <div class="pat-week-bars" id="patWeekBars" role="img" aria-label="요일별 에너지 막대"></div>
-        </section>
-
-        <section class="report-card" aria-labelledby="rankTitle">
-          <h3 id="rankTitle" class="report-card__title">감정 순위</h3>
-          <div class="per-list" id="emotionRankList"></div>
-        </section>
-
-        <section class="pat-insight-card" aria-labelledby="insightTitle">
-          <h3 id="insightTitle" class="pat-insight-card__title">패턴 인사이트</h3>
-          <ul id="insightList"></ul>
-        </section>
-
-        <p id="reportEmptyHint" class="report-empty-hint" hidden>기간 내 감정 기록이 없어요. 일기를 남기면 패턴이 쌓여요.</p>
-      </div>
-    </main>
-  </div>
-
-  <script src="/assets/js/lib/jquery-1.12.4.js"></script>
-  <script src="https://unpkg.com/dexie@3.2.4/dist/dexie.min.js"></script>
-  <script src="/assets/js/config/db-config.js"></script>
-  <script src="/assets/js/domain/diaryStore.js"></script>
-  <script src="/assets/js/domain/emotionChatData.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/ko.js"></script>
-  <script src="/assets/js/view/report.js"></script>
-</body>
+    <script src="/assets/js/lib/jquery-1.12.4.js"></script>
+    <script src="/assets/js/view/report.js"></script>
+  </body>
 </html>
