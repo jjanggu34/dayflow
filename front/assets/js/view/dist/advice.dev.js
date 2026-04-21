@@ -9,6 +9,7 @@
   var FORTUNE_STORE_NAME = "fortuneCookies";
   var FORTUNE_KEY = "latest";
   var FORTUNE_MESSAGE_TYPE = "dayflow:fortune-selected";
+  var FORTUNE_CLOSE_TYPE = "dayflow:fortune-close";
   var FORTUNE_AUTO_OPEN_KEY = "dayflow:fortune-auto-open-date";
   var hasAutoOpened = false;
   var latestFortuneText = "";
@@ -175,7 +176,14 @@
   }
 
   function onPopupMessage(event) {
-    if (!event || !event.data || event.data.type !== FORTUNE_MESSAGE_TYPE) return;
+    if (!event || !event.data || !event.data.type) return;
+
+    if (event.data.type === FORTUNE_CLOSE_TYPE) {
+      closeFortunePopup();
+      return;
+    }
+
+    if (event.data.type !== FORTUNE_MESSAGE_TYPE) return;
     var fortuneText = event.data.fortuneText;
     saveFortuneCookie(fortuneText).then(function () {
       latestFortuneText = fortuneText || "";
