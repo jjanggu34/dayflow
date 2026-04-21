@@ -80,7 +80,7 @@
   gap: 22px;
 }
 
-/* ----- 원형(하단만 좁게 비움) 게이지: 회색 트랙 + 점수만큼 그라데이션 채움 (100점 만점) ----- */
+/* ----- 원형(하단을 넓게 비운 호) 게이지: 회색 트랙 + 점수만큼 그라데이션 채움 (100점 만점) ----- */
 #bodyWrap.result-page .result-gauge {
   position: relative;
   width: 100%;
@@ -99,6 +99,7 @@
 
 #bodyWrap.result-page .result-gauge__track {
   pointer-events: none;
+  stroke: #eff2f3;
 }
 
 #bodyWrap.result-page .result-gauge__arc {
@@ -109,7 +110,7 @@
 #bodyWrap.result-page .result-gauge__center {
   position: absolute;
   left: 50%;
-  top: 46%;
+  top: 44%;
   transform: translate(-50%, -50%);
   width: 78%;
   max-width: 200px;
@@ -120,12 +121,12 @@
 #bodyWrap.result-page .result-gauge__mood {
   margin: 0 0 4px;
   font-size: var(--font15);
-  font-weight: 700;
-  color: var(--primary);
+  font-weight: 500;
+  color: var(--text-sub);
   line-height: 1.3;
 }
 
-#bodyWrap.result-page.result-page--best .result-gauge__mood {
+/*#bodyWrap.result-page.result-page--best .result-gauge__mood {
   color: #1d9e75;
 }
 #bodyWrap.result-page.result-page--good .result-gauge__mood {
@@ -139,15 +140,22 @@
 }
 #bodyWrap.result-page.result-page--worst .result-gauge__mood {
   color: #d85a30;
-}
+}*/
 
 #bodyWrap.result-page .result-gauge__score {
   margin: 0 0 10px;
-  font-size: clamp(2.25rem, 8vw, 2.75rem);
+  font-size: clamp(3rem, 8vw, 3rem);
   font-weight: 800;
   color: var(--title);
   line-height: 1;
   font-variant-numeric: tabular-nums;
+}
+
+#bodyWrap.result-page .result-gauge__score-label {
+  font-size: var(--font16);
+  font-weight: 500;
+  color: var(--text-sub);
+  line-height: 1.3;
 }
 
 #bodyWrap.result-page .result-tags--gauge {
@@ -268,7 +276,7 @@
 }
 
 #bodyWrap.result-page .result-metrics__bar {
-  height: 10px;
+  height: 14px;
   border-radius: 999px;
   background: #ececec;
   overflow: hidden;
@@ -323,13 +331,13 @@
 }
 
 #bodyWrap.result-page .result-metrics--grid .result-metrics__bar {
-  height: 8px;
-  border-radius: 6px;
-  background: #dce8e4;
+  height: 14px;
+  border-radius: 4px;
+  background: #b4d0ff;
 }
 
 #bodyWrap.result-page .result-metrics--grid .result-metrics__fill {
-  background: linear-gradient(90deg, #7ec4b8, #4a9d8f);
+  background: linear-gradient(90deg, #7fa2e0, #135bd6);
 }
 
 #bodyWrap.result-page .result-metrics--grid .result-metrics__name {
@@ -415,7 +423,7 @@
   background-position: center;
 }
 
-#bodyWrap.result-page .card-item > h3 span::before {
+#bodyWrap.result-page .card-item:nth-child(2) > h3 span::before {
   background: #7ac47d;
 }
 
@@ -570,10 +578,7 @@
   flex: 0 0 auto;
   min-height: 0;
   display: block;
-  padding: 12px 16px 16px;
-  padding-bottom: max(16px, env(safe-area-inset-bottom));
-  background: #f5f5f5;
-  border-top: 1px solid #eee;
+  padding: 12px 20px 20px;
   gap: 0;
 }
 

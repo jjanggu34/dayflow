@@ -1,5 +1,6 @@
 {
   "rewrites": [
+    { "source": "/api/open-meteo/:path*", "destination": "https://api.open-meteo.com/:path*" },
     { "source": "/", "destination": "/index.html" },
     { "source": "/login", "destination": "/views/login.html" },
     { "source": "/home", "destination": "/views/home/home.html" },

@@ -22,7 +22,7 @@
             </h2>
             <div class="result-summary__body result-summary__body--gauge">
               <div class="result-gauge" id="resultGauge" style="--gauge-score: 0">
-                <!-- 원형에 하단만 좁게 비운 호 (~318°). pathLength=100으로 점수 채움 유지 -->
+                <!-- 원형에 하단을 넓게 비운 호 (~280°, 하단 갭 ~80°). pathLength=100으로 점수 채움 유지 -->
                 <svg class="result-gauge__svg" viewBox="0 0 280 196" width="280" height="196" aria-hidden="true" focusable="false">
                   <defs>
                     <linearGradient id="resultGaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -30,11 +30,11 @@
                       <stop offset="100%" class="result-gauge__grad-stop result-gauge__grad-stop--b" stop-color="#2f6feb" />
                     </linearGradient>
                   </defs>
-                  <path class="result-gauge__track" d="M 108.46 178.16 A 88 88 0 1 1 171.54 178.16" fill="none" stroke="#d8dde3" stroke-width="16" stroke-linecap="round" pathLength="100" />
+                  <path class="result-gauge__track" d="M 83.43 163.41 A 88 88 0 1 1 196.57 163.41" fill="none" stroke="#EFF2F3" stroke-width="16" stroke-linecap="round" pathLength="100" />
                   <path
                     id="resultGaugeArc"
                     class="result-gauge__arc"
-                    d="M 108.46 178.16 A 88 88 0 1 1 171.54 178.16"
+                    d="M 83.43 163.41 A 88 88 0 1 1 196.57 163.41"
                     fill="none"
                     stroke="url(#resultGaugeGrad)"
                     stroke-width="16"
@@ -47,7 +47,7 @@
                 <div class="result-gauge__center">
                   <p class="result-gauge__mood" id="resultMoodLabel">평온함</p>
                   <p class="result-gauge__score" id="resultTotalScore">0</p>
-                  <div class="result-tags result-tags--gauge" id="resultTags"></div>
+                  <p class="result-gauge__score-label">SCORE</p>
                 </div>
               </div>
               <div class="result-summary__copy">

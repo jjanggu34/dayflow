@@ -1,6 +1,8 @@
 /**
  * 결과 화면 하단 카드: 기온·불쾌지수·운(데모)
- * - 날씨: Open-Meteo (API 키 없음, HTTPS + CORS)
+ * - 날씨: Open-Meteo — 브라우저는 동일 출처 `/api/open-meteo/v1/forecast?...` 만 호출
+ *   (로컬: python3 front/scripts/dayflow_serve.py, 배포: front/vercel.json 프록시)
+ * - 필요 시 `window.DAYFLOW_OPENMETEO_BASE = "https://..."` 로 베이스 덮어쓰기(고급)
  * - 위치: Geolocation → 실패 시 서울 시청 좌표
  * - 불쾌지수: 기온·습도 기반 THI 근사 (표시용)
  * - 운: 날짜 시드 기반 별점(실제 운세 API 아님)
@@ -60,6 +62,14 @@
     });
   }
 
+  function openMeteoBasePath() {
+    if (typeof window !== "undefined" && window.DAYFLOW_OPENMETEO_BASE != null) {
+      var b = String(window.DAYFLOW_OPENMETEO_BASE).trim();
+      if (b !== "") return b.replace(/\/$/, "");
+    }
+    return "/api/open-meteo";
+  }
+
   function buildOpenMeteoUrl(lat, lon) {
     var q =
       "latitude=" +
@@ -68,7 +78,7 @@
       encodeURIComponent(lon) +
       "&current=temperature_2m,relative_humidity_2m,weather_code" +
       "&timezone=auto";
-    return "https://api.open-meteo.com/v1/forecast?" + q;
+    return openMeteoBasePath() + "/v1/forecast?" + q;
   }
 
   function fetchCurrentWeather(lat, lon) {
