@@ -1,0 +1,345 @@
+/* 조언 화면 — 모바일 시안 (포춘 배너 · 점수 행 · 컬러 카드 · AI 카드) */
+
+.wrap:has(> #bodyWrap.advice-page) > header.headerWrap .headerWrap__spacer {
+  flex: 0 0 38px;
+  width: 38px;
+  height: 38px;
+  pointer-events: none;
+}
+
+.wrap:has(> #bodyWrap.advice-page) {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  max-height: 100dvh;
+}
+
+#bodyWrap.advice-page {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: #eff2f3;
+}
+
+#bodyWrap.advice-page .advice-main {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 12px 16px max(20px, env(safe-area-inset-bottom));
+}
+
+/* ----- 포춘쿠키 배너 ----- */
+#bodyWrap.advice-page .advice-fortune-banner {
+  margin: 0;
+}
+
+#bodyWrap.advice-page .advice-fortune-banner__btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 14px 16px;
+  border: none;
+  border-radius: 16px;
+  background: #e8ecee;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition:
+    background 0.2s,
+    transform 0.15s;
+}
+
+#bodyWrap.advice-page .advice-fortune-banner__btn:active {
+  transform: scale(0.99);
+  background: #dfe5e8;
+}
+
+#bodyWrap.advice-page .advice-fortune-banner__icon-wrap {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #5b9cf7 0%, #2f6feb 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(47, 111, 235, 0.35);
+}
+
+#bodyWrap.advice-page .advice-fortune-banner__icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+#bodyWrap.advice-page .advice-fortune-banner__label {
+  font-size: var(--font15, 0.9375rem);
+  font-weight: 600;
+  color: var(--title);
+  letter-spacing: -0.02em;
+}
+
+/* ----- 날짜 · 헤드라인 · 점수 + 원형 이미지 ----- */
+#bodyWrap.advice-page .advice-hero {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 0 8px;
+}
+
+#bodyWrap.advice-page .advice-hero__text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+#bodyWrap.advice-page .advice-hero__date {
+  margin: 0 0 6px;
+  font-size: var(--font13, 0.8125rem);
+  font-weight: 500;
+  color: var(--text-sub, #6b7280);
+}
+
+#bodyWrap.advice-page .advice-hero__headline {
+  margin: 0 0 10px;
+  font-size: clamp(1.05rem, 3.8vw, 1.125rem);
+  font-weight: 700;
+  color: var(--title);
+  line-height: 1.35;
+}
+
+#bodyWrap.advice-page .advice-hero__score {
+  margin: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 2px;
+}
+
+#bodyWrap.advice-page .advice-hero__score-num {
+  font-size: clamp(2.75rem, 12vw, 3.25rem);
+  font-weight: 800;
+  color: var(--title);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+}
+
+#bodyWrap.advice-page .advice-hero__score-unit {
+  font-size: var(--font18, 1.125rem);
+  font-weight: 600;
+  color: var(--title);
+}
+
+#bodyWrap.advice-page .advice-hero__visual {
+  flex-shrink: 0;
+}
+
+#bodyWrap.advice-page .advice-hero__cookie-circle {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: linear-gradient(160deg, #fff5e6 0%, #f0dcc8 45%, #e8c9a8 100%);
+  border: 3px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.35rem;
+  line-height: 1;
+}
+
+/* ----- 컬러 추천 카드 + 태그 ----- */
+#bodyWrap.advice-page .advice-color-card {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 18px 18px 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+
+#bodyWrap.advice-page .advice-color-card__text {
+  margin: 0 0 14px;
+  font-size: var(--font15, 0.9375rem);
+  font-weight: 500;
+  color: var(--title);
+  line-height: 1.55;
+}
+
+#bodyWrap.advice-page .advice-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+#bodyWrap.advice-page .advice-tags__item {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: var(--font13, 0.8125rem);
+  font-weight: 600;
+  color: var(--primary);
+  background: rgba(66, 131, 243, 0.12);
+  border: 1px solid rgba(66, 131, 243, 0.18);
+}
+
+/* ----- AI 맞춤 조언 카드 ----- */
+#bodyWrap.advice-page .advice-ai-card {
+  background: var(--white);
+  border-radius: 22px;
+  padding: 22px 18px 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+#bodyWrap.advice-page .advice-ai-card__icon-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #b8e8c8 0%, #7dd3a8 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(29, 158, 117, 0.2);
+}
+
+#bodyWrap.advice-page .advice-ai-card__icon {
+  font-size: 1.45rem;
+  line-height: 1;
+}
+
+#bodyWrap.advice-page .advice-ai-card__title {
+  margin: 0 0 14px;
+  width: 100%;
+  font-size: var(--font17, 1.0625rem);
+  font-weight: 800;
+  color: var(--title);
+}
+
+#bodyWrap.advice-page .advice-ai-card__body {
+  margin: 0 0 18px;
+  width: 100%;
+  text-align: left;
+  font-size: var(--font14, 0.875rem);
+  font-weight: 400;
+  color: var(--text-default, #444);
+  line-height: 1.65;
+}
+
+#bodyWrap.advice-page .advice-ai-card__tips {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#bodyWrap.advice-page .advice-tip {
+  text-align: left;
+  background: #f0f9f4;
+  border-radius: 16px;
+  padding: 12px 14px 14px;
+}
+
+#bodyWrap.advice-page .advice-tip__label {
+  display: inline-block;
+  margin-bottom: 8px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  background: #1d9e75;
+  letter-spacing: -0.02em;
+}
+
+#bodyWrap.advice-page .advice-tip__text {
+  margin: 0;
+  font-size: var(--font13, 0.8125rem);
+  color: var(--text-default, #444);
+  line-height: 1.55;
+}
+
+/* ----- 포춘쿠키 모달(iframe: fortune_popup.html) ----- */
+.advice-fortune-popup {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: max(12px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right))
+    max(12px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  box-sizing: border-box;
+}
+
+.advice-fortune-popup[hidden] {
+  display: none !important;
+}
+
+.advice-fortune-popup__backdrop {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+}
+
+.advice-fortune-popup__panel {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 440px;
+  max-height: min(90dvh, 720px);
+  border-radius: 20px;
+  overflow: hidden;
+  background: #f2f4f6;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.22);
+}
+
+.advice-fortune-popup__close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  width: 40px;
+  height: 40px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--title, #222);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.advice-fortune-popup__close:active {
+  transform: scale(0.96);
+}
+
+.advice-fortune-popup__frame {
+  display: block;
+  width: 100%;
+  height: min(85dvh, 640px);
+  border: 0;
+  vertical-align: top;
+  background: #f2f4f6;
+}
