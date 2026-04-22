@@ -266,7 +266,9 @@
   }
 
   function init() {
-    var back = document.getElementById("reportBackBtn");
+    var back =
+      document.getElementById("reportBackBtn") ||
+      document.getElementById("chatBackBtn");
     if (back) {
       back.addEventListener("click", function () {
         if (window.history.length > 1) window.history.back();

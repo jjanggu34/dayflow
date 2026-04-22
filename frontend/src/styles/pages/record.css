@@ -1,0 +1,10 @@
+.video {
+  width: 100%;
+  border-radius: 12px;
+  background: #ddd;
+}
+
+.help {
+  font-size: 14px;
+  color: #6c6497;
+}
