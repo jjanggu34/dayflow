@@ -1,23 +1,21 @@
 body.report-page {
+  --bg-color: #4283f3;
   margin: 0;
-  background: #f4f5f7;
-  color: #21242a;
 }
 
-.report-wrap {
-  min-height: 100dvh;
-  background: #f4f5f7;
-}
-
-.report-header {
+.wrap > header.headerWrap {
   position: sticky;
   top: 0;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: max(14px, env(safe-area-inset-top)) 16px 14px;
-  background: #4a86e8;
+  background: var(--bg-color);
+  color: var(--white);
+}
+
+header > button.back {
+  background: var(--white);
+}
+
+.wrap > header.headerWrap > h1 {
+  color: var(--white);
 }
 
 .report-header__back {
@@ -54,44 +52,14 @@ body.report-page {
   padding: 0 0 30px;
 }
 
-#bodyWrap.report-page .importance-content {
-  margin: 0;
-  padding: 16px;
-  background: #fff;
-}
-
 #bodyWrap.report-page .importance-content:first-child {
-  padding: 16px 16px 20px;
-  background: #4a86e8;
+  background: var(--bg-color);
+  padding-bottom: 30px;
 }
 
 #bodyWrap.report-page .importance-content:first-child .text-group p,
 #bodyWrap.report-page .importance-content:first-child .text-group h2 {
-  color: #fff;
-}
-
-#bodyWrap.report-page .importance-content:first-child .text-group p {
-  font-size: 1.25rem;
-  font-weight: 700;
-  margin-bottom: 8px;
-}
-
-#bodyWrap.report-page .importance-content:first-child .text-group h2 {
-  font-size: 1.8125rem;
-  font-weight: 800;
-  line-height: 1.25;
-}
-
-.report-panel .text-group p {
-  margin-bottom: 4px;
-  font-size: 0.75rem;
-  color: #9ca3af;
-}
-
-.report-panel .text-group h2 {
-  font-size: 1.625rem;
-  font-weight: 800;
-  color: #151821;
+  color: var(--white);
 }
 
 .report-cal-nav {
@@ -202,7 +170,7 @@ body.report-page {
 }
 
 .pat-week-bars__bar {
-  width: 24px;
+  width: 34px;
   border-radius: 6px 6px 4px 4px;
   background: #d7dce3;
 }
@@ -266,12 +234,6 @@ body.report-page {
   color: #6e7688;
 }
 
-.emotion-bubble__days {
-  margin-top: 4px;
-  font-size: 0.875rem;
-  color: #8d95a6;
-}
-
 .emotion-bubble.is-top .emotion-bubble__name,
 .emotion-bubble.is-top .emotion-bubble__days {
   color: #fff;
@@ -298,46 +260,4 @@ body.report-page {
   50% {
     transform: translate(-50%, -51.8%);
   }
-}
-
-#bodyWrap.report-page .card-content {
-  padding: 12px 16px 0;
-  background: #f4f5f7;
-}
-
-.report-insight-card {
-  border-radius: 18px;
-  border: 1px solid #eceff4;
-}
-
-.report-insight-card > h3 {
-  margin-bottom: 14px;
-}
-
-.report-insight-card ul {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.report-insight-card li {
-  border: 1px dashed #e4e7ec;
-  border-radius: 12px;
-  padding: 10px 12px 10px 42px;
-  font-size: 0.8125rem;
-  line-height: 1.5;
-  color: #444b57;
-  position: relative;
-}
-
-.report-insight-card li::before {
-  content: "";
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  width: 20px;
-  height: 20px;
-  border-radius: 6px;
-  background: #73c87e;
-  transform: translateY(-50%);
 }

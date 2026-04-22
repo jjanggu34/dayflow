@@ -5,7 +5,7 @@
   "use strict";
 
   var DOW = ["일", "월", "화", "수", "목", "금", "토"];
-  var BAR_COLORS = ["#d0d5dd", "#c8ced9", "#c2c8d5", "#bcc3d1", "#b6bdce", "#b0b8ca", "#aab2c6"];
+  var BAR_COLORS = ["##79AAFF", "#A2C4FF", "#C8DCFF", "##C8DCFF", "#E6EFFF", "#C8DCFF", "#A2C4FF"];
   var MOCK_SCORES = [42, 58, 60, 62, 77, 70, 54];
   var MOCK_COUNTS = {
     best: 9,
@@ -146,30 +146,18 @@
     if (!rows.length) return;
     var max = rows[0].value || 1;
     var palette = ["#6e9bf6", "#dfe7f8", "#e8edf8", "#eceff4", "#f2f4f8"];
-    var layouts = [{
-      x: 8,
-      y: 18
-    }, {
-      x: 52,
-      y: 14
-    }, {
-      x: 36,
-      y: 62
-    }, {
-      x: 4,
-      y: 62
-    }, {
-      x: 74,
-      y: 54
-    }];
+    var hostW = host.clientWidth || 320;
+    var hostH = host.clientHeight || 220;
+    var centerX = hostW / 2;
+    var centerY = hostH / 2;
+    var wallPadding = 10;
+    var nodes = [];
     rows.forEach(function (row, idx) {
       var bubble = document.createElement("div");
       bubble.className = "emotion-bubble";
       var size = Math.max(64, Math.round(74 + row.value / max * 42));
       bubble.style.width = size + "px";
       bubble.style.height = size + "px";
-      bubble.style.left = layouts[idx].x + "%";
-      bubble.style.top = layouts[idx].y + "%";
       bubble.style.background = palette[idx] || "#e9edf5";
       if (idx === 0) bubble.classList.add("is-top");
       var title = document.createElement("strong");
@@ -181,6 +169,47 @@
       bubble.appendChild(title);
       bubble.appendChild(day);
       host.appendChild(bubble);
+      var angle = Math.PI * 2 * idx / Math.max(rows.length, 1);
+      var radius = 22 + idx * 6;
+      nodes.push({
+        el: bubble,
+        r: size / 2,
+        x: centerX + Math.cos(angle) * radius,
+        y: centerY + Math.sin(angle) * radius
+      });
+    });
+
+    for (var t = 0; t < 220; t++) {
+      for (var i = 0; i < nodes.length; i++) {
+        var a = nodes[i];
+        a.x += (centerX - a.x) * 0.055;
+        a.y += (centerY - a.y) * 0.055;
+
+        for (var j = i + 1; j < nodes.length; j++) {
+          var b = nodes[j];
+          var dx = b.x - a.x;
+          var dy = b.y - a.y;
+          var dist = Math.sqrt(dx * dx + dy * dy) || 0.001;
+          var minDist = a.r + b.r + 6;
+
+          if (dist < minDist) {
+            var push = (minDist - dist) * 0.5;
+            var nx = dx / dist;
+            var ny = dy / dist;
+            a.x -= nx * push;
+            a.y -= ny * push;
+            b.x += nx * push;
+            b.y += ny * push;
+          }
+        }
+      }
+    }
+
+    nodes.forEach(function (node) {
+      var px = Math.max(node.r + wallPadding, Math.min(hostW - node.r - wallPadding, node.x));
+      var py = Math.max(node.r + wallPadding, Math.min(hostH - node.r - wallPadding, node.y));
+      node.el.style.left = px + "px";
+      node.el.style.top = py + "px";
     });
   }
 
@@ -230,7 +259,7 @@
   }
 
   function init() {
-    var back = document.getElementById("reportBackBtn");
+    var back = document.getElementById("reportBackBtn") || document.getElementById("chatBackBtn");
 
     if (back) {
       back.addEventListener("click", function () {

@@ -3,7 +3,7 @@
   "use strict";
 
   var DOW = ["일", "월", "화", "수", "목", "금", "토"];
-  var BAR_COLORS = ["#d0d5dd", "#c8ced9", "#c2c8d5", "#bcc3d1", "#b6bdce", "#b0b8ca", "#aab2c6"];
+  var BAR_COLORS = ["##79AAFF", "#A2C4FF", "#C8DCFF", "##C8DCFF", "#E6EFFF", "#C8DCFF", "#A2C4FF"];
   var MOCK_SCORES = [42, 58, 60, 62, 77, 70, 54];
   var MOCK_COUNTS = { best: 9, good: 8, normal: 5, bad: 3, worst: 3 };
 
