@@ -28,11 +28,41 @@
     return Object.prototype.hasOwnProperty.call(TYPE_TO_IDX, t) ? TYPE_TO_IDX[t] : 1;
   }
 
+  /** 결과 화면까지 도달했는지(채팅 기록 완료 후에만 설정) */
+  var STORAGE_CHAT_FLOW_DONE = "dayflow_chat_flow_done";
+
+  /**
+   * 친숙 URL(/chat, /chat/emotion, /chat/result) vs 로컬 파일(emotion.html …) 자동 선택
+   */
+  function useCanonicalChatUrls() {
+    try {
+      var p = String(location.pathname || "");
+      return p === "/chat" || p.indexOf("/chat/") === 0;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /** @param {"emotion"|"chat"|"result"} page */
+  function urlChatFlow(page) {
+    if (useCanonicalChatUrls()) {
+      if (page === "emotion") return "/chat/emotion";
+      if (page === "chat") return "/chat";
+      if (page === "result") return "/chat/result";
+    }
+    if (page === "emotion") return "emotion.html";
+    if (page === "chat") return "chat.html";
+    return "result.html";
+  }
+
   global.DayflowEmotionChat = {
     TYPE_TO_IDX: TYPE_TO_IDX,
     CHAT_EMOTIONS: CHAT_EMOTIONS,
     STARTER_CHIPS_BY_EMO: STARTER_CHIPS_BY_EMO,
     getIdxFromType: getIdxFromType,
     STORAGE_EMOTION_KEY: "dayflow_emotion_type",
+    STORAGE_CHAT_FLOW_DONE: STORAGE_CHAT_FLOW_DONE,
+    urlChatFlow: urlChatFlow,
+    useCanonicalChatUrls: useCanonicalChatUrls
   };
 })(typeof window !== "undefined" ? window : this);

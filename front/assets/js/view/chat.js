@@ -35,6 +35,18 @@
     };
     D = window.DayflowEmotionChat;
   }
+
+  try {
+    var emGate = sessionStorage.getItem(D.STORAGE_EMOTION_KEY);
+    if (!emGate || !/^(best|good|normal|bad|worst)$/.test(emGate)) {
+      window.location.replace(D.urlChatFlow("emotion"));
+      return;
+    }
+  } catch (eGate) {
+    window.location.replace(D.urlChatFlow("emotion"));
+    return;
+  }
+
   window.__dayflowChatInit = true;
 
   var CHAT_EMOTIONS = D.CHAT_EMOTIONS;
@@ -792,7 +804,10 @@
     } catch (e2) {}
 
     function goResult() {
-      window.location.href = "result.html";
+      try {
+        sessionStorage.setItem(D.STORAGE_CHAT_FLOW_DONE, "1");
+      } catch (e4) {}
+      window.location.href = D.urlChatFlow("result");
     }
 
     function saveThenGo() {
@@ -1038,7 +1053,7 @@
 
   if (backBtn) {
     backBtn.addEventListener("click", function () {
-      window.location.href = "emotion.html";
+      window.location.href = D.urlChatFlow("emotion");
     });
   }
 

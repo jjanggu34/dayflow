@@ -97,7 +97,7 @@ server.on("error", (err) => {
 
 server.listen(PORT, () => {
   console.log(`DAYFLOW front — http://localhost:${PORT}/`);
-  console.log(`  /chat/emotion   → 감정 선택`);
+  console.log(`  /chat/emotion → /chat → /chat/result (감정→대화→분석 순서)`);
   console.log(`  /report         → 리포트`);
   console.log(`  /report/report  → 리포트(별칭)`);
   console.log(`  /advice         → 조언`);

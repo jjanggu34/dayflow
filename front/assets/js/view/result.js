@@ -516,6 +516,24 @@
   }
 
   function init() {
+    var Dflow = window.DayflowEmotionChat;
+    if (Dflow) {
+      try {
+        var em0 = sessionStorage.getItem(Dflow.STORAGE_EMOTION_KEY);
+        if (!em0 || !/^(best|good|normal|bad|worst)$/.test(em0)) {
+          window.location.replace(Dflow.urlChatFlow("emotion"));
+          return;
+        }
+        if (sessionStorage.getItem(Dflow.STORAGE_CHAT_FLOW_DONE) !== "1") {
+          window.location.replace(Dflow.urlChatFlow("chat"));
+          return;
+        }
+      } catch (eFlow) {
+        window.location.replace(Dflow.urlChatFlow("emotion"));
+        return;
+      }
+    }
+
     var type = getEmotionType();
     var pack = PACKS[type] || PACKS.good;
     var bodyWrap = document.getElementById("bodyWrap");
@@ -668,10 +686,18 @@
       }
     }
 
+    var homeFoot = document.querySelector(".result-footer__home");
+    if (homeFoot && window.DayflowEmotionChat && typeof DayflowEmotionChat.urlChatFlow === "function") {
+      homeFoot.setAttribute("href", DayflowEmotionChat.urlChatFlow("emotion"));
+    }
+
     var back = document.getElementById("resultBackBtn");
     if (back) {
       back.addEventListener("click", function () {
-        window.location.href = "chat.html";
+        window.location.href =
+          window.DayflowEmotionChat && typeof DayflowEmotionChat.urlChatFlow === "function"
+            ? DayflowEmotionChat.urlChatFlow("chat")
+            : "chat.html";
       });
     }
   }

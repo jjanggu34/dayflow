@@ -1,5 +1,11 @@
 /* views/chat/emotion.html */
 (function () {
+  try {
+    if (window.DayflowEmotionChat && DayflowEmotionChat.STORAGE_CHAT_FLOW_DONE) {
+      sessionStorage.removeItem(DayflowEmotionChat.STORAGE_CHAT_FLOW_DONE);
+    }
+  } catch (eClr) {}
+
   var group = document.getElementById("emotionBtnGroup");
   var bodyWrap = document.getElementById("bodyWrap");
   var captionEl = document.getElementById("emotionPreviewCaption");
@@ -230,6 +236,6 @@
       var key = window.DayflowEmotionChat ? DayflowEmotionChat.STORAGE_EMOTION_KEY : "dayflow_emotion_type";
       sessionStorage.setItem(key, t);
     } catch (e) {}
-    window.location.href = "chat.html";
+    window.location.href = DayflowEmotionChat.urlChatFlow("chat");
   });
 })();
