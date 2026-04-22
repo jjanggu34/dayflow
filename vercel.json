@@ -1,21 +1,27 @@
 {
-  "installCommand": "echo 'skip'",
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "rewrites": [
+  "version": 2,
+  "name": "dayflow",
+  "builds": [
     {
-      "source": "/api/open-meteo/:path*",
-      "destination": "https://api.open-meteo.com/:path*"
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": { "distDir": "dist" }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/open-meteo/(.*)",
+      "dest": "https://api.open-meteo.com/$1"
     },
-    { "source": "/", "destination": "/index.html" },
-    { "source": "/login", "destination": "/views/login.html" },
-    { "source": "/home", "destination": "/views/home/home.html" },
-    { "source": "/chat/emotion", "destination": "/views/chat/emotion.html" },
-    { "source": "/chat/result", "destination": "/views/chat/result.html" },
-    { "source": "/chat", "destination": "/views/chat/chat.html" },
-    { "source": "/report/report", "destination": "/views/report/report.html" },
-    { "source": "/report", "destination": "/views/report/report.html" },
-    { "source": "/advice", "destination": "/views/advice/advice.html" },
-    { "source": "/my", "destination": "/views/my/my.html" }
+    { "src": "/", "dest": "/index.html" },
+    { "src": "/login", "dest": "/views/login.html" },
+    { "src": "/home", "dest": "/views/home/home.html" },
+    { "src": "/chat/emotion", "dest": "/views/chat/emotion.html" },
+    { "src": "/chat/result", "dest": "/views/chat/result.html" },
+    { "src": "/chat", "dest": "/views/chat/chat.html" },
+    { "src": "/report/report", "dest": "/views/report/report.html" },
+    { "src": "/report", "dest": "/views/report/report.html" },
+    { "src": "/advice", "dest": "/views/advice/advice.html" },
+    { "src": "/my", "dest": "/views/my/my.html" }
   ]
 }
