@@ -6,6 +6,9 @@ node_modules/
 .env
 **/.env
 
+# Vercel build output (front 복사본)
+dist/
+
 # logs
 *.log
 npm-debug.log*

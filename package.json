@@ -3,6 +3,6 @@
   "private": true,
   "scripts": {
     "dev": "node scripts/dev-front.mjs",
-    "build": "echo 'Static site: output is front/ (see vercel.json outputDirectory)'"
+    "build": "node scripts/build-static.mjs"
   }
 }

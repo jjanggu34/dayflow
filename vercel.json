@@ -1,7 +1,7 @@
 {
   "installCommand": "echo 'skip'",
-  "buildCommand": "echo 'skip'",
-  "outputDirectory": "front",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
   "rewrites": [
     {
       "source": "/api/open-meteo/:path*",
