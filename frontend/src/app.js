@@ -12,7 +12,7 @@ import { VideoRecordPage, bindVideoRecordEvents } from "./pages/VideoRecordPage.
 import { AnalysisPage, bindAnalysisEvents } from "./pages/AnalysisPage.js";
 import { CalendarPage } from "./pages/CalendarPage.js";
 import { PatternPage } from "./pages/PatternPage.js";
-import { ReportPage } from "./pages/ReportPage.js";
+import { ReportPage, bindReportPageEvents } from "./pages/ReportPage.js";
 import { SettingsPage, bindSettingsEvents } from "./pages/SettingsPage.js";
 
 const appElement = () => document.getElementById("app");
@@ -41,6 +41,7 @@ function render() {
     S4chat: bindChatRecordEvents,
     S4video: bindVideoRecordEvents,
     S5: bindAnalysisEvents,
+    S8: bindReportPageEvents,
     S9: bindSettingsEvents
   }[state.currentScreen];
 

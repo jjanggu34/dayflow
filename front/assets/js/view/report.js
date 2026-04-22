@@ -147,6 +147,7 @@
     var hostH = host.clientHeight || 220;
     var centerX = hostW / 2;
     var centerY = hostH / 2;
+    var wallPadding = 10;
     var nodes = [];
 
     rows.forEach(function (row, idx) {
@@ -157,7 +158,6 @@
       bubble.style.height = size + "px";
       bubble.style.background = palette[idx] || "#e9edf5";
       if (idx === 0) bubble.classList.add("is-top");
-      bubble.style.animationDelay = idx * 0.18 + "s";
 
       var title = document.createElement("strong");
       title.className = "emotion-bubble__name";
@@ -181,7 +181,7 @@
       });
     });
 
-    for (var t = 0; t < 140; t++) {
+    for (var t = 0; t < 220; t++) {
       for (var i = 0; i < nodes.length; i++) {
         var a = nodes[i];
         a.x += (centerX - a.x) * 0.055;
@@ -192,7 +192,7 @@
           var dx = b.x - a.x;
           var dy = b.y - a.y;
           var dist = Math.sqrt(dx * dx + dy * dy) || 0.001;
-          var minDist = a.r + b.r - 6;
+          var minDist = a.r + b.r + 6;
           if (dist < minDist) {
             var push = (minDist - dist) * 0.5;
             var nx = dx / dist;
@@ -207,8 +207,8 @@
     }
 
     nodes.forEach(function (node) {
-      var px = Math.max(node.r + 4, Math.min(hostW - node.r - 4, node.x));
-      var py = Math.max(node.r + 4, Math.min(hostH - node.r - 4, node.y));
+      var px = Math.max(node.r + wallPadding, Math.min(hostW - node.r - wallPadding, node.x));
+      var py = Math.max(node.r + wallPadding, Math.min(hostH - node.r - wallPadding, node.y));
       node.el.style.left = px + "px";
       node.el.style.top = py + "px";
     });

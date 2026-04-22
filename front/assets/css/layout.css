@@ -81,11 +81,12 @@
     #공통 레이아웃
 ---------------------------------------------*/
 .wrap {
-  margin: 0;
+  margin: 0 auto;
   padding: 0;
   width: 100%;
+  max-width: 375px;
   height: 100%;
-  overflow: hidden;
+  overflow: auto;
   position: relative;
 }
 .wrap > header.headerWrap {

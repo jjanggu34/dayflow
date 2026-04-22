@@ -119,6 +119,11 @@
   overflow: hidden;
 }
 
+.report-v2__bubble-cluster {
+  position: absolute;
+  inset: 0;
+}
+
 .report-v2__bubble {
   position: absolute;
   transform: translate(-50%, -50%);
@@ -128,6 +133,7 @@
   align-items: center;
   justify-content: center;
   text-align: center;
+  will-change: left, top;
 }
 
 .report-v2__bubble strong {
@@ -200,4 +206,24 @@
   padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
   background: #fff;
   border-top: 1px solid #e8ebf0;
+}
+
+.report-v2__tabbar .tabbar {
+  margin-top: 0;
+  gap: 0;
+  background: transparent;
+}
+
+.report-v2__tabbar .tabbar__item {
+  border-radius: 0;
+  background: transparent;
+  color: #a1a8b6;
+  font-size: 12px;
+  padding: 8px 0 6px;
+}
+
+.report-v2__tabbar .tabbar__item.is-active {
+  background: transparent;
+  color: #4a86e8;
+  font-weight: 700;
 }

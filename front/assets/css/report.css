@@ -225,6 +225,7 @@ body.report-page {
   background: #f7f9fc;
   border: 1px solid #edf1f6;
   overflow: hidden;
+  animation: bubble-cluster-drift 3.8s ease-in-out infinite;
 }
 
 .emotion-bubble {
@@ -241,6 +242,22 @@ body.report-page {
     left 0.35s ease-out,
     top 0.35s ease-out;
   animation: bubble-float 2.8s ease-in-out infinite;
+}
+
+.emotion-bubble:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.emotion-bubble:nth-child(3) {
+  animation-delay: 0.35s;
+}
+
+.emotion-bubble:nth-child(4) {
+  animation-delay: 0.5s;
+}
+
+.emotion-bubble:nth-child(5) {
+  animation-delay: 0.65s;
 }
 
 .emotion-bubble__name {
@@ -260,13 +277,26 @@ body.report-page {
   color: #fff;
 }
 
+@keyframes bubble-cluster-drift {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  30% {
+    transform: translate(2px, -2px);
+  }
+  60% {
+    transform: translate(-2px, 1px);
+  }
+}
+
 @keyframes bubble-float {
   0%,
   100% {
     transform: translate(-50%, -50%);
   }
   50% {
-    transform: translate(-50%, -52%);
+    transform: translate(-50%, -51.8%);
   }
 }
 
