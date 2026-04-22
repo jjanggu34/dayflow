@@ -1,4 +1,9 @@
-/* SPA에서 레거시 리포트 HTML 임베드 — iframe에 확정 높이(그리드) 필수 */
+/*
+ * SPA #/report 전용: iframe·탭바 래퍼만.
+ * 리포트 본문(막대·버블·인사이트 등) 스타일은 항상
+ *   front/assets/css/report.css
+ * (report.html 이 <link>로 불러오는 경로 /assets/css/report.css)
+ */
 .page.page-report-embed {
   gap: 0;
 }
