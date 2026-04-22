@@ -20,6 +20,7 @@ const rewrites = [
   ["/home", "/views/home/home.html"],
   ["/report", "/views/report/report.html"],
   ["/report/report", "/views/report/report.html"],
+  ["/advice/advice", "/views/advice/advice.html"],
   ["/advice", "/views/advice/advice.html"],
   ["/my", "/views/my/my.html"],
   ["/", "/index.html"]
@@ -99,4 +100,6 @@ server.listen(PORT, () => {
   console.log(`  /chat/emotion   → 감정 선택`);
   console.log(`  /report         → 리포트`);
   console.log(`  /report/report  → 리포트(별칭)`);
+  console.log(`  /advice         → 조언`);
+  console.log(`  /advice/advice  → 조언(별칭)`);
 });
