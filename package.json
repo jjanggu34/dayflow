@@ -2,8 +2,7 @@
   "name": "dayflow",
   "private": true,
   "scripts": {
-    "dev": "npm run dev --prefix frontend",
-    "build": "npm run build --prefix frontend",
-    "dev:backend": "npm run dev --prefix backend"
+    "dev": "npx --yes serve@14 front -l 5173",
+    "build": "echo 'Static site: output is front/ (see vercel.json outputDirectory)'"
   }
 }

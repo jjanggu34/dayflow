@@ -5,7 +5,7 @@
 감정 일기 웹앱. 사용자가 오늘의 감정을 선택하고 AI와 대화하며 감정을 기록한다.
 
 - **스택**: Vanilla JS (jQuery), HTML, CSS — 빌드 도구 없음
-- **배포**: Vercel (vercel.json 라우팅)
+- **배포**: Vercel — 리포지토리 루트 `vercel.json`(`outputDirectory: front`, 라우팅)
 - **AI**: Anthropic Claude API (chatAgent, analysisAgent)
 
 ## 디렉터리 구조
