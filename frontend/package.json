@@ -4,7 +4,9 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "sync-legacy": "node scripts/sync-legacy-front.mjs",
+    "dev": "node scripts/sync-legacy-front.mjs && vite",
+    "prebuild": "node scripts/sync-legacy-front.mjs",
     "build": "vite build",
     "preview": "vite preview"
   },
