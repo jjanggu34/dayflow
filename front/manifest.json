@@ -1,8 +1,8 @@
 {
-  "name": "Dayflow — 감정 일기",
-  "short_name": "Dayflow",
+  "name": "안다로미 — 감정 일기",
+  "short_name": "안다로미",
   "description": "AI와 함께 하루 감정을 기록하는 일기 앱",
-  "start_url": "/",
+  "start_url": "/index.html",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#1D1D2E",
