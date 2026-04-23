@@ -333,7 +333,7 @@
 #bodyWrap.result-page .result-metrics--grid .result-metrics__bar {
   height: 14px;
   border-radius: 4px;
-  background: #b4d0ff;
+  background: #eff2f3;
 }
 
 #bodyWrap.result-page .result-metrics--grid .result-metrics__fill {
@@ -372,6 +372,16 @@
   font-size: var(--font14);
   line-height: 1.6;
   color: var(--text-default);
+}
+
+#bodyWrap.result-page .card-content .card-item:first-of-type > h3 span::before {
+  -webkit-mask-image: url("../img/result/ico-01.svg");
+  mask-image: url("../img/result/ico-01.svg");
+}
+
+#bodyWrap.result-page .card-content .card-item:nth-of-type(2) > h3 span::before {
+  -webkit-mask-image: url("../img/result/ico-02.svg");
+  mask-image: url("../img/result/ico-02.svg");
 }
 
 #bodyWrap.result-page .card-item ol {

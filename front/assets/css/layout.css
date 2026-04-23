@@ -193,7 +193,7 @@ footer {
     #text 상단 문구
 ---------------------------------------------*/
 .text-content .text-group p {
-  margin: 0 0 8px;
+  margin: 8px 0 0;
   color: var(--text-default);
   font-size: var(--font14);
   font-weight: 400;
@@ -381,4 +381,85 @@ footer {
   font-weight: normal;
   color: var(--text-disabled);
   font-size: var(--font12);
+}
+
+/*---------------------------------------------
+    #하단 탭 (홈 · 리포트 · 조언) — 레이아웃은 layout.css
+---------------------------------------------*/
+#footerWrap.app-tab-footer {
+  padding: 0;
+  gap: 0;
+  margin: 0;
+  background: var(--white);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+#footerWrap.app-tab-footer .footer-content {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: space-around;
+  gap: 4px;
+  padding: 10px 8px 12px;
+}
+
+#footerWrap.app-tab-footer .footer-content > a {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-sub);
+  font-family: inherit;
+  font-size: var(--font12);
+  font-weight: 500;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#footerWrap.app-tab-footer .footer-content > a span {
+  line-height: 1.2;
+  color: #b1b1b1;
+}
+
+#footerWrap.app-tab-footer .footer-content > a::before {
+  background-color: #b1b1b1;
+  content: "";
+  display: block;
+  margin-bottom: 4px;
+  width: 30px;
+  height: 30px;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 28px auto;
+  mask-size: 28px auto;
+  -webkit-mask-position: center;
+}
+
+#footerWrap.app-tab-footer .footer-content > a:first-of-type::before {
+  webkit-mask-image: url("../img/com/ico-home.png");
+  mask-image: url("../img/com/ico-home.png");
+}
+
+#footerWrap.app-tab-footer .footer-content > a:nth-of-type(2)::before {
+  webkit-mask-image: url("../img/com/ico-report.svg");
+  mask-image: url("../img/com/ico-report.png");
+}
+
+#footerWrap.app-tab-footer .footer-content > a:nth-of-type(3)::before {
+  webkit-mask-image: url("../img/com/ico-advice.svg");
+  mask-image: url("../img/com/ico-advice.svg");
+}
+
+#footerWrap.app-tab-footer .footer-content > a[aria-current="page"]::before {
+  background-color: var(--primary);
+}
+
+#footerWrap.app-tab-footer .footer-content > a[aria-current="page"] span {
+  color: var(--primary);
 }

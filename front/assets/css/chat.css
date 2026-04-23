@@ -300,6 +300,8 @@
 #bodyWrap.chat .chat-chips-wrap--intro .chat-chip:not(.chat-chip--finish):hover,
 #bodyWrap.chat .chat-chips-wrap--intro .chat-chip:not(.chat-chip--finish):focus-visible {
   border-color: var(--primary);
+  background-color: var(--white);
+  color: var(--primary);
 }
 
 #bodyWrap.chat .chat-chips--flush {

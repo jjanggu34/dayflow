@@ -11,9 +11,9 @@
     <meta name="apple-mobile-web-app-title" content="Dayflow" />
     <title>DAYFLOW — 오늘의 분석</title>
     <link rel="stylesheet" href="../../assets/css/main.css" />
-      <script>
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/sw.js');
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/sw.js");
       }
     </script>
   </head>
@@ -22,14 +22,14 @@
       <header class="headerWrap">
         <button type="button" class="back" id="resultBackBtn" aria-label="이전 화면으로">이전 화면으로</button>
         <h1>오늘의 분석</h1>
-        <p class="result-header__date" id="resultHeaderDate" aria-label="오늘 날짜"></p>
+        <!--<p class="result-header__date" id="resultHeaderDate" aria-label="오늘 날짜"></p>-->
       </header>
       <div id="bodyWrap" class="result-page">
         <main class="result-main" id="resultMain">
           <section class="result-card result-summary" aria-labelledby="resultSummaryTitle">
             <h2>
-              <em id="resultHeadline" class="result-summary__headline">안정적이고 균형 잡힌 하루</em>
-              <span id="resultSubline" class="result-summary__sub">평온한 에너지가 하루를 차분하게 이끌어요!</span>
+              <span id="" class="result-summary__sub">데일리 채팅 분석</span>
+              <em id="" class="result-summary__headline">오늘의 감정 점수</em>
             </h2>
             <div class="result-summary__body result-summary__body--gauge">
               <div class="result-gauge" id="resultGauge" style="--gauge-score: 0">
@@ -71,7 +71,7 @@
             <div class="card-item" aria-labelledby="resultInsightsTitle">
               <h3 id="resultInsightsTitle" class="result-insight-panel__title">
                 <span></span>
-                AI 맞춤 조언
+                오늘은 이렇게 보내고 계시는군요!
               </h3>
               <p class="result-insights" id="resultInsightsList">
                 평온한 에너지로 차분한 하루를 보내셨다니 참 좋습니다. 직장에서의 좋은 운을 살려 내일은 미뤄두었던 업무나 새로운 프로젝트에 도전해 보시면 어떨까요? 금전 운이 조금 낮은 만큼 불필요한
@@ -88,7 +88,7 @@
             <div class="card-item">
               <h3>
                 <span></span>
-                내일을 위한 추천
+                내일은 이렇게 준비해보세요!
               </h3>
               <ol id="resultRecoList">
                 <li>
