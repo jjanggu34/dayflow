@@ -1,13 +1,33 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>DAYFLOW</title>
-  <link rel="stylesheet" href="/assets/css/main.css" />
-</head>
-<body>
-  <p><a href="/login">로그인</a> · <a href="/home">홈</a> · <a href="/main">메인(캘린더)</a></p>
-  <script src="/assets/js/lib/jquery-1.12.4.js"></script>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="apple-touch-icon" href="/assets/img/pwa/icon-180.png" />
+    <meta name="theme-color" content="#1D1D2E" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Dayflow" />
+    <title>DAYFLOW</title>
+    <link rel="stylesheet" href="/assets/css/main.css" />
+    <style>
+      .splash-content img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        margin: 0 auto;
+        object-fit: contain;
+      }
+    </style>
+  </head>
+  <body>
+    <div calss="wrap">
+      <main class="splash">
+        <div class="splash-content">
+          <img src="/assets/img/main/img-splash.gif" alt="안다미로" class="splash-logo" />
+        </div>
+      </main>
+    </div>
+  </body>
 </html>
