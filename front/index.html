@@ -20,6 +20,11 @@
         object-fit: contain;
       }
     </style>
+      <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js');
+      }
+    </script>
   </head>
   <body>
     <div class="wrap">

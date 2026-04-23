@@ -11,7 +11,12 @@
     <meta name="apple-mobile-web-app-title" content="Dayflow" />
   <title>DAYFLOW — 홈</title>
   <link rel="stylesheet" href="/assets/css/main.css" />
-</head>
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js');
+      }
+    </script>
+  </head>
 <body>
   <main class="page">홈 — 오늘 요약, 캘린더</main>
   <script src="/assets/js/lib/jquery-1.12.4.js"></script>

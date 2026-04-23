@@ -11,6 +11,11 @@
     <meta name="apple-mobile-web-app-title" content="Dayflow" />
     <title>DAYFLOW — 오늘의 분석</title>
     <link rel="stylesheet" href="../../assets/css/main.css" />
+      <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js');
+      }
+    </script>
   </head>
   <body>
     <div class="wrap">
