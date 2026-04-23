@@ -6,6 +6,7 @@
   var BAR_COLORS = ["##79AAFF", "#A2C4FF", "#C8DCFF", "##C8DCFF", "#E6EFFF", "#C8DCFF", "#A2C4FF"];
   var MOCK_SCORES = [42, 58, 60, 62, 77, 70, 54];
   var MOCK_COUNTS = { best: 9, good: 8, normal: 5, bad: 3, worst: 3 };
+  var insightRequestSeq = 0;
 
   function pad2(n) {
     return n < 10 ? "0" + n : String(n);
@@ -122,6 +123,28 @@
     });
   }
 
+  var emotionRankIo = null;
+
+  function bindEmotionBubbleReveal(clusterEl) {
+    if (!clusterEl) return;
+    clusterEl.classList.remove("is-animated");
+    if (emotionRankIo) {
+      emotionRankIo.disconnect();
+      emotionRankIo = null;
+    }
+    if (!clusterEl.querySelector(".emotion-bubble")) return;
+    emotionRankIo = new IntersectionObserver(function (entries) {
+      if (entries[0] && entries[0].isIntersecting) {
+        clusterEl.classList.add("is-animated");
+        if (emotionRankIo) {
+          emotionRankIo.disconnect();
+          emotionRankIo = null;
+        }
+      }
+    }, { threshold: 0.3 });
+    emotionRankIo.observe(clusterEl);
+  }
+
   function renderBubbleRanking(counts) {
     var host = document.getElementById("emotionRankList");
     if (!host) return;
@@ -157,6 +180,8 @@
       bubble.style.width = size + "px";
       bubble.style.height = size + "px";
       bubble.style.background = palette[idx] || "#e9edf5";
+      bubble.style.setProperty("--bubble-delay", (idx * 0.23).toFixed(2) + "s");
+      bubble.style.zIndex = String(20 - idx);
       if (idx === 0) bubble.classList.add("is-top");
 
       var title = document.createElement("strong");
@@ -214,11 +239,7 @@
     });
   }
 
-  function renderInsights(scores7, counts, isMock) {
-    var list = document.getElementById("insightList");
-    if (!list) return;
-    list.innerHTML = "";
-
+  function buildFallbackInsightLines(scores7, counts, isMock) {
     var hi = 0;
     var lo = 0;
     for (var i = 1; i < scores7.length; i++) {
@@ -236,13 +257,110 @@
       "주 중반 이후 에너지가 내려갈 때 휴식 루틴을 넣으면 좋아요.",
     ];
     if (isMock) {
-      lines.unshift("아직 기록 데이터가 없어 샘플 데이터로 리포트를 보여드려요.");
+      lines[0] = "아직 기록이 없어 예시 수치예요. " + lines[0];
     }
+    return lines;
+  }
 
+  function renderInsightList(list, lines) {
+    if (!list) return;
+    list.innerHTML = "";
     lines.forEach(function (line) {
       var li = document.createElement("li");
       li.textContent = line;
       list.appendChild(li);
+    });
+  }
+
+  function stripJsonCodeFence(s) {
+    var t = String(s || "").trim();
+    if (t.indexOf("```") === 0) {
+      t = t.replace(/^```[a-zA-Z0-9]*\s*/, "").replace(/\s*```\s*$/m, "");
+    }
+    return t.trim();
+  }
+
+  function parseInsightJsonArray(text) {
+    var raw = stripJsonCodeFence(text);
+    var data;
+    try {
+      data = JSON.parse(raw);
+    } catch (e) {
+      return null;
+    }
+    if (!Array.isArray(data)) return null;
+    var out = [];
+    for (var i = 0; i < data.length && out.length < 3; i++) {
+      if (typeof data[i] !== "string") continue;
+      var line = String(data[i]).replace(/\s+/g, " ").trim();
+      if (line) out.push(line);
+    }
+    return out.length === 3 ? out : null;
+  }
+
+  function requestReportInsightsAi(scores7, counts, isMock, monthLabel) {
+    if (!window.DayflowApiKey || !DayflowApiKey.has()) {
+      return Promise.resolve(null);
+    }
+    if (!window.DayflowChatAgent || typeof DayflowChatAgent.sendMessages !== "function") {
+      return Promise.resolve(null);
+    }
+
+    var dowScores = DOW.map(function (d, i) {
+      return d + "요일 평균 점수 " + scores7[i] + (scores7[i] === 0 ? "(해당 요일 기록 없음)" : "");
+    }).join("\n");
+
+    var emotionCounts =
+      "설렘(best) " +
+      (counts.best || 0) +
+      "일, 평온함(good) " +
+      (counts.good || 0) +
+      "일, 활기참(normal) " +
+      (counts.normal || 0) +
+      "일, 무기력(bad) " +
+      (counts.bad || 0) +
+      "일, 불안함(worst) " +
+      (counts.worst || 0) +
+      "일 (하루당 최신 기록 1건만 집계)";
+
+    var userBlock =
+      "[대상 월] " +
+      monthLabel +
+      "\n[샘플 여부] " +
+      (isMock ? "예 — 실제 기록이 없어 아래 수치는 예시입니다. 그럼에도 수치에 맞춰 문장을 쓰되, 첫 문장에서 예시 데이터임을 짧게 밝혀 주세요." : "아니오 — 실제 한 달 기록입니다.") +
+      "\n\n[요일별]\n" +
+      dowScores +
+      "\n\n[감정 유형별 일수]\n" +
+      emotionCounts;
+
+    return DayflowChatAgent.sendMessages({
+      apiKey: DayflowApiKey.get(),
+      system:
+        "당신은 감정 일기 앱의 월간 리포트 카피라이터입니다. " +
+        "입력 수치와 요일·감정 라벨에만 근거해 패턴 인사이트 문장을 정확히 3개 작성하세요. " +
+        "한국어 존댓말, 각 문장 90자 이내, 글머리표·번호·따옴표 없이 본문만. " +
+        "응답에는 다른 토큰이나 설명 없이 JSON 배열만 출력하세요. 형식: [\"문장1\",\"문장2\",\"문장3\"]",
+      messages: [{ role: "user", content: userBlock }],
+    })
+      .then(function (reply) {
+        return parseInsightJsonArray(reply);
+      })
+      .catch(function () {
+        return null;
+      });
+  }
+
+  function renderInsights(scores7, counts, isMock, monthLabel) {
+    var list = document.getElementById("insightList");
+    if (!list) return;
+
+    var seq = ++insightRequestSeq;
+    var fallback = buildFallbackInsightLines(scores7, counts, isMock);
+    renderInsightList(list, fallback);
+
+    requestReportInsightsAi(scores7, counts, isMock, monthLabel).then(function (aiLines) {
+      if (seq !== insightRequestSeq || !aiLines) return;
+      renderInsightList(list, aiLines);
     });
   }
 
@@ -261,7 +379,8 @@
       if (empty) empty.hidden = hasData;
       renderWeekBars(scores7);
       renderBubbleRanking(counts);
-      renderInsights(scores7, counts, !hasData);
+      bindEmotionBubbleReveal(document.getElementById("emotionRankList"));
+      renderInsights(scores7, counts, !hasData, monthLabel);
     });
   }
 

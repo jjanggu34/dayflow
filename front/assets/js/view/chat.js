@@ -53,12 +53,14 @@
   var STARTER_CHIPS_BY_EMO = D.STARTER_CHIPS_BY_EMO;
   /** 결과 화면「채팅 요약」— 기록완료 시 Claude로 생성해 sessionStorage에 저장 */
   var STORAGE_CHAT_SUMMARY = "dayflow_diary_chat_summary";
+  var STORAGE_SELECTED_DATE = "dayflow_selected_date";
 
   var chatHistory = [];
   var diaryText = "";
   var pendingImageBase64 = null;
   var starterChipsTimer = null;
   var lastSendAt = 0;
+  var isFinishing = false;
   /** 음성 대화 모드: 마이크 켠 상태에서 인식 → 2초 묵음 후 자동 전송 → 봇 답변 TTS */
   var isVoiceConversationMode = false;
   var voicePausedForTts = false;
@@ -792,6 +794,9 @@
   }
 
   function finishDiary() {
+    if (isFinishing) return;
+    isFinishing = true;
+
     var text = diaryText.trim();
     var summary = text.slice(0, 2000);
     try {
@@ -799,13 +804,17 @@
     } catch (e) {}
 
     var emotion = "good";
+    var selectedDate = "";
     try {
       emotion = sessionStorage.getItem(D.STORAGE_EMOTION_KEY) || "good";
+      selectedDate = (sessionStorage.getItem(STORAGE_SELECTED_DATE) || "").trim();
     } catch (e2) {}
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(selectedDate)) selectedDate = "";
 
     function goResult() {
       try {
         sessionStorage.setItem(D.STORAGE_CHAT_FLOW_DONE, "1");
+        if (selectedDate) sessionStorage.removeItem(STORAGE_SELECTED_DATE);
       } catch (e4) {}
       window.location.href = D.urlChatFlow("result");
     }
@@ -813,6 +822,7 @@
     function saveThenGo() {
       if (window.DayflowDiaryStore && typeof DayflowDiaryStore.saveTodayDiary === "function") {
         DayflowDiaryStore.saveTodayDiary({
+          date: selectedDate || undefined,
           emotion: emotion,
           content: text,
           summary: summary,
@@ -861,6 +871,7 @@
     chatHistory = [];
     diaryText = "";
     pendingImageBase64 = null;
+    isFinishing = false;
     try {
       sessionStorage.removeItem(STORAGE_CHAT_SUMMARY);
     } catch (eRm) {}

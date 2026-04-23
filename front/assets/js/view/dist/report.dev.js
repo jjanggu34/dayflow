@@ -129,6 +129,33 @@
     });
   }
 
+  var emotionRankIo = null;
+
+  function bindEmotionBubbleReveal(clusterEl) {
+    if (!clusterEl) return;
+    clusterEl.classList.remove("is-animated");
+
+    if (emotionRankIo) {
+      emotionRankIo.disconnect();
+      emotionRankIo = null;
+    }
+
+    if (!clusterEl.querySelector(".emotion-bubble")) return;
+    emotionRankIo = new IntersectionObserver(function (entries) {
+      if (entries[0] && entries[0].isIntersecting) {
+        clusterEl.classList.add("is-animated");
+
+        if (emotionRankIo) {
+          emotionRankIo.disconnect();
+          emotionRankIo = null;
+        }
+      }
+    }, {
+      threshold: 0.3
+    });
+    emotionRankIo.observe(clusterEl);
+  }
+
   function renderBubbleRanking(counts) {
     var host = document.getElementById("emotionRankList");
     if (!host) return;
@@ -159,6 +186,8 @@
       bubble.style.width = size + "px";
       bubble.style.height = size + "px";
       bubble.style.background = palette[idx] || "#e9edf5";
+      bubble.style.setProperty("--bubble-delay", (idx * 0.23).toFixed(2) + "s");
+      bubble.style.zIndex = String(20 - idx);
       if (idx === 0) bubble.classList.add("is-top");
       var title = document.createElement("strong");
       title.className = "emotion-bubble__name";
@@ -254,6 +283,7 @@
       if (empty) empty.hidden = hasData;
       renderWeekBars(scores7);
       renderBubbleRanking(counts);
+      bindEmotionBubbleReveal(document.getElementById("emotionRankList"));
       renderInsights(scores7, counts, !hasData);
     });
   }

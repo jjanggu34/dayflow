@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0" />
+    <title>DAYFLOW — 홈</title>
+    <link rel="stylesheet" href="/assets/css/main.css" />
+  </head>
+  <body class="main-page">
+    <div class="wrap">
+      <header class="headerWrap" role="banner">
+        <h1 class="andamiro-logo">안다미로</h1>
+      </header>
+      <div id="bodyWrap" class="main-page">
+        <main class="report-main" role="main">
+          <section class="importance-content">
+            <div class="text-content">
+              <div class="text-group">
+                <p>오늘 하루는 어떠셨나요?</p>
+                <h2>지금 마음을 가볍게 남겨보세요!</h2>
+              </div>
+              <div class="btn-content">
+                <button type="button" class="btn-link" id="mainCtaBtn">오늘 기록 남기러 가기</button>
+              </div>
+            </div>
+          </section>
+          <section class="importance-content round calendar">
+            <div class="calendar-grid__item" id="mainCalendarHost" aria-label="월별 캘린더"></div>
+            <div id="calendarDayRecord" hidden>
+              <hr />
+              <div class="calendar-list">
+                <h3 id="calendarDayTitle" class="title-font-16">날짜를 선택해 주세요</h3>
+                <ul id="calendarDayList"></ul>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <script src="/assets/js/lib/dexie.min.js"></script>
+    <script src="/assets/js/config/db-config.js"></script>
+    <script src="/assets/js/domain/diaryStore.js"></script>
+    <script src="/assets/js/domain/emotionChatData.js"></script>
+    <script src="/assets/js/ui/com/dayflowCalendar.js"></script>
+    <script src="/assets/js/ui/com/calendar.js"></script>
+    <script src="/assets/js/view/main.js"></script>
+  </body>
+</html>

@@ -29,6 +29,9 @@
     return global.DayflowDB;
   }
 
+  // 동일 (date + content) 저장이 동시에 들어올 때 한 번만 처리하기 위한 in-memory lock
+  var PENDING_SAVE_BY_KEY = {};
+
   /**
    * @param {string} dateYmd
    * @returns {Promise<object|null>} 최신 일기 한 건
@@ -106,24 +109,47 @@
    */
   function saveTodayDiary(opts) {
     var o = opts || {};
-    return saveDiaryEntry({
-      date: o.date,
-      emotion: o.emotion,
-      content: o.content,
-      summary: o.summary,
-      imageBase64: o.imageBase64,
-    }).then(function (id) {
+    var targetDate = o.date || toYmd();
+    var targetContent = String(o.content || "").trim();
+    var lockKey = targetDate + "::" + targetContent;
+
+    if (Object.prototype.hasOwnProperty.call(PENDING_SAVE_BY_KEY, lockKey)) {
+      return PENDING_SAVE_BY_KEY[lockKey];
+    }
+
+    var task = getLatestDiaryForDate(targetDate).then(function (latest) {
+      // 동일 날짜 + 동일 본문이면 중복으로 보고 전체 저장(일기/감정) 모두 건너뜀
+      if (latest && String(latest.content || "").trim() === targetContent) {
+        return { id: latest.id, skipped: true };
+      }
+
+      return saveDiaryEntry({
+        date: targetDate,
+        emotion: o.emotion,
+        content: targetContent,
+        summary: o.summary,
+        imageBase64: o.imageBase64,
+      }).then(function (id) {
+        return { id: id, skipped: false };
+      });
+    }).then(function (saved) {
+      if (saved.skipped) return saved.id;
       return saveEmotionEntry({
-        date: o.date,
+        date: targetDate,
         type: o.emotion || "good",
         score: o.score != null ? o.score : emotionScore(o.emotion),
       })
         .then(function () {
-          return id;
+          return saved.id;
         })
         .catch(function () {
-          return id;
+          return saved.id;
         });
+    });
+
+    PENDING_SAVE_BY_KEY[lockKey] = task;
+    return task.finally(function () {
+      delete PENDING_SAVE_BY_KEY[lockKey];
     });
   }
 

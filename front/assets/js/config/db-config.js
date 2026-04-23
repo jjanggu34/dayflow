@@ -1,7 +1,7 @@
 /**
  * Dexie — DayflowDB 스키마
  * 문서: diaries / emotions / settings (research.md)
- * 로드: dexie.min.js → 본 파일 → diaryStore.js
+ * 로드: /assets/js/lib/dexie.min.js → 본 파일 → diaryStore.js
  */
 (function (global) {
   "use strict";

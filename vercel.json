@@ -1,6 +1,29 @@
 {
   "version": 2,
   "name": "dayflow",
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://cdn.jsdelivr.net>; rel=preconnect; crossorigin, <https://api.anthropic.com>; rel=preconnect"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "geolocation=(self), microphone=(self), camera=(self)"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-ancestors 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src 'self' https://cdn.jsdelivr.net data:; img-src 'self' data: https: blob:; connect-src 'self' https: wss: http://127.0.0.1:8787 http://localhost:8787"
+        }
+      ]
+    }
+  ],
   "builds": [
     {
       "src": "package.json",
@@ -8,14 +31,17 @@
       "config": { "distDir": "dist" }
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/api/open-meteo/(.*)",
-      "dest": "https://api.open-meteo.com/$1"
-    },
+      "source": "/api/open-meteo/:path*",
+      "destination": "https://api.open-meteo.com/:path*"
+    }
+  ],
+  "routes": [
     { "src": "/", "dest": "/index.html" },
     { "src": "/login", "dest": "/views/login.html" },
     { "src": "/home", "dest": "/views/home/home.html" },
+    { "src": "/main", "dest": "/views/main/main.html" },
     { "src": "/chat/emotion", "dest": "/views/chat/emotion.html" },
     { "src": "/chat/result", "dest": "/views/chat/result.html" },
     { "src": "/chat", "dest": "/views/chat/chat.html" },

@@ -1,0 +1,349 @@
+/* 메인(홈) — 캘린더 카드 + 히어로 (리포트 톤과 맞춤) */
+
+body.main-page {
+  background: linear-gradient(180deg, #3b7eea 0%, #4283f3 38%, #fff 100%);
+}
+
+.main-page .wrap > header.headerWrap {
+  background: transparent;
+  justify-content: flex-start;
+}
+.main-page .wrap > header.headerWrap > h1.andamiro-logo {
+  font-size: 0;
+}
+.main-page .wrap > header.headerWrap > h1.andamiro-logo::before {
+  content: "";
+  font-weight: 700;
+  background: var(--white);
+  width: 81px;
+  height: 28px;
+  display: block;
+  text-indent: -9999px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-align: center;
+  -webkit-mask-image: url("../img/com/logo-andamiro.svg");
+  mask-image: url("../img/com/logo-andamiro.svg");
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
+
+/* 히어로: 장식만 (배경 블루는 body 그라데이션) */
+.main-page .importance-content:first-of-type {
+  background: url("../img/main/bg.png") no-repeat left bottom / 100%;
+}
+
+.main-page .text-content .text-group p,
+.main-page .text-content .text-group h2 {
+  color: var(--white);
+}
+
+.main-page .importance-content:first-of-type .btn-content {
+  margin-top: 20px;
+}
+
+.main-page .importance-content:first-of-type .btn-ctp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 48px;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* 달력 카드 */
+
+.main-page .calendar-list h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 12px;
+}
+
+.main-page .calendar-list h3 span {
+  font-weight: 500;
+  color: #8b93a4;
+}
+
+.main-page .calendar-list ul {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.main-page .calendar-list li.calendar-list__empty {
+  cursor: default;
+  color: #8b93a4;
+  font-size: 0.875rem;
+  justify-content: flex-start;
+}
+
+.main-page .calendar-list li.calendar-list__empty--action {
+  cursor: pointer;
+  color: #5f6b80;
+}
+
+.main-page .calendar-list li.calendar-list__empty--action:hover {
+  background: #fff;
+  box-shadow: 0 2px 12px rgba(66, 131, 243, 0.08);
+}
+
+.main-page .calendar-list li.calendar-list__empty::after {
+  display: none;
+}
+
+.main-page .calendar-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 14px 14px 16px;
+  background: #f7f9fc;
+  border-radius: 16px;
+  border: 1px solid #edf1f6;
+  cursor: pointer;
+  text-align: left;
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.main-page .calendar-list li:hover {
+  background: #fff;
+  box-shadow: 0 2px 12px rgba(66, 131, 243, 0.08);
+}
+
+.main-page .calendar-list li::after {
+  content: "";
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  margin-left: auto;
+  border-right: 2px solid #c5cad6;
+  border-bottom: 2px solid #c5cad6;
+  transform: rotate(-45deg);
+}
+
+.main-page .calendar-list li em {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 72px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  font-style: normal;
+  color: #4b5563;
+  background: #fff;
+  border: 1px solid #e8ecf2;
+}
+
+.main-page .calendar-list li em.ico-best {
+  color: #0d6b4f;
+  border-color: rgba(29, 158, 117, 0.25);
+}
+
+.main-page .calendar-list li em.ico-good {
+  color: #3d4a8f;
+  border-color: rgba(84, 72, 192, 0.2);
+}
+
+.main-page .calendar-list li em.ico-normal {
+  color: #7a3d56;
+  border-color: rgba(212, 83, 126, 0.2);
+}
+
+.main-page .calendar-list li em.ico-bad {
+  color: #5c5a57;
+  border-color: rgba(140, 137, 133, 0.25);
+}
+
+.main-page .calendar-list li em.ico-worst {
+  color: #8b3d1f;
+  border-color: rgba(216, 90, 48, 0.25);
+}
+
+.main-page .calendar-list li .calendar-list__summary {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: #6b7280;
+}
+
+/* ─── DayflowCalendar (위젯) ─── */
+.dayflow-cal {
+  --dayflow-cal-muted: #f9f9fb;
+  --dayflow-clover-best: linear-gradient(145deg, #34d399, #059669);
+  --dayflow-clover-good: linear-gradient(145deg, #7c9ef0, #4283f3);
+  --dayflow-clover-today: #11a858;
+  --dayflow-calendar-items: #ffca2d;
+  width: 100%;
+  min-width: 0;
+}
+
+.dayflow-cal__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.dayflow-cal__month-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 2px;
+  border: 0;
+  background: transparent;
+  cursor: default;
+  font-family: inherit;
+}
+
+.dayflow-cal__nav {
+  display: flex;
+  gap: 4px;
+}
+
+.dayflow-cal__nav-btn {
+  width: 24px;
+  height: 24px;
+  font-size: 0;
+}
+.dayflow-cal__nav-btn::before {
+  content: "";
+  display: block;
+  width: 24px;
+  height: 24px;
+  background-size: 12px 12px;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+.dayflow-cal__nav-btn.dayflow-cal__nav-btn--prev::before {
+  background-image: var(--ico-prev);
+}
+
+.dayflow-cal__nav-btn.dayflow-cal__nav-btn--next::before {
+  background-image: var(--ico-next);
+}
+
+.dayflow-cal__dow {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.dayflow-cal__dow-cell {
+  text-align: center;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: #9ca3af;
+  padding: 4px 0;
+}
+
+.dayflow-cal__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px 1%;
+  justify-items: center;
+  width: 100%;
+  min-width: 0;
+}
+
+.dayflow-cal__day {
+  position: relative;
+  width: 100%;
+  max-width: 38px;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2px;
+  font-family: inherit;
+}
+
+.dayflow-cal__day:disabled {
+  cursor: default;
+}
+
+.dayflow-cal__clover {
+  flex-shrink: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--dayflow-cal-muted);
+  -webkit-mask-image: url("../img/main/day.svg");
+  mask-image: url("../img/main/day.svg");
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
+
+.dayflow-cal__today.is-today .dayflow-cal__clover,
+.dayflow-cal__day--best .dayflow-cal__clover,
+.dayflow-cal__day--good .dayflow-cal__clover,
+.dayflow-cal__day--normal .dayflow-cal__clover,
+.dayflow-cal__day--bad .dayflow-cal__clover,
+.dayflow-cal__day--worst .dayflow-cal__clover {
+  background: var(--dayflow-calendar-items);
+  opacity: 1;
+  color: var(--white);
+}
+.dayflow-cal__day.is-today .dayflow-cal__clover {
+  background: var(--dayflow-clover-today);
+  opacity: 1;
+  color: var(--white);
+}
+
+.dayflow-cal__num {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  transform: translatey(-50%);
+  font-size: var(--font12);
+  font-weight: 600;
+  color: #9395a1;
+  text-align: center;
+  line-height: 1;
+}
+
+.dayflow-cal__day--best .dayflow-cal__num,
+.dayflow-cal__day--good .dayflow-cal__num,
+.dayflow-cal__day--normal .dayflow-cal__num,
+.dayflow-cal__day--bad .dayflow-cal__num,
+.dayflow-cal__day--worst .dayflow-cal__num {
+  color: var(--white);
+}
+
+.dayflow-cal__day.is-today .dayflow-cal__num {
+  color: var(--white);
+  font-weight: 700;
+}
+
+.dayflow-cal__day:not(:disabled):hover .dayflow-cal__clover {
+  transform: scale(1.06);
+}
+
+#calendarDayRecord[hidden] {
+  display: none;
+}

@@ -3,6 +3,10 @@ body.report-page {
   margin: 0;
 }
 
+body.report-page .wrap {
+  background: var(--bg-color);
+}
+
 .wrap > header.headerWrap {
   position: sticky;
   top: 0;
@@ -18,16 +22,6 @@ header > button.back {
   color: var(--white);
 }
 
-.report-header__back {
-  position: absolute;
-  left: 10px;
-  top: calc(max(14px, env(safe-area-inset-top)) + 4px);
-  width: 28px;
-  height: 28px;
-  border: 0;
-  background: transparent;
-}
-
 .report-header__back-icon::before {
   content: "";
   display: block;
@@ -39,27 +33,20 @@ header > button.back {
   transform: rotate(45deg);
 }
 
-.report-header__title {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #fff;
-}
-
 #bodyWrap.report-page .report-main {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 0 0 30px;
-}
-
-#bodyWrap.report-page .importance-content:first-child {
-  background: var(--bg-color);
-  padding-bottom: 30px;
+  gap: 0;
+  padding: 0 0;
 }
 
 #bodyWrap.report-page .importance-content:first-child .text-group p,
 #bodyWrap.report-page .importance-content:first-child .text-group h2 {
   color: var(--white);
+}
+
+#bodyWrap.report-page .importance-content:nth-child(2) {
+  border-radius: 16px 16px 0 0;
 }
 
 .report-cal-nav {
@@ -189,11 +176,16 @@ header > button.back {
   position: relative;
   margin-top: 12px;
   min-height: 220px;
-  border-radius: 18px;
-  background: #f7f9fc;
-  border: 1px solid #edf1f6;
+  margin-left: -20px;
+  width: clac(100% + 20px);
   overflow: hidden;
-  animation: bubble-cluster-drift 3.8s ease-in-out infinite;
+}
+
+.round-graph-content__graph-item {
+  position: relative;
+  width: 100%;
+  min-height: 220px;
+  overflow: visible;
 }
 
 .emotion-bubble {
@@ -204,28 +196,29 @@ header > button.back {
   align-items: center;
   justify-content: center;
   text-align: center;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) scale(0);
+  transform-origin: center center;
+  opacity: 0;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
   transition:
     left 0.35s ease-out,
     top 0.35s ease-out;
-  animation: bubble-float 2.8s ease-in-out infinite;
 }
 
-.emotion-bubble:nth-child(2) {
-  animation-delay: 0.2s;
+.round-graph-content__graph-item.is-animated .emotion-bubble {
+  animation:
+    emotion-bubble-in 0.72s cubic-bezier(0.34, 1.56, 0.64, 1) var(--bubble-delay) both,
+    emotion-bubble-breathe 3.2s ease-in-out calc(0.72s + var(--bubble-delay) * 4) infinite;
 }
 
-.emotion-bubble:nth-child(3) {
-  animation-delay: 0.35s;
-}
-
-.emotion-bubble:nth-child(4) {
-  animation-delay: 0.5s;
-}
-
-.emotion-bubble:nth-child(5) {
-  animation-delay: 0.65s;
+.round-graph-content__graph-item.is-animated .emotion-bubble:hover {
+  animation-play-state: running;
+  filter: brightness(1.08) drop-shadow(0 4px 14px rgba(66, 131, 243, 0.22));
+  transform: translate(-50%, -50%) scale(1.08);
+  transition:
+    filter 0.2s ease,
+    transform 0.2s ease;
+  z-index: 99;
 }
 
 .emotion-bubble__name {
@@ -239,25 +232,83 @@ header > button.back {
   color: #fff;
 }
 
-@keyframes bubble-cluster-drift {
-  0%,
+@keyframes emotion-bubble-in {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0);
+  }
+  65% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+  82% {
+    transform: translate(-50%, -50%) scale(0.96);
+  }
   100% {
-    transform: translate(0, 0);
-  }
-  30% {
-    transform: translate(2px, -2px);
-  }
-  60% {
-    transform: translate(-2px, 1px);
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
   }
 }
 
-@keyframes bubble-float {
+@keyframes emotion-bubble-breathe {
   0%,
   100% {
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) scale(1);
   }
   50% {
-    transform: translate(-50%, -51.8%);
+    transform: translate(-50%, -50%) scale(1.05);
   }
+}
+
+.report-insight-card {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.card-content .card-item.report-insight-card > h3 span {
+  background: #e9f5fe;
+}
+
+.card-content .card-item.report-insight-card > h3 span::before {
+  background: #2196f3;
+  mask-image: url("../img/report/ico-card-item1.svg");
+  -webkit-mask-image: url("../img/report/ico-card-item1.svg");
+}
+
+.card-content .card-item.report-insight-card ul {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card-content .card-item.report-insight-card li {
+  border: 1px dashed #eee;
+  border-radius: 16px;
+  padding: 16px;
+  color: var(--text-default);
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.card-content .card-item.report-insight-card li::before {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+}
+
+.card-content .card-item.report-insight-card li:first-child::before {
+  background: url("../img/report/ico-card-item1-ll1.png") no-repeat center center / 100% 100%;
+}
+
+.card-content .card-item.report-insight-card li:nth-child(2)::before {
+  background: url("../img/report/ico-card-item1-ll2.png") no-repeat center center / 100% 100%;
+}
+
+.card-content .card-item.report-insight-card li:nth-child(3)::before {
+  background: url("../img/report/ico-card-item1-ll3.png") no-repeat center center / 100% 100%;
 }

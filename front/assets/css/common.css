@@ -339,6 +339,7 @@ body {
   --text-sub: #666666;
   --text-disabled: #999999;
   --bg-disabled: #e9e7e7;
+  --color-fa: #fafafa;
   --color-f7: #f7f7f7;
   --color-f8: #f8f8f8;
   /* 감정 선택 emotion.css */
@@ -346,4 +347,14 @@ body {
   --emotion-bg-none-end: #fbfbfb;
   --emotion-stage-pager-bg: rgba(255, 255, 255, 0.7);
   --emotion-preview-drop-shadow: rgba(15, 23, 42, 0.08);
+}
+
+/*---------------------------------------------
+    #공통 아이콘
+---------------------------------------------*/
+:root {
+  --ico-logo: url("../img/com/logo-andamiro.svg");
+  --ico-next: url("../img/com/ico-next.svg");
+  --ico-prev: url("../img/com/ico-prev.svg");
+  --ico-line: url("../img/com/ico-link.svg");
 }

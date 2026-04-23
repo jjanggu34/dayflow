@@ -18,6 +18,7 @@ const rewrites = [
   ["/chat", "/views/chat/chat.html"],
   ["/login", "/views/login.html"],
   ["/home", "/views/home/home.html"],
+  ["/main", "/views/main/main.html"],
   ["/report", "/views/report/report.html"],
   ["/report/report", "/views/report/report.html"],
   ["/advice/advice", "/views/advice/advice.html"],
@@ -100,6 +101,7 @@ server.listen(PORT, () => {
   console.log(`  /chat/emotion → /chat → /chat/result (감정→대화→분석 순서)`);
   console.log(`  /report         → 리포트`);
   console.log(`  /report/report  → 리포트(별칭)`);
+  console.log(`  /main           → 메인(캘린더)`);
   console.log(`  /advice         → 조언`);
   console.log(`  /advice/advice  → 조언(별칭)`);
 });

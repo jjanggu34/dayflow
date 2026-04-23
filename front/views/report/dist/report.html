@@ -45,8 +45,8 @@
                   <p>감정 리포트</p>
                   <h2>이번달 감정 순위</h2>
                 </div>
-                <div class="bubble-graph-content__graph" id="emotionRankList">
-                  <div class="round-graph-content__graph-item"></div>
+                <div class="bubble-graph-content__graph">
+                  <div class="round-graph-content__graph-item" id="emotionRankList"></div>
                 </div>
               </div>
             </div>
@@ -58,11 +58,7 @@
                 <span></span>
                 패턴 인사이트
               </h3>
-              <ul id="insightList">
-                <li>주초(월·화)에 에너지가 높고 주 중반 이후 낮아지는 패턴이 보여요.</li>
-                <li>평온함이 베이스 감정으로, 안정적인 흐름을 유지하고 있어요.</li>
-                <li>불쾌지수가 높은 날 무기력·불안이 동반되는 경향이 있어요.</li>
-              </ul>
+              <ul id="insightList" aria-live="polite"></ul>
             </div>
           </section>
         </main>
@@ -70,6 +66,8 @@
     </div>
 
     <script src="/assets/js/lib/jquery-1.12.4.js"></script>
+    <script src="/assets/js/agents/apikeyManager.js"></script>
+    <script src="/assets/js/agents/chatAgent.js"></script>
     <script src="/assets/js/view/report.js"></script>
   </body>
 </html>
