@@ -3,37 +3,17 @@
   "use strict";
 
   var POPUP_PATH = "/views/advice/fortune_popup.html";
-  var FORTUNE_DB_NAME = "dayflowDB";
+  /** Dexie DayflowDB 와 이름·버전 충돌 방지 (포춘 전용) */
+  var FORTUNE_DB_NAME = "DayflowFortuneCookie";
   var FORTUNE_STORE_NAME = "fortuneCookies";
   var FORTUNE_KEY = "latest";
   var FORTUNE_MESSAGE_TYPE = "dayflow:fortune-selected";
   var FORTUNE_CLOSE_TYPE = "dayflow:fortune-close";
-  var FORTUNE_AUTO_OPEN_KEY = "dayflow:fortune-auto-open-date";
   var hasAutoOpened = false;
   var latestFortuneText = "";
 
-  function getTodayKey() {
-    var now = new Date();
-    var year = String(now.getFullYear());
-    var month = String(now.getMonth() + 1).padStart(2, "0");
-    var date = String(now.getDate()).padStart(2, "0");
-    return year + "-" + month + "-" + date;
-  }
-
-  function canAutoOpenToday() {
-    try {
-      return window.localStorage.getItem(FORTUNE_AUTO_OPEN_KEY) !== getTodayKey();
-    } catch (e) {
-      return true;
-    }
-  }
-
-  function markAutoOpenedToday() {
-    try {
-      window.localStorage.setItem(FORTUNE_AUTO_OPEN_KEY, getTodayKey());
-    } catch (e) {
-      /* ignore storage errors */
-    }
+  function hasMeaningfulFortune(saved) {
+    return !!(saved && String(saved.text || "").trim());
   }
 
   function openFortuneDb() {
@@ -143,10 +123,18 @@
     var $frame = $("#fortunePopupFrame");
     if (!$overlay.length || !$frame.length) return;
     $frame.attr("src", buildPopupUrl(initialFortuneText));
-    $overlay.removeAttr("hidden").attr("aria-hidden", "false");
-    $("body").css("overflow", "hidden");
+    $overlay.attr("aria-hidden", "false");
+    if (window.popupL && typeof window.popupL.openPopup === "function") {
+      window.popupL.openPopup("fortunePopupOverlay");
+    } else {
+      $overlay.addClass("on");
+      $("body").css("overflow", "hidden");
+    }
     setTimeout(function () {
-      $overlay.find(".advice-fortune-popup__close").trigger("focus");
+      var $backdrop = $overlay.find(".advice-fortune-popup__backdrop");
+      if ($backdrop.length) {
+        $backdrop.trigger("focus");
+      }
     }, 100);
   }
 
@@ -154,9 +142,14 @@
     var $overlay = $("#fortunePopupOverlay");
     var $frame = $("#fortunePopupFrame");
     if (!$overlay.length) return;
-    $overlay.attr("hidden", "hidden").attr("aria-hidden", "true");
+    $overlay.attr("aria-hidden", "true");
+    if (window.popupL && typeof window.popupL.closePopup === "function") {
+      window.popupL.closePopup("fortunePopupOverlay");
+    } else {
+      $overlay.removeClass("on");
+      $("body").css("overflow", "");
+    }
     $frame.attr("src", "about:blank");
-    $("body").css("overflow", "");
   }
 
   function onPopupMessage(event) {
@@ -183,26 +176,29 @@
       openFortunePopup(latestFortuneText);
     });
 
-    $("#fortunePopupOverlay .advice-fortune-popup__backdrop").on("click", closeFortunePopup);
-    $("#fortunePopupOverlay .advice-fortune-popup__close").on("click", closeFortunePopup);
+    $("#fortunePopupOverlay [data-popup-close='fortunePopupOverlay']").on("click", function () {
+      closeFortunePopup();
+    });
 
     $(document).on("keydown", function (e) {
       if (e.key !== "Escape") return;
       var el = document.getElementById("fortunePopupOverlay");
-      if (el && !el.hasAttribute("hidden")) closeFortunePopup();
+      if (el && el.classList.contains("on")) closeFortunePopup();
     });
 
     window.addEventListener("message", onPopupMessage);
 
     getSavedFortuneCookie().then(function (saved) {
-      if (saved && saved.text) {
-        latestFortuneText = saved.text;
-        applyFortuneToAdvice(saved.text);
+      if (hasMeaningfulFortune(saved)) {
+        latestFortuneText = String(saved.text).trim();
+        applyFortuneToAdvice(latestFortuneText);
       }
-      if (!saved && !hasAutoOpened && canAutoOpenToday()) {
+      /* 저장이 없거나 text 비어 있으면 첫 진입 시 자동 오픈 (레코드만 있는 경우도 포함) */
+      if (!hasMeaningfulFortune(saved) && !hasAutoOpened) {
         hasAutoOpened = true;
-        markAutoOpenedToday();
-        openFortunePopup();
+        requestAnimationFrame(function () {
+          openFortunePopup();
+        });
       }
     });
   });

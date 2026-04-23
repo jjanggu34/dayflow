@@ -48,12 +48,7 @@
     for (i = 1; i <= lastDate; i++) {
       cells.push({ inMonth: true, y: viewYear, m0: m0, d: i });
     }
-    while (cells.length % 7 !== 0) {
-      cells.push({ inMonth: false, y: 0, m0: 0, d: 0 });
-    }
-    while (cells.length < 42) {
-      cells.push({ inMonth: false, y: 0, m0: 0, d: 0 });
-    }
+    /* 말일 뒤 7칸 맞춤·42칸(6주) 패딩 없음 → 빈 마지막 줄이 잡히지 않음 (7열 그리드 자동 줄바꿈) */
     return cells;
   }
 

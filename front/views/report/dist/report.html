@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css" />
   </head>
   <body class="report-page">
-    <div class="wrap report-wrap">
+    <div class="wrap report-wrap has-tab-footer">
       <header class="headerWrap" role="banner">
         <button type="button" class="back" id="chatBackBtn" aria-label="이전 화면으로">이전 화면으로</button>
         <h1 class="report-header__title">리포트</h1>
@@ -63,8 +63,10 @@
           </section>
         </main>
       </div>
+      <div id="footerIncludeHost" data-app-tab="report"></div>
     </div>
 
+    <script src="/assets/js/ui/com/includeFooter.js"></script>
     <script src="/assets/js/lib/jquery-1.12.4.js"></script>
     <script src="/assets/js/agents/apikeyManager.js"></script>
     <script src="/assets/js/agents/chatAgent.js"></script>

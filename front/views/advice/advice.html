@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="/assets/css/main.css" />
   </head>
   <body>
-    <div class="wrap">
+    <div class="wrap has-tab-footer">
       <header class="headerWrap" role="banner">
         <button type="button" class="back" id="chatBackBtn" aria-label="이전 화면으로">이전 화면으로</button>
         <h1>조언</h1>
@@ -59,14 +59,22 @@
           </section>
         </main>
       </div>
+      <div id="footerIncludeHost" data-app-tab="advice"></div>
     </div>
-    <div id="fortunePopupOverlay" class="advice-fortune-popup" aria-hidden="true" hidden>
-      <button type="button" class="advice-fortune-popup__backdrop" aria-label="팝업 닫기"></button>
-      <section class="advice-fortune-popup__panel" role="dialog" aria-modal="true" aria-label="포춘쿠키 팝업">
-        <iframe id="fortunePopupFrame" class="advice-fortune-popup__frame" src="about:blank" title="포춘쿠키" loading="eager"></iframe>
-      </section>
+    <div id="fortunePopupOverlay" class="layerPopup advice-fortune-popup" role="dialog" aria-modal="true" aria-label="포춘쿠키 팝업">
+      <div class="pop-area">
+        <div class="pop-body">
+          <div class="pop-content">
+            <iframe id="fortunePopupFrame" class="advice-fortune-popup__frame" src="about:blank" title="포춘쿠키" loading="eager"></iframe>
+          </div>
+        </div>
+        <button type="button" class="advice-fortune-popup__backdrop" data-popup-close="fortunePopupOverlay" aria-label="팝업 닫기" tabindex="-1"></button>
+      </div>
+      <button type="button" class="btn-pop-close" data-popup-close="fortunePopupOverlay" style="z-index: 1001">닫기</button>
     </div>
+    <script src="/assets/js/ui/com/includeFooter.js"></script>
     <script src="/assets/js/lib/jquery-1.12.4.js"></script>
     <script src="/assets/js/view/advice.js"></script>
+    <script src="/assets/js/ui/com/popup.js"></script>
   </body>
 </html>

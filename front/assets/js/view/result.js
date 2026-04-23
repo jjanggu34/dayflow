@@ -700,6 +700,13 @@
             : "chat.html";
       });
     }
+
+    var homeBtn = document.getElementById("resultAdviceBtn");
+    if (homeBtn) {
+      homeBtn.addEventListener("click", function () {
+        window.location.href = "/main";
+      });
+    }
   }
 
   if (document.readyState === "loading") {

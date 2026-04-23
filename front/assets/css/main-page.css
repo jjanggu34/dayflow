@@ -1,7 +1,7 @@
 /* 메인(홈) — 캘린더 카드 + 히어로 (리포트 톤과 맞춤) */
 
 body.main-page {
-  background: linear-gradient(180deg, #3b7eea 0%, #4283f3 38%, #fff 100%);
+  background: linear-gradient(180deg, #3b7eea 0%, #4283f3 38%, #fff 20%);
 }
 
 .main-page .wrap > header.headerWrap {
@@ -137,18 +137,19 @@ body.main-page {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 72px;
-  padding: 6px 10px;
-  border-radius: 999px;
-  font-size: 0.8125rem;
-  font-weight: 700;
+  font-size: var(--font16);
+  font-weight: 500;
   font-style: normal;
-  color: #4b5563;
-  background: #fff;
-  border: 1px solid #e8ecf2;
+  color: var(--text-default);
 }
 
-.main-page .calendar-list li em.ico-best {
+.main-page .calendar-list li span {
+  color: var(--text-sub);
+  font-size: var(--font14);
+  font-weight: 400;
+}
+
+/*.main-page .calendar-list li em.ico-best {
   color: #0d6b4f;
   border-color: rgba(29, 158, 117, 0.25);
 }
@@ -179,7 +180,7 @@ body.main-page {
   font-size: 0.8125rem;
   line-height: 1.45;
   color: #6b7280;
-}
+}*/
 
 /* ─── DayflowCalendar (위젯) ─── */
 .dayflow-cal {
@@ -281,6 +282,12 @@ body.main-page {
 
 .dayflow-cal__day:disabled {
   cursor: default;
+}
+
+/* 달 밖 빈 칸: 그리드 슬롯은 유지하고 시각만 숨김 */
+.dayflow-cal__day.dayflow-cal__day--muted {
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .dayflow-cal__clover {

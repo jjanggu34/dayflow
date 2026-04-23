@@ -1,5 +1,44 @@
 /* overlay, modal, bottom-sheet, apikey-overlay */
 /* 팝업_콘텐츠 */
+.layerPopup {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  z-index: 10000;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  max-height: 100dvh;
+}
+
+.layerPopup::before {
+  content: "";
+  display: block;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.layerPopup .pop-area {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0 auto;
+  width: 80%;
+  max-width: 300px;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: var(--white);
+}
+
 .layerPopup > .pop-content {
   position: fixed;
   padding: 24px;
@@ -18,6 +57,12 @@
   max-height: 508px;
   height: 100%;
   overflow-y: auto;
+}
+
+.layerPopup .pop-body .pop-content {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 .layerPopup.on {
   display: block;
@@ -131,4 +176,16 @@
 }
 .layerPopup.modal .pop-footer {
   margin-top: 42px;
+}
+
+.layerPopup .btn-pop-close {
+  position: absolute;
+  padding-top: 30px;
+  width: 100%;
+  height: 48px;
+  bottom: 30px;
+  right: 10px;
+  z-index: 1001;
+  background-color: transparent;
+  color: #fff;
 }

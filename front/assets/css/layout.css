@@ -87,6 +87,54 @@
   overflow: auto;
   position: relative;
 }
+
+/* 하단 탭(.has-tab-footer): 헤더·푸터 고정, #bodyWrap만 스크롤 */
+html:has(.wrap.has-tab-footer),
+body:has(.wrap.has-tab-footer) {
+  height: 100%;
+  max-height: 100dvh;
+  overflow: hidden;
+  margin: 0;
+}
+
+.wrap.has-tab-footer {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  max-height: 100dvh;
+  min-height: 0;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.wrap.has-tab-footer > header.headerWrap {
+  flex: 0 0 auto;
+  position: relative;
+  z-index: 5;
+}
+
+.wrap.has-tab-footer > #bodyWrap {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+}
+
+.wrap.has-tab-footer > #footerIncludeHost {
+  flex: 0 0 auto;
+  min-height: 52px;
+}
+
+.wrap.has-tab-footer > footer#footerWrap.app-tab-footer {
+  flex: 0 0 auto;
+}
+
 .wrap > header.headerWrap {
   possition: relative;
   display: flex;
