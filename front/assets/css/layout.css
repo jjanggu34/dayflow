@@ -136,7 +136,7 @@ body:has(.wrap.has-tab-footer) {
 }
 
 .wrap > header.headerWrap {
-  possition: relative;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;

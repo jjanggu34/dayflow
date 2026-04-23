@@ -3,13 +3,27 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="apple-touch-icon" href="/assets/img/pwa/icon-180.png" />
+    <meta name="theme-color" content="#1D1D2E" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Dayflow" />
     <title>DAYFLOW — 감정 선택</title>
     <link rel="stylesheet" href="../../assets/css/main.css" />
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/sw.js");
+      }
+    </script>
   </head>
   <body>
     <div class="wrap">
       <!-- <div id="headerWrap"><header id="header"></header></div> -->
       <div id="bodyWrap" class="emotion bg-none">
+        <header class="headerWrap" role="banner" style="height: 58px; position: relative">
+          <button type="button" class="back" id="chatBackBtn" aria-label="이전 화면으로" style="left: 10px">이전 화면으로</button>
+        </header>
         <main>
           <div>
             <section class="text-content" aria-labelledby="emotion-screen-title">
