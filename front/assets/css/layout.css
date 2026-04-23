@@ -463,3 +463,10 @@ footer {
 #footerWrap.app-tab-footer .footer-content > a[aria-current="page"] span {
   color: var(--primary);
 }
+
+/* PWA standalone(Android/iOS): 하단 시스템 바와 탭이 겹치지 않게 여유 보정 */
+@media (display-mode: standalone) {
+  #footerWrap.app-tab-footer {
+    padding-bottom: max(12px, env(safe-area-inset-bottom, 0px));
+  }
+}
