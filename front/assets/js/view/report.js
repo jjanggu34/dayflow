@@ -299,7 +299,7 @@
   }
 
   function requestReportInsightsAi(scores7, counts, isMock, monthLabel) {
-    if (!window.DayflowApiKey || !DayflowApiKey.has()) {
+    if (!window.DayflowApiKey || (!DayflowApiKey.has() && !DayflowApiKey.usesServerProxy())) {
       return Promise.resolve(null);
     }
     if (!window.DayflowChatAgent || typeof DayflowChatAgent.sendMessages !== "function") {

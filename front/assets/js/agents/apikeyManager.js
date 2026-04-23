@@ -18,6 +18,16 @@
     return !!getEmbedded();
   }
 
+  /** localhost가 아닌 환경에서는 /api/chat 서버리스 프록시가 API 키를 처리 */
+  function usesServerProxy() {
+    try {
+      var host = window.location.hostname;
+      return host !== "127.0.0.1" && host !== "localhost";
+    } catch (e) {
+      return false;
+    }
+  }
+
   function get() {
     var emb = getEmbedded();
     if (emb) return emb;
@@ -43,6 +53,7 @@
     STORAGE_KEY: STORAGE_KEY,
     getEmbedded: getEmbedded,
     usesEmbeddedKey: usesEmbeddedKey,
+    usesServerProxy: usesServerProxy,
     get: get,
     set: set,
     has: has,

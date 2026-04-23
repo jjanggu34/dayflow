@@ -29,6 +29,10 @@
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": { "distDir": "dist" }
+    },
+    {
+      "src": "api/**/*.js",
+      "use": "@vercel/node"
     }
   ],
   "rewrites": [
@@ -38,6 +42,7 @@
     }
   ],
   "routes": [
+    { "src": "/api/chat", "dest": "/api/chat.js" },
     { "src": "/", "dest": "/index.html" },
     { "src": "/login", "dest": "/views/login.html" },
     { "src": "/home", "dest": "/views/home/home.html" },

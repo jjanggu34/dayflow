@@ -182,7 +182,7 @@
       onDone("");
       return;
     }
-    if (!window.DayflowApiKey || !DayflowApiKey.has() || !window.DayflowChatAgent || typeof DayflowChatAgent.sendMessages !== "function") {
+    if (!window.DayflowApiKey || (!DayflowApiKey.has() && !DayflowApiKey.usesServerProxy()) || !window.DayflowChatAgent || typeof DayflowChatAgent.sendMessages !== "function") {
       onDone("");
       return;
     }
@@ -213,7 +213,7 @@
       onDone("");
       return;
     }
-    if (!window.DayflowApiKey || !DayflowApiKey.has() || !window.DayflowChatAgent || typeof DayflowChatAgent.sendMessages !== "function") {
+    if (!window.DayflowApiKey || (!DayflowApiKey.has() && !DayflowApiKey.usesServerProxy()) || !window.DayflowChatAgent || typeof DayflowChatAgent.sendMessages !== "function") {
       onDone("");
       return;
     }
@@ -254,7 +254,7 @@
       onDone([]);
       return;
     }
-    if (!window.DayflowApiKey || !DayflowApiKey.has() || !window.DayflowChatAgent || typeof DayflowChatAgent.sendMessages !== "function") {
+    if (!window.DayflowApiKey || (!DayflowApiKey.has() && !DayflowApiKey.usesServerProxy()) || !window.DayflowChatAgent || typeof DayflowChatAgent.sendMessages !== "function") {
       onDone([]);
       return;
     }
@@ -385,7 +385,7 @@
       onDone(null);
       return;
     }
-    if (!window.DayflowApiKey || !DayflowApiKey.has() || !window.DayflowChatAgent || typeof DayflowChatAgent.sendMessages !== "function") {
+    if (!window.DayflowApiKey || (!DayflowApiKey.has() && !DayflowApiKey.usesServerProxy()) || !window.DayflowChatAgent || typeof DayflowChatAgent.sendMessages !== "function") {
       onDone(null);
       return;
     }

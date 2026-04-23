@@ -82,7 +82,7 @@
   var voiceCancel = document.getElementById("chatVoiceCancel");
   var ttsStyleSelect = document.getElementById("chatTtsStyle");
 
-  if (apikeyBtn && DayflowApiKey.usesEmbeddedKey && DayflowApiKey.usesEmbeddedKey()) {
+  if (apikeyBtn && (DayflowApiKey.usesEmbeddedKey() || DayflowApiKey.usesServerProxy())) {
     apikeyBtn.setAttribute("hidden", "");
     apikeyBtn.setAttribute("aria-hidden", "true");
     apikeyBtn.setAttribute("tabindex", "-1");
@@ -707,7 +707,7 @@
     diaryText += diaryText ? "\n" + t : t;
     chatHistory.push({ role: "user", content: t });
 
-    if (!window.DayflowApiKey || !DayflowApiKey.has()) {
+    if (!window.DayflowApiKey || (!DayflowApiKey.has() && !DayflowApiKey.usesServerProxy())) {
       var needKeyMsg =
         "Claude와 대화하려면 상단 ⚙에서 API 키를 먼저 입력해 주세요.\n키는 이 브라우저에만 저장돼요.";
       addBotBubble(needKeyMsg, false);
@@ -768,7 +768,7 @@
       onDone("");
       return;
     }
-    if (!window.DayflowApiKey || !DayflowApiKey.has() || !window.DayflowChatAgent || typeof DayflowChatAgent.sendMessages !== "function") {
+    if (!window.DayflowApiKey || (!DayflowApiKey.has() && !DayflowApiKey.usesServerProxy()) || !window.DayflowChatAgent || typeof DayflowChatAgent.sendMessages !== "function") {
       onDone("");
       return;
     }
@@ -889,7 +889,7 @@
   }
 
   function openApiKeyPrompt() {
-    if (DayflowApiKey.usesEmbeddedKey && DayflowApiKey.usesEmbeddedKey()) {
+    if (DayflowApiKey.usesEmbeddedKey() || DayflowApiKey.usesServerProxy()) {
       return;
     }
     var cur = DayflowApiKey.get();
