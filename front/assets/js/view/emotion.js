@@ -11,6 +11,7 @@
   var captionEl = document.getElementById("emotionPreviewCaption");
   var emojiEl = document.getElementById("emotionPreviewEmoji");
   var startBtn = document.getElementById("startChatBtn");
+  var backBtn = document.getElementById("chatBackBtn");
   var footerPointer = document.getElementById("emotionFooterPointer");
   var footerEl = document.querySelector("#bodyWrap footer");
 
@@ -238,4 +239,10 @@
     } catch (e) {}
     window.location.href = DayflowEmotionChat.urlChatFlow("chat");
   });
+
+  if (backBtn) {
+    backBtn.addEventListener("click", function () {
+      window.location.href = "/main";
+    });
+  }
 })();
