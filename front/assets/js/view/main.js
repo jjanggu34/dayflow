@@ -26,6 +26,43 @@
     return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate());
   }
 
+  /** YYYY-MM-DD 문자열을 달력 셀과 동일한 기준(정오 로컬)으로 비교 */
+  function ymdToNoon(ymd) {
+    var p = String(ymd || "").split("-");
+    var y = Number(p[0]);
+    var m = Number(p[1]);
+    var d = Number(p[2]);
+    if (isNaN(y) || isNaN(m) || isNaN(d)) return NaN;
+    return new Date(y, m - 1, d, 12, 0, 0, 0).getTime();
+  }
+
+  function isFutureYmd(ymd, todayYmd) {
+    var a = ymdToNoon(ymd);
+    var b = ymdToNoon(todayYmd);
+    if (isNaN(a) || isNaN(b)) return false;
+    return a > b;
+  }
+
+  function scrollRecordPanelIntoView(recordPanel) {
+    if (!recordPanel || recordPanel.hidden) return;
+    requestAnimationFrame(function () {
+      try {
+        recordPanel.scrollIntoView({ block: "nearest", behavior: "smooth", inline: "nearest" });
+      } catch (e) {
+        try {
+          recordPanel.scrollIntoView(true);
+        } catch (e2) {}
+      }
+    });
+  }
+
+  function revealRecordPanel(recordPanel) {
+    if (!recordPanel) return;
+    recordPanel.removeAttribute("hidden");
+    recordPanel.hidden = false;
+    scrollRecordPanelIntoView(recordPanel);
+  }
+
   function monthRangeYmd(viewYear, viewMonth1) {
     var last = new Date(viewYear, viewMonth1, 0).getDate();
     return {
@@ -138,12 +175,19 @@
     if (!titleEl || !listEl || !listWrap) return;
 
     var todayYmd = toYmd(new Date());
-    if (String(ymd || "") > todayYmd) {
-      if (recordPanel) recordPanel.hidden = true;
-      else listWrap.hidden = true;
+    if (isFutureYmd(ymd, todayYmd)) {
+      if (recordPanel) {
+        recordPanel.setAttribute("hidden", "");
+        recordPanel.hidden = true;
+      } else {
+        listWrap.hidden = true;
+      }
       return;
     }
-    if (recordPanel) recordPanel.hidden = false;
+    if (recordPanel) {
+      revealRecordPanel(recordPanel);
+    }
+    listWrap.removeAttribute("hidden");
     listWrap.hidden = false;
 
     titleEl.textContent = "불러오는 중…";
@@ -174,6 +218,7 @@
           }
         });
         listEl.appendChild(empty);
+        scrollRecordPanelIntoView(recordPanel);
         return;
       }
 
@@ -205,6 +250,7 @@
         li.appendChild(sum);
         listEl.appendChild(li);
       });
+      scrollRecordPanelIntoView(recordPanel);
     });
   }
 

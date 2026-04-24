@@ -354,3 +354,8 @@ body.main-page {
 #calendarDayRecord[hidden] {
   display: none;
 }
+
+/* 홈: 공통 main{overflow:hidden} 때문에 캘린더 아래 일별 목록이 앱(WebView)·짧은 뷰포트에서 잘릴 수 있음 */
+#bodyWrap.main-page > main.report-main {
+  overflow: visible;
+}
