@@ -12,22 +12,37 @@
     <title>DAYFLOW</title>
     <link rel="stylesheet" href="/assets/css/main.css" />
     <style>
-      .splash-content img {
-        display: block;
+      .wrap.splash {
         width: 100%;
         height: 100%;
+        max-height: 100dvh;
+        min-height: 100dvh;
+      }
+      .wrap.splash main.splash {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: var(--white);
+      }
+      .splash-content img {
+        display: block;
+        width: 80%;
+        height: 80%;
         margin: 0 auto;
         object-fit: contain;
       }
     </style>
-      <script>
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/sw.js');
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/sw.js");
       }
     </script>
   </head>
   <body>
-    <div class="wrap">
+    <div class="wrap splash">
       <main class="splash">
         <div class="splash-content">
           <img src="/assets/img/main/img-splash.gif" alt="안다미로" class="splash-logo" />
