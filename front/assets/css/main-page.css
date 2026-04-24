@@ -139,22 +139,11 @@ body.main-page {
 
 .main-page .calendar-list li:hover {
   background: #fff;
-  box-shadow: 0 2px 12px rgba(66, 131, 243, 0.08);
-}
-
-.main-page .calendar-list li::after {
-  content: "";
-  flex-shrink: 0;
-  width: 8px;
-  height: 8px;
-  margin-left: auto;
-  border-right: 2px solid #c5cad6;
-  border-bottom: 2px solid #c5cad6;
-  transform: rotate(-45deg);
 }
 
 .main-page .calendar-list li em {
   flex-shrink: 0;
+  margin-bottom: 4px;
   display: block;
   text-align: left;
   font-size: var(--font16);
