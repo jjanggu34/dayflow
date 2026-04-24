@@ -28,7 +28,7 @@ body:has(#bodyWrap.emotion) > .wrap {
   flex-direction: column;
   background-position: center top;
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: 100%;
 }
 
 /* 화면 배경: 선택 전·후 (에셋 bg-*.png / 미선택은 그라데이션) */
@@ -55,6 +55,11 @@ body:has(#bodyWrap.emotion) > .wrap {
 
 #bodyWrap.emotion.bg-worst {
   background-image: url("../img/emotion/bg-worst.png");
+}
+
+#bodyWrap.emotion.bg-worst .text-content .text-group p,
+#bodyWrap.emotion.bg-worst .text-content .text-group h2 {
+  color: var(--white);
 }
 
 #bodyWrap.emotion main {
