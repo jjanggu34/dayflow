@@ -405,7 +405,7 @@ footer {
   align-items: stretch;
   justify-content: space-around;
   gap: 4px;
-  padding: 10px 8px 12px;
+  padding: 0 !important;
 }
 
 #footerWrap.app-tab-footer .footer-content > a {
