@@ -46,12 +46,23 @@
   function scrollRecordPanelIntoView(recordPanel) {
     if (!recordPanel || recordPanel.hidden) return;
     requestAnimationFrame(function () {
-      try {
-        recordPanel.scrollIntoView({ block: "nearest", behavior: "smooth", inline: "nearest" });
-      } catch (e) {
-        try {
-          recordPanel.scrollIntoView(true);
-        } catch (e2) {}
+      var bodyWrap = document.getElementById("bodyWrap");
+      if (!bodyWrap) {
+        try { recordPanel.scrollIntoView({ block: "nearest", behavior: "smooth" }); } catch (e) {}
+        return;
+      }
+      // standalone 앱에서 footer가 position:fixed 로 하단을 덮으므로 그 높이만큼 여유를 둠
+      var isStandalone = window.matchMedia("(display-mode: standalone)").matches || !!window.navigator.standalone;
+      var footerH = isStandalone ? 104 : 0;
+
+      var bodyRect = bodyWrap.getBoundingClientRect();
+      var panelRect = recordPanel.getBoundingClientRect();
+      var threshold = bodyRect.bottom - footerH;
+
+      if (panelRect.bottom > threshold) {
+        bodyWrap.scrollBy({ top: panelRect.bottom - threshold + 12, behavior: "smooth" });
+      } else if (panelRect.top < bodyRect.top) {
+        bodyWrap.scrollBy({ top: panelRect.top - bodyRect.top - 12, behavior: "smooth" });
       }
     });
   }
