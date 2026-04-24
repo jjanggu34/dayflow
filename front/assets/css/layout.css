@@ -393,6 +393,7 @@ footer {
   margin: 0;
   background: var(--white);
   /* 흰 배경이 시스템 내비까지 이어지고, 탭 아이콘만 safe-area 위로 올림 */
+  padding-bottom: max(16px, env(safe-area-inset-bottom, 0)) !important;
 }
 
 #footerWrap.app-tab-footer .footer-content {
@@ -465,9 +466,29 @@ footer {
   color: var(--primary);
 }
 
-/* PWA standalone: 전체 화면에 더 가깝게 붙는 경우가 많아 하단 여유를 조금 더 둠 */
+/*
+ * 설치형 앱(standalone): 100dvh 플렉스 푸터가 안드로이드 시스템 내비에 깔리는 경우가 많아
+ * 탭을 뷰포트 하단에 고정하고, 본문(#bodyWrap)에 탭 높이만큼 패딩을 둠.
+ */
 @media (display-mode: standalone) {
   #footerWrap.app-tab-footer {
-    padding-bottom: max(16px, env(safe-area-inset-bottom, 0)) !important;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    z-index: 50;
+    flex: none !important;
+    box-sizing: border-box;
+    /* env가 0이어도 제스처/3버튼 막대 높이만큼 확보 */
+    padding-bottom: max(28px, env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .wrap.has-tab-footer > #bodyWrap {
+    box-sizing: border-box;
+    /* 탭 한 줄(~56px) + 푸터 하단 패딩과 동일한 여유 */
+    padding-bottom: calc(56px + max(28px, env(safe-area-inset-bottom, 0px)));
   }
 }
