@@ -155,16 +155,17 @@ body.main-page {
 
 .main-page .calendar-list li em {
   flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  display: block;
+  text-align: left;
   font-size: var(--font16);
   font-weight: 500;
   font-style: normal;
   color: var(--text-default);
 }
 
-.main-page .calendar-list li span {
+.main-page .calendar-list li span.calendar-list__summary {
+  display: block;
+  text-align: left;
   color: var(--text-sub);
   font-size: var(--font14);
   font-weight: 400;
