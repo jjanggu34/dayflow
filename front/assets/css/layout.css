@@ -393,7 +393,6 @@ footer {
   margin: 0;
   background: var(--white);
   /* 흰 배경이 시스템 내비까지 이어지고, 탭 아이콘만 safe-area 위로 올림 */
-  padding-bottom: max(16px, env(safe-area-inset-bottom, 0px));
 }
 
 #footerWrap.app-tab-footer .footer-content {
@@ -402,7 +401,7 @@ footer {
   align-items: stretch;
   justify-content: space-around;
   gap: 4px;
-  padding: 10px 8px 12px;
+  padding: 10px 8px 0;
 }
 
 #footerWrap.app-tab-footer .footer-content > a {
@@ -466,9 +465,9 @@ footer {
   color: var(--primary);
 }
 
-/* 설치형 PWA: iOS 홈 인디케이터·안드로이드 내비 대비 여유 조금 더 */
+/* PWA standalone: 전체 화면에 더 가깝게 붙는 경우가 많아 하단 여유를 조금 더 둠 */
 @media (display-mode: standalone) {
   #footerWrap.app-tab-footer {
-    padding-bottom: max(20px, env(safe-area-inset-bottom, 0px));
+    padding-bottom: max(16px, env(safe-area-inset-bottom, 0)) !important;
   }
 }
