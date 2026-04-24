@@ -33,11 +33,14 @@
             </p>-->
         </div>
         <div class="fortune-info-card">
-          <p>쿠키를 눌러 오늘의 행운을 확인하세요!</p>
+          <p id="fortune-info-card-text">쿠키를 눌러 오늘의 행운을 확인하세요!</p>
         </div>
 
+        <div class="fortune-cta-row" id="fortuneResultActions" hidden>
+          <button type="button" class="btn-ctp" id="btnGoAdviceIntro">조언으로 보러가기</button>
+          <button type="button" class="btn-text fortune-result__home" id="btnCloseResult">쿠키 다시 열기</button>
+        </div>
       </div>
-    </div>
     </div>
 
     <script>
@@ -45,6 +48,8 @@
         var cookieBtn = document.getElementById("cookie-btn");
         var cookieImg = document.getElementById("cookie-image");
         var fortuneResult = document.getElementById("fortune-result");
+        var fortuneInfoText = document.getElementById("fortune-info-card-text");
+        var fortuneResultActions = document.getElementById("fortuneResultActions");
         var imgBroken = "/assets/img/advice/popup-img-fortune-cookie.png";
         var selectedFortune = "";
 
@@ -93,9 +98,13 @@
             selectedFortune = text;
             fortuneResult.textContent = text;
           }
+          fortuneResult.removeAttribute("hidden");
           fortuneResult.hidden = false;
           cookieImg.hidden = true;
           document.body.classList.add("fortune-result-open");
+          if (fortuneInfoText) fortuneInfoText.textContent = "오늘의 행운을 확인했어요!";
+          if (fortuneResultActions) fortuneResultActions.hidden = false;
+          isAnimating = false;
         }
 
         function resetAll() {
@@ -103,9 +112,12 @@
           cookieImg.classList.remove("fade-out", "shaking");
           cookieImg.src = "/assets/img/advice/popup-img-fortune.png";
           cookieImg.hidden = false;
+          fortuneResult.setAttribute("hidden", "");
           fortuneResult.hidden = true;
           selectedFortune = "";
           document.body.classList.remove("fortune-result-open");
+          if (fortuneInfoText) fortuneInfoText.textContent = "쿠키를 눌러 오늘의 행운을 확인하세요!";
+          if (fortuneResultActions) fortuneResultActions.hidden = true;
         }
 
         function openCookie() {
@@ -133,8 +145,10 @@
           }
         });
 
-        document.getElementById("btnGoAdviceIntro").addEventListener("click", goAdvice);
-        document.getElementById("btnCloseResult").addEventListener("click", resetAll);
+        var btnGoAdviceIntro = document.getElementById("btnGoAdviceIntro");
+        var btnCloseResult = document.getElementById("btnCloseResult");
+        if (btnGoAdviceIntro) btnGoAdviceIntro.addEventListener("click", goAdvice);
+        if (btnCloseResult) btnCloseResult.addEventListener("click", resetAll);
 
         cookieImg.addEventListener("error", function () {
           this.src = "/assets/img/advice/popup-img-fortune.png";

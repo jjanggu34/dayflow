@@ -27,49 +27,51 @@
       </header>
       <div id="bodyWrap" class="report-page">
         <main class="report-main" role="main">
-          <section class="importance-content">
-            <div class="text-content">
-              <div class="text-group">
-                <p>4월의 감정은 어땠을까요?</p>
-                <h2>한 달의 마음 흐름을 돌아보세요!</h2>
-              </div>
-            </div>
-          </section>
-          <section class="importance-content report-section report-section--chart">
-            <div class="bar-graph-content">
-              <div class="text-content sm report-panel">
+          <div id="reportHeroAndCharts" class="report-hero-charts">
+            <section class="importance-content">
+              <div class="text-content">
                 <div class="text-group">
-                  <p class="report-hero__date">이번 달 요일별 평균</p>
-                  <h2 class="report-hero__headline">요일별 에너지</h2>
+                  <p>4월의 감정은 어땠을까요?</p>
+                  <h2>한 달의 마음 흐름을 돌아보세요!</h2>
                 </div>
-                <!--<p id="patternSubLabel" class="report-sub-label">요일별 감정 점수 평균을 보여드려요.</p>
+              </div>
+            </section>
+            <section class="importance-content report-section report-section--chart">
+              <div class="bar-graph-content">
+                <div class="text-content sm report-panel">
+                  <div class="text-group">
+                    <p class="report-hero__date">이번 달 요일별 평균</p>
+                    <h2 class="report-hero__headline">요일별 에너지</h2>
+                  </div>
+                  <!--<p id="patternSubLabel" class="report-sub-label">요일별 감정 점수 평균을 보여드려요.</p>
                 <p id="reportEmptyHint" class="report-empty-hint" hidden>기록된 감정 데이터가 아직 없습니다.</p>-->
-                <div id="patWeekBars" class="bar-graph-content__graph" aria-label="요일별 에너지 막대"></div>
+                  <div id="patWeekBars" class="bar-graph-content__graph" aria-label="요일별 에너지 막대"></div>
+                </div>
               </div>
-            </div>
-            <hr />
+              <hr />
 
-            <div class="bar-graph-content">
-              <div class="text-content sm report-panel">
-                <div class="text-group">
-                  <p>감정 리포트</p>
-                  <h2>이번달 감정 순위</h2>
-                </div>
-                <div class="bubble-graph-content__graph">
-                  <div class="round-graph-content__graph-item" id="emotionRankList"></div>
+              <div class="bar-graph-content">
+                <div class="text-content sm report-panel">
+                  <div class="text-group">
+                    <p>감정 리포트</p>
+                    <h2>이번달 감정 순위</h2>
+                  </div>
+                  <div class="bubble-graph-content__graph">
+                    <div class="round-graph-content__graph-item" id="emotionRankList"></div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </section>
-          <section class="card-content report-section">
-            <div class="card-item report-insight-card">
-              <h3>
-                <span></span>
-                패턴 인사이트
-              </h3>
-              <ul id="insightList" aria-live="polite"></ul>
-            </div>
-          </section>
+            </section>
+            <section class="card-content report-section">
+              <div class="card-item report-insight-card">
+                <h3>
+                  <span></span>
+                  패턴 인사이트
+                </h3>
+                <ul id="insightList" aria-live="polite"></ul>
+              </div>
+            </section>
+          </div>
           <section class="no-data report-empty-cta" id="reportEmptyState" hidden aria-label="감정 기록 없음 안내">
             <div id="emptyDiaryCtaHost"></div>
           </section>
@@ -79,6 +81,8 @@
     </div>
 
     <script src="/assets/js/ui/com/includeFooter.js"></script>
+    <script src="/assets/js/lib/dexie.min.js"></script>
+    <script src="/assets/js/config/db-config.js"></script>
     <script src="/assets/js/ui/com/emptyDiaryCta.js"></script>
     <script src="/assets/js/lib/jquery-1.12.4.js"></script>
     <script src="/assets/js/agents/apikeyManager.js"></script>
