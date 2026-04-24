@@ -92,8 +92,6 @@
 /* 셸은 100dvh로 화면에 꽉 채움. min(svh)+JS로 줄이면 탭 아래 빈 틈(붕 뜸)이 생겨 제거 — 하단은 푸터 safe-area 패딩으로만 대응 */
 html:has(.wrap.has-tab-footer),
 body:has(.wrap.has-tab-footer) {
-  height: 100%;
-  max-height: 100dvh;
   overflow: hidden;
   margin: 0;
 }
@@ -393,7 +391,7 @@ footer {
   margin: 0;
   background: var(--white);
   /* 흰 배경이 시스템 내비까지 이어지고, 탭 아이콘만 safe-area 위로 올림 */
-  padding-bottom: max(16px, env(safe-area-inset-bottom, 0)) !important;
+  padding-bottom: max(0, env(safe-area-inset-bottom, 0)) !important;
 }
 
 #footerWrap.app-tab-footer .footer-content {
