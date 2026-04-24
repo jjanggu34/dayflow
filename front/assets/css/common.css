@@ -82,7 +82,7 @@ html {
   height: 100% !important;
 } /*  기본 폰트 사이즈 16px */
 body {
-  height: 100vh !important;
+  height: 100% !important;
   font-size: 1rem;
   font-weight: 400;
   line-height: normal;
