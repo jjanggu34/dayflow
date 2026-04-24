@@ -501,6 +501,19 @@ footer {
     padding-bottom: calc(64px + max(8px, env(safe-area-inset-bottom, 0px)));
   }
 }
+
+/* iOS(PWA) 미세 보정: 하단 safe-area를 조금 더 타이트하게 */
+@supports (-webkit-touch-callout: none) {
+  @media (display-mode: standalone) {
+    #footerWrap.app-tab-footer {
+      padding-bottom: max(4px, env(safe-area-inset-bottom, 0px)) !important;
+    }
+
+    .wrap.has-tab-footer > #bodyWrap {
+      padding-bottom: calc(64px + max(4px, env(safe-area-inset-bottom, 0px)));
+    }
+  }
+}
 /*---------------------------------------------
     #데이터 없음 (리포트·조언 등 — 흐름 안에 두고 hidden 으로 토글)
 ---------------------------------------------*/
