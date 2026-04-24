@@ -10,8 +10,8 @@
   "lang": "ko",
   "icons": [
     {
-      "src": "/assets/img/andamiro-favicon.png",
-      "sizes": "192x192",
+      "src": "/assets/img/andamiro-favicon-180.png",
+      "sizes": "180x180",
       "type": "image/png",
       "purpose": "any maskable"
     },
