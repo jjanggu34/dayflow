@@ -492,7 +492,7 @@ footer {
     flex: none !important;
     box-sizing: border-box;
     /* env가 0이어도 제스처/3버튼 막대 높이만큼 확보 */
-    padding-bottom: max(28px, env(safe-area-inset-bottom, 0px)) !important;
+    /* padding-bottom: max(28px, env(safe-area-inset-bottom, 0px)) !important; */
   }
 
   .wrap.has-tab-footer > #bodyWrap {
