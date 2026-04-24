@@ -89,10 +89,13 @@
 }
 
 /* 하단 탭(.has-tab-footer): 헤더·푸터 고정, #bodyWrap만 스크롤 */
+/* 100dvh만 쓰면 Android에서 UI 안정 후 dvh가 커져 푸터가 시스템 내비에 밀림 → svh와 min + JS(--app-tab-shell-height) 보정 */
 html:has(.wrap.has-tab-footer),
 body:has(.wrap.has-tab-footer) {
   height: 100%;
   max-height: 100dvh;
+  max-height: min(100dvh, 100svh);
+  max-height: var(--app-tab-shell-height, min(100dvh, 100svh));
   overflow: hidden;
   margin: 0;
 }
@@ -102,6 +105,8 @@ body:has(.wrap.has-tab-footer) {
   flex-direction: column;
   height: 100dvh;
   max-height: 100dvh;
+  height: var(--app-tab-shell-height, min(100dvh, 100svh));
+  max-height: var(--app-tab-shell-height, min(100dvh, 100svh));
   min-height: 0;
   width: 100%;
   max-width: 100%;
@@ -392,7 +397,6 @@ footer {
   margin: 0;
   background: var(--white);
   /* Android 등에서 safe-area가 0이어도 3버튼/제스처 내비와 겹치지 않게 최소 여백 */
-  padding-bottom: max(16px, env(safe-area-inset-bottom, 0px));
 }
 
 #footerWrap.app-tab-footer .footer-content {
