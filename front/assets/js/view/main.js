@@ -201,7 +201,11 @@
         empty.className = "calendar-list__empty calendar-list__empty--action";
         empty.setAttribute("role", "button");
         empty.tabIndex = 0;
-        empty.textContent = "아직 작성한 일기가 없어요.";
+        empty.appendChild(document.createTextNode("아직 작성한 일기가 없어요."));
+        var emptyCta = document.createElement("span");
+        emptyCta.className = "calendar-list__empty-cta";
+        emptyCta.textContent = "일기쓰러가기";
+        empty.appendChild(emptyCta);
         empty.addEventListener("click", function () {
           try {
             sessionStorage.setItem(STORAGE_SELECTED_DATE, String(ymd));
