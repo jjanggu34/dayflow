@@ -488,8 +488,8 @@ footer {
 
   .wrap.has-tab-footer > #bodyWrap {
     box-sizing: border-box;
-    /* 탭 한 줄(~70px: padding-top 10 + 아이콘 30 + margin 4 + 텍스트 14 + padding 12) + 푸터 safe-area 패딩 */
-    padding-bottom: calc(72px + max(28px, env(safe-area-inset-bottom, 0px)));
+    /* 탭 한 줄(~71px: footer-content 70px + 여유) + 푸터 safe-area 패딩 */
+    padding-bottom: calc(76px + max(28px, env(safe-area-inset-bottom, 0px)));
   }
 }
 /*---------------------------------------------
