@@ -25,6 +25,7 @@
       </header>
       <div id="bodyWrap" class="advice-page">
         <main class="advice-main">
+          <div id="adviceMainContent">
           <section class="importance-content" aria-labelledby="emotion-screen-title">
             <div class="button-content" aria-label="포춘쿠키">
               <button type="button" class="ortune" id="adviceFortuneBtn">
@@ -68,6 +69,10 @@
               </div>
             </div>
           </section>
+          </div>
+          <section class="no-data advice-empty-cta" id="adviceEmptyState" hidden aria-label="감정 기록 없음 안내">
+            <div id="emptyDiaryCtaHost"></div>
+          </section>
         </main>
       </div>
       <div id="footerIncludeHost" data-app-tab="advice"></div>
@@ -84,6 +89,9 @@
       <button type="button" class="btn-pop-close" data-popup-close="fortunePopupOverlay" style="z-index: 1001">닫기</button>
     </div>
     <script src="/assets/js/ui/com/includeFooter.js"></script>
+    <script src="/assets/js/lib/dexie.min.js"></script>
+    <script src="/assets/js/config/db-config.js"></script>
+    <script src="/assets/js/ui/com/emptyDiaryCta.js"></script>
     <script src="/assets/js/lib/jquery-1.12.4.js"></script>
     <script src="/assets/js/view/advice.js"></script>
     <script src="/assets/js/ui/com/popup.js"></script>

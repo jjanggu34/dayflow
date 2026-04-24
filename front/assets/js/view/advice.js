@@ -188,18 +188,43 @@
 
     window.addEventListener("message", onPopupMessage);
 
-    getSavedFortuneCookie().then(function (saved) {
-      if (hasMeaningfulFortune(saved)) {
-        latestFortuneText = String(saved.text).trim();
-        applyFortuneToAdvice(latestFortuneText);
-      }
-      /* 저장이 없거나 text 비어 있으면 첫 진입 시 자동 오픈 (레코드만 있는 경우도 포함) */
-      if (!hasMeaningfulFortune(saved) && !hasAutoOpened) {
-        hasAutoOpened = true;
-        requestAnimationFrame(function () {
-          openFortunePopup();
+    function hasAnyEmotionRecord() {
+      var db = window.DayflowDB;
+      if (!db || !db.emotions) return Promise.resolve(false);
+      return db.emotions
+        .count()
+        .then(function (n) {
+          return n > 0;
+        })
+        .catch(function () {
+          return false;
         });
+    }
+
+    hasAnyEmotionRecord().then(function (has) {
+      var mainContent = document.getElementById("adviceMainContent");
+      var emptyEl = document.getElementById("adviceEmptyState");
+      if (!has) {
+        if (mainContent) mainContent.hidden = true;
+        if (emptyEl) emptyEl.removeAttribute("hidden");
+        return;
       }
+      if (mainContent) mainContent.hidden = false;
+      if (emptyEl) emptyEl.setAttribute("hidden", "");
+
+      getSavedFortuneCookie().then(function (saved) {
+        if (hasMeaningfulFortune(saved)) {
+          latestFortuneText = String(saved.text).trim();
+          applyFortuneToAdvice(latestFortuneText);
+        }
+        /* 저장이 없거나 text 비어 있으면 첫 진입 시 자동 오픈 (감정 기록이 있을 때만) */
+        if (!hasMeaningfulFortune(saved) && !hasAutoOpened) {
+          hasAutoOpened = true;
+          requestAnimationFrame(function () {
+            openFortunePopup();
+          });
+        }
+      });
     });
   });
 })(jQuery);

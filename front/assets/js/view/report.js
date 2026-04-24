@@ -133,16 +133,73 @@
       emotionRankIo = null;
     }
     if (!clusterEl.querySelector(".emotion-bubble")) return;
-    emotionRankIo = new IntersectionObserver(function (entries) {
-      if (entries[0] && entries[0].isIntersecting) {
-        clusterEl.classList.add("is-animated");
-        if (emotionRankIo) {
-          emotionRankIo.disconnect();
-          emotionRankIo = null;
-        }
+
+    var revealed = false;
+    var fallbackId = 0;
+
+    function revealBubbles() {
+      if (revealed) return;
+      revealed = true;
+      if (fallbackId) {
+        clearTimeout(fallbackId);
+        fallbackId = 0;
       }
-    }, { threshold: 0.3 });
+      clusterEl.classList.add("is-animated");
+      if (emotionRankIo) {
+        emotionRankIo.disconnect();
+        emotionRankIo = null;
+      }
+    }
+
+    /*
+     * 좁은 뷰포트(모바일·크롬 DevTools 반응형): root=#bodyWrap 인 IO가 교차를 0으로만 보고
+     * isIntersecting 이 안 뜨는 버그가 있어, 스크롤 인 연출 대신 곧바로 표시.
+     * 넓은 PC에서는 기존처럼 IO + 지연 폴백.
+     */
+    var narrowByW = typeof window.innerWidth === "number" && window.innerWidth <= 1024;
+    var narrowByMq =
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(max-width: 1024px)").matches;
+    if (narrowByW || narrowByMq) {
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          revealBubbles();
+        });
+      });
+      fallbackId = setTimeout(function () {
+        fallbackId = 0;
+        revealBubbles();
+      }, 450);
+      return;
+    }
+
+    var scrollRoot = document.getElementById("bodyWrap");
+    var ioOpts = { threshold: 0.08 };
+    if (scrollRoot) ioOpts.root = scrollRoot;
+
+    emotionRankIo = new IntersectionObserver(function (entries) {
+      if (entries[0] && entries[0].isIntersecting) revealBubbles();
+    }, ioOpts);
     emotionRankIo.observe(clusterEl);
+
+    fallbackId = setTimeout(function () {
+      fallbackId = 0;
+      revealBubbles();
+    }, 2200);
+  }
+
+  /** 반응형 직후 host.clientWidth가 데스크톱 폭으로 남아 left가 1000px대로 나가는 것 방지 */
+  function measureBubbleHost(host) {
+    var vw =
+      typeof window.innerWidth === "number" && window.innerWidth > 0
+        ? window.innerWidth
+        : 4096;
+    var rect = host.getBoundingClientRect();
+    var rawW = host.clientWidth || rect.width || 0;
+    var rawH = host.clientHeight || rect.height || 0;
+    var w = rawW > 0 ? Math.min(Math.round(rawW), Math.round(vw)) : Math.min(320, Math.round(vw));
+    var h = rawH > 0 ? Math.max(200, Math.round(rawH)) : 220;
+    return { w: w, h: h };
   }
 
   function renderBubbleRanking(counts) {
@@ -166,12 +223,8 @@
 
     var max = rows[0].value || 1;
     var palette = ["#6e9bf6", "#dfe7f8", "#e8edf8", "#eceff4", "#f2f4f8"];
-    var hostW = host.clientWidth || 320;
-    var hostH = host.clientHeight || 220;
-    var centerX = hostW / 2;
-    var centerY = hostH / 2;
     var wallPadding = 10;
-    var nodes = [];
+    var meta = [];
 
     rows.forEach(function (row, idx) {
       var bubble = document.createElement("div");
@@ -195,47 +248,63 @@
       bubble.appendChild(title);
       bubble.appendChild(day);
       host.appendChild(bubble);
-
-      var angle = (Math.PI * 2 * idx) / Math.max(rows.length, 1);
-      var radius = 22 + idx * 6;
-      nodes.push({
-        el: bubble,
-        r: size / 2,
-        x: centerX + Math.cos(angle) * radius,
-        y: centerY + Math.sin(angle) * radius,
-      });
+      meta.push({ el: bubble, size: size });
     });
 
-    for (var t = 0; t < 220; t++) {
-      for (var i = 0; i < nodes.length; i++) {
-        var a = nodes[i];
-        a.x += (centerX - a.x) * 0.055;
-        a.y += (centerY - a.y) * 0.055;
+    function runBubbleLayout() {
+      var dim = measureBubbleHost(host);
+      var hostW = dim.w;
+      var hostH = dim.h;
+      var centerX = hostW / 2;
+      var centerY = hostH / 2;
+      var n = meta.length;
+      var nodes = meta.map(function (m, idx) {
+        var angle = (Math.PI * 2 * idx) / Math.max(n, 1);
+        var radius = 22 + idx * 6;
+        return {
+          el: m.el,
+          r: m.size / 2,
+          x: centerX + Math.cos(angle) * radius,
+          y: centerY + Math.sin(angle) * radius,
+        };
+      });
 
-        for (var j = i + 1; j < nodes.length; j++) {
-          var b = nodes[j];
-          var dx = b.x - a.x;
-          var dy = b.y - a.y;
-          var dist = Math.sqrt(dx * dx + dy * dy) || 0.001;
-          var minDist = a.r + b.r + 6;
-          if (dist < minDist) {
-            var push = (minDist - dist) * 0.5;
-            var nx = dx / dist;
-            var ny = dy / dist;
-            a.x -= nx * push;
-            a.y -= ny * push;
-            b.x += nx * push;
-            b.y += ny * push;
+      for (var t = 0; t < 220; t++) {
+        for (var i = 0; i < nodes.length; i++) {
+          var a = nodes[i];
+          a.x += (centerX - a.x) * 0.055;
+          a.y += (centerY - a.y) * 0.055;
+
+          for (var j = i + 1; j < nodes.length; j++) {
+            var b = nodes[j];
+            var dx = b.x - a.x;
+            var dy = b.y - a.y;
+            var dist = Math.sqrt(dx * dx + dy * dy) || 0.001;
+            var minDist = a.r + b.r + 6;
+            if (dist < minDist) {
+              var push = (minDist - dist) * 0.5;
+              var nx = dx / dist;
+              var ny = dy / dist;
+              a.x -= nx * push;
+              a.y -= ny * push;
+              b.x += nx * push;
+              b.y += ny * push;
+            }
           }
         }
       }
+
+      nodes.forEach(function (node) {
+        var px = Math.max(node.r + wallPadding, Math.min(hostW - node.r - wallPadding, node.x));
+        var py = Math.max(node.r + wallPadding, Math.min(hostH - node.r - wallPadding, node.y));
+        node.el.style.left = px + "px";
+        node.el.style.top = py + "px";
+      });
     }
 
-    nodes.forEach(function (node) {
-      var px = Math.max(node.r + wallPadding, Math.min(hostW - node.r - wallPadding, node.x));
-      var py = Math.max(node.r + wallPadding, Math.min(hostH - node.r - wallPadding, node.y));
-      node.el.style.left = px + "px";
-      node.el.style.top = py + "px";
+    runBubbleLayout();
+    requestAnimationFrame(function () {
+      requestAnimationFrame(runBubbleLayout);
     });
   }
 
@@ -373,14 +442,29 @@
 
     return fetchEmotionsRange(toYmd(range.start), toYmd(range.end)).then(function (rows) {
       var hasData = rows.length > 0;
-      var scores7 = hasData ? averageScoresByDow(rows) : MOCK_SCORES.slice();
-      var counts = hasData ? countEmotionTypes(rows) : Object.assign({}, MOCK_COUNTS);
+      var heroCharts = document.getElementById("reportHeroAndCharts");
+      var insightSec = document.querySelector("#bodyWrap.report-page section.card-content.report-section");
+      var emptyState = document.getElementById("reportEmptyState");
 
-      if (empty) empty.hidden = hasData;
+      if (!hasData) {
+        if (heroCharts) heroCharts.hidden = true;
+        if (insightSec) insightSec.hidden = true;
+        if (emptyState) emptyState.removeAttribute("hidden");
+        return;
+      }
+
+      if (heroCharts) heroCharts.hidden = false;
+      if (insightSec) insightSec.hidden = false;
+      if (emptyState) emptyState.setAttribute("hidden", "");
+
+      var scores7 = averageScoresByDow(rows);
+      var counts = countEmotionTypes(rows);
+
+      if (empty) empty.hidden = true;
       renderWeekBars(scores7);
       renderBubbleRanking(counts);
       bindEmotionBubbleReveal(document.getElementById("emotionRankList"));
-      renderInsights(scores7, counts, !hasData, monthLabel);
+      renderInsights(scores7, counts, false, monthLabel);
     });
   }
 

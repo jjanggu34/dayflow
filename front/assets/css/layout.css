@@ -492,3 +492,72 @@ footer {
     padding-bottom: calc(56px + max(28px, env(safe-area-inset-bottom, 0px)));
   }
 }
+/*---------------------------------------------
+    #데이터 없음 (리포트·조언 등 — 흐름 안에 두고 hidden 으로 토글)
+---------------------------------------------*/
+.no-data[hidden] {
+  display: none !important;
+}
+
+.no-data:not([hidden]) {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 520px;
+  min-height: min(360px, 52vh);
+  background: var(--white);
+}
+.no-data .btn-link {
+  background: var(--primary);
+  color: var(--white);
+}
+
+.no-data .text-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  text-align: center;
+}
+
+.no-data .text-content .text-group {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.no-data .text-content .text-group p {
+  font-size: 1rem;
+  font-weight: normal;
+  color: var(--text-default);
+  text-align: center;
+}
+
+.no-data .text-content .text-group p em {
+  display: block;
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: var(--font20);
+  font-weight: 500;
+}
+.no-data .text-content .text-group::before {
+  content: "";
+  display: block;
+  width: 210px;
+  height: 210px;
+  margin: 0 auto;
+  background: url("/assets/img/com/img-none.png") no-repeat center center / 100% auto;
+  z-index: 2;
+}

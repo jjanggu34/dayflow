@@ -83,6 +83,9 @@ const server = http.createServer((req, res) => {
     }
     const ext = path.extname(abs).toLowerCase();
     res.setHeader("Content-Type", mime[ext] || "application/octet-stream");
+    /* 로컬에서 JS/CSS가 디스크 캐시·SW 조합으로 갱신 안 되는 경우 방지 */
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+    res.setHeader("Pragma", "no-cache");
     res.writeHead(200).end(data);
   });
 });

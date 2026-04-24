@@ -80,3 +80,21 @@ header > button.back {
   -webkit-mask-size: 18px auto;
   -webkit-mask-position: center;
 }
+
+.btn-sub {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  width: auto;
+  height: 40px;
+  border-radius: 8px;
+  background-color: #f0f1f6;
+  color: var(--text-default);
+  padding: 0 15px;
+  font-size: var(--font16);
+  font-weight: 400;
+  cursor: pointer;
+  border: 0;
+  margin: 0;
+}

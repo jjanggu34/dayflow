@@ -18,40 +18,6 @@
         navigator.serviceWorker.register("/sw.js");
       }
     </script>
-    <style>
-      .no-data {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: var(--white);
-        z-index: 2;
-      }
-      .no-data .btn-link {
-        background: var(--primary);
-        color: var(--white);
-      }
-
-      .no-data .text-content {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 20px;
-      }
-      .no-data .text-content .text-group::before {
-        content: "";
-        display: block;
-        width: 210px;
-        height: 210px;
-        margin: 0 auto;
-        background: url("/assets/img/com/img-none.png") no-repeat center center / 100% auto;
-        z-index: 2;
-      }
-    </style>
   </head>
   <body class="report-page">
     <div class="wrap report-wrap has-tab-footer">
@@ -104,18 +70,8 @@
               <ul id="insightList" aria-live="polite"></ul>
             </div>
           </section>
-          <section class="no-data">
-            <div class="text-content">
-              <div class="text-group">
-                <p>
-                  <em>당신의 하루를 들려주길 <br />기다리고 있어요!</em>
-                  작은 기록이 모여 당신의 마음 지도가 완성돼요.
-                </p>
-              </div>
-              <div class="btn-content">
-                <button type="button" class="btn-link" id="noDataCtaBtn">일기 쓰러가기</button>
-              </div>
-            </div>
+          <section class="no-data report-empty-cta" id="reportEmptyState" hidden aria-label="감정 기록 없음 안내">
+            <div id="emptyDiaryCtaHost"></div>
           </section>
         </main>
       </div>
@@ -123,6 +79,7 @@
     </div>
 
     <script src="/assets/js/ui/com/includeFooter.js"></script>
+    <script src="/assets/js/ui/com/emptyDiaryCta.js"></script>
     <script src="/assets/js/lib/jquery-1.12.4.js"></script>
     <script src="/assets/js/agents/apikeyManager.js"></script>
     <script src="/assets/js/agents/chatAgent.js"></script>
