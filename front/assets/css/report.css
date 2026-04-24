@@ -37,7 +37,7 @@ header > button.back {
   display: flex;
   flex-direction: column;
   gap: 0;
-  padding: 0 0;
+  padding: 0 0 32px;
 }
 
 #bodyWrap.report-page .importance-content:first-child .text-group p,
