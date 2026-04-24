@@ -11,9 +11,9 @@
     <meta name="apple-mobile-web-app-title" content="Dayflow" />
     <title>DAYFLOW — 조언</title>
     <link rel="stylesheet" href="/assets/css/main.css" />
-      <script>
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/sw.js');
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/sw.js");
       }
     </script>
   </head>
@@ -26,49 +26,49 @@
       <div id="bodyWrap" class="advice-page">
         <main class="advice-main">
           <div id="adviceMainContent">
-          <section class="importance-content" aria-labelledby="emotion-screen-title">
-            <div class="button-content" aria-label="포춘쿠키">
-              <button type="button" class="ortune" id="adviceFortuneBtn">
-                <span class="advice-fortune-banner__label">포춘쿠키를 확인하세요!</span>
-              </button>
-            </div>
-            <div class="text-content">
-              <div class="text-group">
-                <p class="advice-hero__date">4월 21일 월요일</p>
-                <h2 id="emotion-screen-title" class="advice-hero__headline">안정적이고 균형 잡힌 날</h2>
-                <p class="advice-hero__score"><span class="advice-hero__score-num">80</span><span class="advice-hero__score-unit">점</span></p>
+            <section class="importance-content" aria-labelledby="emotion-screen-title">
+              <div class="button-content" aria-label="포춘쿠키">
+                <button type="button" class="advice-fortune-btn" id="adviceFortuneBtn">
+                  <span class="advice-fortune-banner__label">포춘쿠키를 확인하세요</span>
+                </button>
               </div>
-            </div>
-          </section>
+              <div class="text-content">
+                <div class="text-group">
+                  <p class="advice-hero__date">4월 21일 월요일</p>
+                  <h2 id="emotion-screen-title" class="advice-hero__headline">안정적이고 균형 잡힌 날</h2>
+                  <p class="advice-hero__score"><span class="advice-hero__score-num">80</span><span class="advice-hero__score-unit">점</span></p>
+                </div>
+              </div>
+            </section>
 
-          <section class="card-content">
-            <div class="card-item">
-              <p class="advice-color-card__text">오늘은 블루(파란색) 이 당신에게 긍정적인 에너지를 가져다줄 거예요! 💙</p>
-              <div class="advice-tags">
-                <span class="advice-tags__item"># 안정</span>
-                <span class="advice-tags__item"># 집중</span>
-                <span class="advice-tags__item"># 균형</span>
+            <section class="card-content">
+              <div class="card-item">
+                <p class="advice-color-card__text">오늘은 블루(파란색) 이 당신에게 긍정적인 에너지를 가져다줄 거예요! 💙</p>
+                <div class="advice-tags">
+                  <span class="advice-tags__item"># 안정</span>
+                  <span class="advice-tags__item"># 집중</span>
+                  <span class="advice-tags__item"># 균형</span>
+                </div>
               </div>
-            </div>
-            <div class="card-item">
-              <h3>
-                <span></span>
-                AI 맞춤 조언
-              </h3>
-              <p>
-                평온한 에너지로 차분한 하루를 보내셨다니 참 좋습니다. 직장에서의 좋은 운을 살려 내일은 미뤄두었던 업무나 새로운 프로젝트에 도전해 보시면 어떨까요? 금전 운이 조금 낮은 만큼 불필요한
-                지출은 자제하고, 애정 운도 함께 상승 중이니 소중한 사람들과 따뜻한 시간을 나누며 오늘의 평온함을 내일까지 이어가시길 응원합니다.
-              </p>
-              <div class="card-tips">
-                <h4>날씨 활용법</h4>
-                <p>11°C 이슬비 날씨예요. 따뜻하게 입기를 챙겨보세요.</p>
+              <div class="card-item">
+                <h3>
+                  <span></span>
+                  AI 맞춤 조언
+                </h3>
+                <p>
+                  평온한 에너지로 차분한 하루를 보내셨다니 참 좋습니다. 직장에서의 좋은 운을 살려 내일은 미뤄두었던 업무나 새로운 프로젝트에 도전해 보시면 어떨까요? 금전 운이 조금 낮은 만큼 불필요한
+                  지출은 자제하고, 애정 운도 함께 상승 중이니 소중한 사람들과 따뜻한 시간을 나누며 오늘의 평온함을 내일까지 이어가시길 응원합니다.
+                </p>
+                <div class="card-tips">
+                  <h4>날씨 활용법</h4>
+                  <p>11°C 이슬비 날씨예요. 따뜻하게 입기를 챙겨보세요.</p>
+                </div>
+                <div class="card-tips">
+                  <h4>평온함 케어</h4>
+                  <p>안정 루틴으로 내일도 좋은 흐름을 이어요.</p>
+                </div>
               </div>
-              <div class="card-tips">
-                <h4>평온함 케어</h4>
-                <p>안정 루틴으로 내일도 좋은 흐름을 이어요.</p>
-              </div>
-            </div>
-          </section>
+            </section>
           </div>
           <section class="no-data advice-empty-cta" id="adviceEmptyState" hidden aria-label="감정 기록 없음 안내">
             <div id="emptyDiaryCtaHost"></div>

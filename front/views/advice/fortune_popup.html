@@ -33,11 +33,9 @@
             </p>-->
         </div>
         <div class="fortune-info-card">
-          <p>쿠키를 눌러 오늘의 행운을 확인하세요!</p>
+          <p id="fortune-info-card-text">쿠키를 눌러 오늘의 행운을 확인하세요!</p>
         </div>
-
       </div>
-    </div>
     </div>
 
     <script>
@@ -45,6 +43,7 @@
         var cookieBtn = document.getElementById("cookie-btn");
         var cookieImg = document.getElementById("cookie-image");
         var fortuneResult = document.getElementById("fortune-result");
+        var fortuneInfoText = document.getElementById("fortune-info-card-text");
         var imgBroken = "/assets/img/advice/popup-img-fortune-cookie.png";
         var selectedFortune = "";
 
@@ -68,44 +67,36 @@
           }
         }
 
-        function goAdvice() {
-          var hasOpenedFortune = !!selectedFortune && !fortuneResult.hidden;
-          var payload = {
-            type: hasOpenedFortune ? "dayflow:fortune-selected" : "dayflow:fortune-close",
-            fortuneText: hasOpenedFortune ? selectedFortune : "",
-            savedAt: new Date().toISOString(),
-          };
-          var url = "/advice";
+        function notifyParentFortuneRevealed(text) {
+          if (!text) return;
           try {
-            if (window.parent && window.parent !== window) {
-              window.parent.postMessage(payload, window.location.origin);
-              return;
-            } else {
-              window.location.href = url;
-            }
+            if (!window.parent || window.parent === window) return;
+            window.parent.postMessage(
+              {
+                type: "dayflow:fortune-revealed",
+                fortuneText: text,
+                savedAt: new Date().toISOString(),
+              },
+              window.location.origin
+            );
           } catch (e) {
-            window.location.href = url;
+            /* ignore */
           }
         }
 
-        function showResult(text) {
+        function showResult(text, opts) {
+          opts = opts || {};
           if (text) {
             selectedFortune = text;
             fortuneResult.textContent = text;
           }
+          fortuneResult.removeAttribute("hidden");
           fortuneResult.hidden = false;
           cookieImg.hidden = true;
           document.body.classList.add("fortune-result-open");
-        }
-
-        function resetAll() {
+          if (fortuneInfoText) fortuneInfoText.textContent = "오늘의 행운을 확인했어요!";
+          if (!opts.skipNotify && selectedFortune) notifyParentFortuneRevealed(selectedFortune);
           isAnimating = false;
-          cookieImg.classList.remove("fade-out", "shaking");
-          cookieImg.src = "/assets/img/advice/popup-img-fortune.png";
-          cookieImg.hidden = false;
-          fortuneResult.hidden = true;
-          selectedFortune = "";
-          document.body.classList.remove("fortune-result-open");
         }
 
         function openCookie() {
@@ -125,16 +116,15 @@
           }, 1200);
         }
 
-        cookieBtn.addEventListener("click", openCookie);
-        cookieBtn.addEventListener("keydown", function (e) {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            openCookie();
-          }
-        });
-
-        document.getElementById("btnGoAdviceIntro").addEventListener("click", goAdvice);
-        document.getElementById("btnCloseResult").addEventListener("click", resetAll);
+        if (cookieBtn) {
+          cookieBtn.addEventListener("click", openCookie);
+          cookieBtn.addEventListener("keydown", function (e) {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              openCookie();
+            }
+          });
+        }
 
         cookieImg.addEventListener("error", function () {
           this.src = "/assets/img/advice/popup-img-fortune.png";
@@ -142,7 +132,7 @@
 
         var initialFortune = getInitialFortuneFromQuery();
         if (initialFortune) {
-          showResult(initialFortune);
+          showResult(initialFortune, { skipNotify: true });
         }
       })();
     </script>

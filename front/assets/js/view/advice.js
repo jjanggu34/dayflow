@@ -7,7 +7,7 @@
   var FORTUNE_DB_NAME = "DayflowFortuneCookie";
   var FORTUNE_STORE_NAME = "fortuneCookies";
   var FORTUNE_KEY = "latest";
-  var FORTUNE_MESSAGE_TYPE = "dayflow:fortune-selected";
+  var FORTUNE_REVEALED_TYPE = "dayflow:fortune-revealed";
   var FORTUNE_CLOSE_TYPE = "dayflow:fortune-close";
   var hasAutoOpened = false;
   var latestFortuneText = "";
@@ -87,7 +87,7 @@
   function applyFortuneToAdvice(fortuneText) {
     if (!fortuneText) return;
     var $buttonLabel = $(".advice-fortune-banner__label");
-    if ($buttonLabel.length) $buttonLabel.text("오늘의 포춘쿠키 다시 보기");
+    if ($buttonLabel.length) $buttonLabel.text("오늘의 운세를 확인하세요");
   }
 
   function resolvePopupUrl() {
@@ -158,16 +158,15 @@
       closeFortunePopup();
       return;
     }
-    if (event.data.type !== FORTUNE_MESSAGE_TYPE) return;
-    var fortuneText = event.data.fortuneText;
-    saveFortuneCookie(fortuneText)
-      .then(function () {
-        latestFortuneText = fortuneText || "";
-        applyFortuneToAdvice(fortuneText);
-      })
-      .finally(function () {
-        closeFortunePopup();
+    if (event.data.type === FORTUNE_REVEALED_TYPE) {
+      var revealed = event.data.fortuneText;
+      if (!revealed) return;
+      saveFortuneCookie(revealed).then(function () {
+        latestFortuneText = String(revealed).trim();
+        applyFortuneToAdvice(latestFortuneText);
       });
+      return;
+    }
   }
 
   $(function () {

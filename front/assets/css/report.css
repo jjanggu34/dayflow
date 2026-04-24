@@ -22,6 +22,20 @@ header > button.back {
   color: var(--white);
 }
 
+/* 이번 달 데이터 없음: #reportEmptyState 가 보일 때(no hidden) — [hidden]이면 오히려 "데이터 있음" */
+body.report-page .wrap.report-wrap:has(#reportEmptyState:not([hidden])) > header.headerWrap {
+  background: var(--white);
+  color: var(--title);
+}
+
+body.report-page .wrap.report-wrap:has(#reportEmptyState:not([hidden])) > header.headerWrap > h1 {
+  color: var(--title);
+}
+
+body.report-page .wrap.report-wrap:has(#reportEmptyState:not([hidden])) > header.headerWrap > button.back {
+  background: var(--title);
+}
+
 .report-header__back-icon::before {
   content: "";
   display: block;
@@ -40,6 +54,13 @@ header > button.back {
   gap: 0;
   padding: 0 0;
   height: auto;
+  min-height: 100%;
+  background: var(--white);
+}
+
+#bodyWrap.report-page .report-main:has(.no-data:not([hidden])) #reportHeroAndCharts {
+  height: 100%;
+  display: none;
 }
 
 #bodyWrap.report-page .report-empty-cta {
