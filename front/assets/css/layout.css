@@ -506,11 +506,11 @@ footer {
 @supports (-webkit-touch-callout: none) {
   @media (display-mode: standalone) {
     #footerWrap.app-tab-footer {
-      padding-bottom: max(4px, env(safe-area-inset-bottom, 0px)) !important;
+      padding-bottom: 0 !important;
     }
 
     .wrap.has-tab-footer > #bodyWrap {
-      padding-bottom: calc(64px + max(4px, env(safe-area-inset-bottom, 0px)));
+      padding-bottom: 0 !important ;
     }
   }
 }
