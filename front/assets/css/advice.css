@@ -3,8 +3,8 @@
 .wrap:has(> #bodyWrap.advice-page) {
   display: flex;
   flex-direction: column;
-  min-height: 100dvh;
-  max-height: 100dvh;
+  min-height: 100%;
+  max-height: 100%;
 }
 
 #bodyWrap.advice-page {
@@ -296,7 +296,7 @@ body.fortune-popup-page {
 
 /* 풀팝업 레이아웃: 본문은 스크롤, 푸터는 하단 고정 느낌 */
 .fortune-popup-page .layerPopup.full > .pop-area {
-  height: 100dvh;
+  height: 100%;
   border-radius: 0;
 }
 

@@ -4,14 +4,14 @@
 html:has(#bodyWrap.emotion),
 body:has(#bodyWrap.emotion) {
   height: 100%;
-  max-height: 100dvh;
+  max-height: 100%;
   margin: 0;
   overflow: hidden;
 }
 
 body:has(#bodyWrap.emotion) > .wrap {
-  height: 100dvh;
-  max-height: 100dvh;
+  height: 100%;
+  max-height: 100%;
   min-height: 0;
   display: flex;
   flex-direction: column;
