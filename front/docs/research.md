@@ -66,6 +66,21 @@
 
 공통: 상단 헤더, 하단 탭바, 푸터, 챗봇 단계바는 `views/common/` + `layout.js`로 조합 예정.
 
+## 조언 화면 포춘쿠키 팝업 현황 (2026-04-27)
+
+- 대상 파일: `views/advice/advice.html`, `assets/js/view/advice.js`, `views/advice/fortune_popup.html`
+- 현재 동작:
+  - `#adviceFortuneBtn` 클릭 시 `openFortunePopup()`로 iframe 팝업 오픈
+  - IndexedDB(`DayflowFortuneCookie.fortuneCookies.latest`)에 저장된 값이 없으면 조언 화면 첫 진입에서 자동 오픈
+  - 포춘 내용은 `postMessage(type: "dayflow:fortune-revealed")` 수신 시 저장
+- 확인된 이슈:
+  - 요구사항은 "초기 미노출, 버튼 클릭 시만 노출"인데 현재는 첫 진입 자동 오픈 로직이 있음
+  - "하루 지나면 다시 열 수 있게"를 위한 날짜 경계 체크(당일/익일 판별)가 저장값 읽기 로직에 없음
+- 구현 시 고려사항:
+  - 저장 스키마(`savedAt`)를 활용해 로컬 날짜 기준 당일 여부 판별 함수 추가
+  - 당일 이미 확인한 경우 버튼 클릭 시 팝업 미오픈 + 안내 문구(또는 버튼 상태) 처리
+  - 다음날(00:00 경과 후) 자동으로 다시 오픈 가능 상태로 전환
+
 ## 데이터 흐름 (IndexedDB 기준)
 
 1. **스키마(`db-config.js`, Dexie)**

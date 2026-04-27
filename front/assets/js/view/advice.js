@@ -9,8 +9,8 @@
   var FORTUNE_KEY = "latest";
   var FORTUNE_REVEALED_TYPE = "dayflow:fortune-revealed";
   var FORTUNE_CLOSE_TYPE = "dayflow:fortune-close";
-  var hasAutoOpened = false;
   var latestFortuneText = "";
+  var latestFortuneSavedAt = "";
 
   function hasMeaningfulFortune(saved) {
     return !!(saved && String(saved.text || "").trim());
@@ -90,6 +90,28 @@
     if ($buttonLabel.length) $buttonLabel.text("오늘의 운세를 확인하세요");
   }
 
+  function toLocalDateKey(input) {
+    if (!input) return "";
+    var date = new Date(input);
+    if (isNaN(date.getTime())) return "";
+    var y = date.getFullYear();
+    var m = String(date.getMonth() + 1);
+    var d = String(date.getDate());
+    return y + "-" + m + "-" + d;
+  }
+
+  function isTodayFortuneSaved() {
+    var todayKey = toLocalDateKey(new Date());
+    var savedKey = toLocalDateKey(latestFortuneSavedAt);
+    return !!todayKey && todayKey === savedKey;
+  }
+
+  function getInitialFortuneForPopup() {
+    // 같은 날에는 기존 포춘을 다시 보여주고, 날짜가 바뀌면 새 포춘을 열도록 빈 값 전달
+    if (isTodayFortuneSaved()) return latestFortuneText;
+    return "";
+  }
+
   function resolvePopupUrl() {
     if (typeof window.DAYFLOW_FORTUNE_POPUP_URL === "string" && window.DAYFLOW_FORTUNE_POPUP_URL.trim()) {
       return window.DAYFLOW_FORTUNE_POPUP_URL.trim();
@@ -163,6 +185,7 @@
       if (!revealed) return;
       saveFortuneCookie(revealed).then(function () {
         latestFortuneText = String(revealed).trim();
+        latestFortuneSavedAt = new Date().toISOString();
         applyFortuneToAdvice(latestFortuneText);
       });
       return;
@@ -172,7 +195,7 @@
   $(function () {
     $("#adviceFortuneBtn").on("click", function (e) {
       e.preventDefault();
-      openFortunePopup(latestFortuneText);
+      openFortunePopup(getInitialFortuneForPopup());
     });
 
     $("#fortunePopupOverlay [data-popup-close='fortunePopupOverlay']").on("click", function () {
@@ -214,14 +237,8 @@
       getSavedFortuneCookie().then(function (saved) {
         if (hasMeaningfulFortune(saved)) {
           latestFortuneText = String(saved.text).trim();
+          latestFortuneSavedAt = String(saved.savedAt || "");
           applyFortuneToAdvice(latestFortuneText);
-        }
-        /* 저장이 없거나 text 비어 있으면 첫 진입 시 자동 오픈 (감정 기록이 있을 때만) */
-        if (!hasMeaningfulFortune(saved) && !hasAutoOpened) {
-          hasAutoOpened = true;
-          requestAnimationFrame(function () {
-            openFortunePopup();
-          });
         }
       });
     });
