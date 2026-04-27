@@ -74,62 +74,40 @@
     scrollRecordPanelIntoView(recordPanel);
   }
 
-  function monthRangeYmd(viewYear, viewMonth1) {
-    var last = new Date(viewYear, viewMonth1, 0).getDate();
-    return {
-      start: viewYear + "-" + pad2(viewMonth1) + "-01",
-      end: viewYear + "-" + pad2(viewMonth1) + "-" + pad2(last),
-    };
-  }
-
-  function pickLatestEmotionByDate(rows) {
-    var map = {};
-    rows.forEach(function (row) {
-      var key = row.date;
-      if (!map[key] || (row.createdAt || 0) > (map[key].createdAt || 0)) {
-        map[key] = row;
-      }
-    });
-    return map;
-  }
-
   function fetchEmotionMarksForMonth(viewYear, viewMonth1) {
-    var db = window.DayflowDB;
-    if (!db || !db.emotions) return Promise.resolve({});
-    var r = monthRangeYmd(viewYear, viewMonth1);
-    return db.emotions
-      .where("date")
-      .between(r.start, r.end, true, true)
-      .toArray()
-      .then(function (rows) {
-        var latest = pickLatestEmotionByDate(rows);
-        var marks = {};
-        Object.keys(latest).forEach(function (k) {
-          marks[k] = latest[k].type || "good";
-        });
-        return marks;
-      })
-      .catch(function () {
-        return {};
+    var store = window.DayflowSupabaseStore;
+    if (!store) return Promise.resolve({});
+    var yearMonth = viewYear + "-" + pad2(viewMonth1);
+    return store.getDiariesForMonth(yearMonth).then(function (rows) {
+      var latest = {};
+      rows.forEach(function (row) {
+        var key = row.date;
+        if (!latest[key] || (row.created_at || 0) > (latest[key].created_at || 0)) {
+          latest[key] = row;
+        }
       });
+      var marks = {};
+      Object.keys(latest).forEach(function (k) {
+        marks[k] = latest[k].emotion || "good";
+      });
+      return marks;
+    }).catch(function () { return {}; });
+  }
+
+  function refreshCalendarMarks() {
+    if (!calApi || typeof calApi.getView !== "function" || typeof calApi.setMarks !== "function") {
+      return Promise.resolve();
+    }
+    var view = calApi.getView();
+    return fetchEmotionMarksForMonth(view.viewYear, view.viewMonth).then(function (marks) {
+      calApi.setMarks(marks);
+    });
   }
 
   function fetchDiariesForDay(ymd) {
-    var db = window.DayflowDB;
-    if (!db || !db.diaries) return Promise.resolve([]);
-    return db.diaries
-      .where("date")
-      .equals(ymd)
-      .toArray()
-      .then(function (rows) {
-        rows.sort(function (a, b) {
-          return (b.createdAt || 0) - (a.createdAt || 0);
-        });
-        return rows;
-      })
-      .catch(function () {
-        return [];
-      });
+    var store = window.DayflowSupabaseStore;
+    if (!store) return Promise.resolve([]);
+    return store.getDiariesForDate(ymd);
   }
 
   function formatDayTitle(ymd, count) {
@@ -259,10 +237,28 @@
 
         var sum = document.createElement("span");
         sum.className = "calendar-list__summary";
-        sum.textContent = isTodayRow ? formatTime(row.createdAt) + " · " + diarySummary(row) : diarySummary(row);
+        sum.textContent = isTodayRow ? formatTime(row.created_at) + " · " + diarySummary(row) : diarySummary(row);
+
+        var delBtn = document.createElement("button");
+        delBtn.type = "button";
+        delBtn.className = "calendar-list__delete";
+        delBtn.setAttribute("aria-label", "기록 삭제");
+        delBtn.textContent = "삭제";
+        delBtn.addEventListener("click", function (e) {
+          e.stopPropagation();
+          if (!confirm("이 기록을 삭제할까요?")) return;
+          DayflowSupabaseStore.deleteDiary(row.id).then(function () {
+            refreshCalendarMarks().then(function () {
+              renderDayPanel(ymd);
+            });
+          }).catch(function () {
+            alert("삭제 중 오류가 발생했습니다.");
+          });
+        });
 
         li.appendChild(mood);
         li.appendChild(sum);
+        li.appendChild(delBtn);
         listEl.appendChild(li);
       });
       scrollRecordPanelIntoView(recordPanel);
@@ -288,10 +284,6 @@
     if (page === "emotion") return "/chat/emotion";
     if (page === "chat") return "/chat";
     return "/chat/result";
-  }
-
-  function goChat() {
-    window.location.href = resolveChatFlowUrl("chat");
   }
 
   function goResult() {
@@ -351,10 +343,31 @@
     });
   }
 
+  function loadUserName() {
+    var nameEl = document.getElementById("mainUserName");
+    if (!nameEl || !window.DayflowAuth) return;
+    DayflowAuth.getCurrentUser().then(function (user) {
+      if (!user) { window.location.replace("/login"); return; }
+      var name = (user.user_metadata && (user.user_metadata.full_name || user.user_metadata.name))
+        || user.email.split("@")[0];
+      nameEl.textContent = name + "님";
+    });
+  }
+
   function init() {
     var cta = document.getElementById("mainCtaBtn");
     if (cta) cta.addEventListener("click", goEmotion);
 
+    var logoutBtn = document.getElementById("mainLogoutBtn");
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", function () {
+        DayflowAuth.signOut().then(function () {
+          window.location.replace("/login");
+        });
+      });
+    }
+
+    loadUserName();
     initCalendar();
   }
 

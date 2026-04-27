@@ -820,8 +820,8 @@
     }
 
     function saveThenGo() {
-      if (window.DayflowDiaryStore && typeof DayflowDiaryStore.saveTodayDiary === "function") {
-        DayflowDiaryStore.saveTodayDiary({
+      if (window.DayflowSupabaseStore && typeof DayflowSupabaseStore.saveTodayDiary === "function") {
+        DayflowSupabaseStore.saveTodayDiary({
           date: selectedDate || undefined,
           emotion: emotion,
           content: text,
@@ -831,7 +831,7 @@
           .then(goResult)
           .catch(function (err) {
             if (typeof console !== "undefined" && console.warn) {
-              console.warn("[Dayflow] IndexedDB 저장 실패 — 결과 화면으로 이동", err);
+              console.warn("[Dayflow] Supabase 저장 실패 — 결과 화면으로 이동", err);
             }
             goResult();
           });

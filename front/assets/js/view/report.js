@@ -4,8 +4,6 @@
 
   var DOW = ["일", "월", "화", "수", "목", "금", "토"];
   var BAR_COLORS = ["##79AAFF", "#A2C4FF", "#C8DCFF", "##C8DCFF", "#E6EFFF", "#C8DCFF", "#A2C4FF"];
-  var MOCK_SCORES = [42, 58, 60, 62, 77, 70, 54];
-  var MOCK_COUNTS = { best: 9, good: 8, normal: 5, bad: 3, worst: 3 };
   var insightRequestSeq = 0;
 
   function pad2(n) {
@@ -23,23 +21,30 @@
     return { start: start, end: end };
   }
 
-  function fetchEmotionsRange(startYmd, endYmd) {
-    var db = window.DayflowDB;
-    if (!db || !db.emotions) return Promise.resolve([]);
-    return db.emotions
-      .where("date")
-      .between(startYmd, endYmd, true, true)
-      .toArray()
-      .catch(function () {
-        return [];
+  var SCORE_BY_EMOTION = { best: 92, good: 72, normal: 58, bad: 42, worst: 28 };
+
+  function fetchEmotionsRange(startYmd) {
+    var store = window.DayflowSupabaseStore;
+    if (!store) return Promise.resolve([]);
+    var yearMonth = startYmd.slice(0, 7);
+    return store.getDiariesForMonth(yearMonth).then(function (rows) {
+      return rows.map(function (row) {
+        var em = row.emotion || "good";
+        return {
+          date:       row.date,
+          type:       em,
+          score:      SCORE_BY_EMOTION[em] || 58,
+          created_at: row.created_at,
+        };
       });
+    });
   }
 
   function pickLatestPerDay(rows) {
     var map = {};
     rows.forEach(function (row) {
       var key = row.date;
-      if (!map[key] || (row.createdAt || 0) > (map[key].createdAt || 0)) {
+      if (!map[key] || (row.created_at || 0) > (map[key].created_at || 0)) {
         map[key] = row;
       }
     });

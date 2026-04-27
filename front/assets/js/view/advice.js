@@ -3,10 +3,7 @@
   "use strict";
 
   var POPUP_PATH = "/views/advice/fortune_popup.html";
-  /** Dexie DayflowDB 와 이름·버전 충돌 방지 (포춘 전용) */
-  var FORTUNE_DB_NAME = "DayflowFortuneCookie";
-  var FORTUNE_STORE_NAME = "fortuneCookies";
-  var FORTUNE_KEY = "latest";
+  var FORTUNE_KEY = "dayflow:fortune-cookie";
   var FORTUNE_REVEALED_TYPE = "dayflow:fortune-revealed";
   var FORTUNE_CLOSE_TYPE = "dayflow:fortune-close";
   var latestFortuneText = "";
@@ -30,72 +27,24 @@
     return !!(saved && String(saved.text || "").trim());
   }
 
-  function openFortuneDb() {
-    return new Promise(function (resolve, reject) {
-      if (!window.indexedDB) {
-        reject(new Error("IndexedDB is not supported"));
-        return;
-      }
-      var req = window.indexedDB.open(FORTUNE_DB_NAME, 1);
-      req.onupgradeneeded = function (event) {
-        var db = event.target.result;
-        if (!db.objectStoreNames.contains(FORTUNE_STORE_NAME)) {
-          db.createObjectStore(FORTUNE_STORE_NAME, { keyPath: "id" });
-        }
-      };
-      req.onsuccess = function (event) {
-        resolve(event.target.result);
-      };
-      req.onerror = function () {
-        reject(req.error || new Error("Failed to open IndexedDB"));
-      };
-    });
-  }
-
   function saveFortuneCookie(fortuneText) {
     if (!fortuneText) return Promise.resolve();
-    return openFortuneDb().then(function (db) {
-      return new Promise(function (resolve, reject) {
-        var tx = db.transaction(FORTUNE_STORE_NAME, "readwrite");
-        var store = tx.objectStore(FORTUNE_STORE_NAME);
-        store.put({
-          id: FORTUNE_KEY,
-          text: fortuneText,
-          savedAt: new Date().toISOString(),
-        });
-        tx.oncomplete = function () {
-          db.close();
-          resolve();
-        };
-        tx.onerror = function () {
-          db.close();
-          reject(tx.error || new Error("Failed to save fortune cookie"));
-        };
-      });
-    });
+    try {
+      localStorage.setItem(FORTUNE_KEY, JSON.stringify({
+        text: fortuneText,
+        savedAt: new Date().toISOString(),
+      }));
+    } catch (e) {}
+    return Promise.resolve();
   }
 
   function getSavedFortuneCookie() {
-    return openFortuneDb()
-      .then(function (db) {
-        return new Promise(function (resolve, reject) {
-          var tx = db.transaction(FORTUNE_STORE_NAME, "readonly");
-          var store = tx.objectStore(FORTUNE_STORE_NAME);
-          var req = store.get(FORTUNE_KEY);
-          req.onsuccess = function () {
-            resolve(req.result || null);
-          };
-          req.onerror = function () {
-            reject(req.error || new Error("Failed to read fortune cookie"));
-          };
-          tx.oncomplete = function () {
-            db.close();
-          };
-        });
-      })
-      .catch(function () {
-        return null;
-      });
+    try {
+      var raw = localStorage.getItem(FORTUNE_KEY);
+      return Promise.resolve(raw ? JSON.parse(raw) : null);
+    } catch (e) {
+      return Promise.resolve(null);
+    }
   }
 
   function applyFortuneToAdvice(fortuneText) {
@@ -155,24 +104,10 @@
     return date.getMonth() + 1 + "월 " + date.getDate() + "일 " + weeks[date.getDay()];
   }
 
-  function getLatestDiaryRecord() {
-    var db = window.DayflowDB;
-    if (!db || !db.diaries) return Promise.resolve(null);
-    return db.diaries
-      .toArray()
-      .then(function (rows) {
-        if (!rows || !rows.length) return null;
-        rows.sort(function (a, b) {
-          var aDate = String(a.date || "");
-          var bDate = String(b.date || "");
-          if (aDate !== bDate) return bDate.localeCompare(aDate);
-          return Number(b.createdAt || 0) - Number(a.createdAt || 0);
-        });
-        return rows[0];
-      })
-      .catch(function () {
-        return null;
-      });
+  function getTodayLatestDiary() {
+    var store = window.DayflowSupabaseStore;
+    if (!store) return Promise.resolve(null);
+    return store.getLatestDiaryForToday();
   }
 
   function clampAdviceToSixLines(text) {
@@ -490,46 +425,51 @@
 
     window.addEventListener("message", onPopupMessage);
 
-    function hasAnyEmotionRecord() {
-      var db = window.DayflowDB;
-      if (!db || !db.diaries) return Promise.resolve(false);
-      return db.diaries
-        .count()
-        .then(function (n) {
-          return n > 0;
-        })
-        .catch(function () {
-          return false;
-        });
-    }
-
-    hasAnyEmotionRecord().then(function (has) {
-      var mainContent = document.getElementById("adviceMainContent");
-      var emptyEl = document.getElementById("adviceEmptyState");
-      if (!has) {
+    getTodayLatestDiary().then(function (todayDiary) {
+      if (!todayDiary) {
+        var mainContent = document.getElementById("adviceMainContent");
+        var emptyEl    = document.getElementById("adviceEmptyState");
+        var ctaHost    = document.getElementById("emptyDiaryCtaHost");
         if (mainContent) mainContent.hidden = true;
         if (emptyEl) emptyEl.removeAttribute("hidden");
-        return;
-      }
-      if (mainContent) mainContent.hidden = false;
-      if (emptyEl) emptyEl.setAttribute("hidden", "");
 
-      getLatestDiaryRecord().then(function (latestDiary) {
-        if (!latestDiary) return;
-        applyAdviceData(latestDiary, "");
-        getTodayWeatherSummary().then(function (weather) {
+        var store = window.DayflowSupabaseStore;
+        return (store ? store.hasDiaries() : Promise.resolve(false)).then(function (hasAny) {
+          if (!hasAny) {
+            // 기록 자체가 없는 신규 사용자 → emptyDiaryCta.js 가 채운 기존 문구 유지
+            return;
+          }
+          // 과거 기록은 있지만 오늘 기록 없음 → 날짜 기반 안내
+          if (ctaHost) {
+            var now = new Date();
+            var DOW = ["일", "월", "화", "수", "목", "금", "토"];
+            var dateLabel = (now.getMonth() + 1) + "." + now.getDate() + "(" + DOW[now.getDay()] + ")";
+            ctaHost.innerHTML =
+              '<div class="text-content">' +
+                '<div class="text-group">' +
+                  "<p><em>" + dateLabel + " 기록이 없습니다.</em></p>" +
+                  "<p>오늘 당신의 감정을 들려주세요!</p>" +
+                "</div>" +
+                '<div class="btn-content">' +
+                  '<button type="button" class="btn-sub" onclick="location.href=\'/chat/emotion\'">일기 쓰러가기</button>' +
+                "</div>" +
+              "</div>";
+          }
+        });
+      }
+
+      applyAdviceData(todayDiary, "");
+
+      getTodayWeatherSummary().then(function (weather) {
+        applyAdviceExtras({ weatherTip: buildWeatherTipFromSummary(weather) });
+        requestAiAdviceFromLatestDiary(todayDiary, weather).then(function (aiPayload) {
+          if (!aiPayload) return;
+          applyAdviceData(todayDiary, aiPayload.adviceBody || "");
           applyAdviceExtras({
-            weatherTip: buildWeatherTipFromSummary(weather),
-          });
-          requestAiAdviceFromLatestDiary(latestDiary, weather).then(function (aiPayload) {
-            if (!aiPayload) return;
-            applyAdviceData(latestDiary, aiPayload.adviceBody || "");
-            applyAdviceExtras({
-              colorMessage: aiPayload.colorMessage || "",
-              tags: Array.isArray(aiPayload.tags) ? aiPayload.tags.slice(0, 3) : [],
-              weatherTip: aiPayload.weatherTip || "",
-              careTip: aiPayload.careTip || "",
-            });
+            colorMessage: aiPayload.colorMessage || "",
+            tags: Array.isArray(aiPayload.tags) ? aiPayload.tags.slice(0, 3) : [],
+            weatherTip: aiPayload.weatherTip || "",
+            careTip: aiPayload.careTip || "",
           });
         });
       });

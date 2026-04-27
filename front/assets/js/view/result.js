@@ -585,8 +585,8 @@
       var insightsDiary = getDiaryText();
       if (insightsDiary) {
         showPersonalizedInsightFromRaw(insightsDiary);
-      } else if (window.DayflowDiaryStore && typeof DayflowDiaryStore.getLatestDiaryForToday === "function") {
-        DayflowDiaryStore.getLatestDiaryForToday().then(function (row) {
+      } else if (window.DayflowSupabaseStore && typeof DayflowSupabaseStore.getLatestDiaryForToday === "function") {
+        DayflowSupabaseStore.getLatestDiaryForToday().then(function (row) {
           if (row && row.content) showPersonalizedInsightFromRaw(String(row.content));
           else insightsList.textContent = fallbackInsightText;
         });
@@ -610,8 +610,8 @@
     var recDiary = getDiaryText();
     if (recDiary) {
       showTomorrowRecommendationsFromRaw(recDiary);
-    } else if (window.DayflowDiaryStore && typeof DayflowDiaryStore.getLatestDiaryForToday === "function") {
-      DayflowDiaryStore.getLatestDiaryForToday().then(function (row) {
+    } else if (window.DayflowSupabaseStore && typeof DayflowSupabaseStore.getLatestDiaryForToday === "function") {
+      DayflowSupabaseStore.getLatestDiaryForToday().then(function (row) {
         if (row && row.content) showTomorrowRecommendationsFromRaw(String(row.content));
         else renderTomorrowRecommendations(fallbackRecs);
       });
@@ -628,8 +628,8 @@
     }
     if (recDiary) {
       hydrateDynamicPackFromRaw(recDiary);
-    } else if (window.DayflowDiaryStore && typeof DayflowDiaryStore.getLatestDiaryForToday === "function") {
-      DayflowDiaryStore.getLatestDiaryForToday().then(function (row) {
+    } else if (window.DayflowSupabaseStore && typeof DayflowSupabaseStore.getLatestDiaryForToday === "function") {
+      DayflowSupabaseStore.getLatestDiaryForToday().then(function (row) {
         if (row && row.content) hydrateDynamicPackFromRaw(String(row.content));
       });
     }
@@ -676,8 +676,8 @@
       var diary = getDiaryText();
       if (diary) {
         showNarrativeFromRaw(diary);
-      } else if (window.DayflowDiaryStore && typeof DayflowDiaryStore.getLatestDiaryForToday === "function") {
-        DayflowDiaryStore.getLatestDiaryForToday().then(function (row) {
+      } else if (window.DayflowSupabaseStore && typeof DayflowSupabaseStore.getLatestDiaryForToday === "function") {
+        DayflowSupabaseStore.getLatestDiaryForToday().then(function (row) {
           if (row && row.content) showNarrativeFromRaw(String(row.content));
           else showDiaryEmpty();
         });
