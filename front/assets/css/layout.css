@@ -113,6 +113,9 @@ body:has(.wrap.has-tab-footer) {
 }
 
 .wrap.has-tab-footer > header.headerWrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   flex: 0 0 auto;
   position: relative;
   z-index: 5;
@@ -155,6 +158,11 @@ body:has(.wrap.has-tab-footer) {
   text-align: center;
   display: inline-block;
   text-align: center;
+  flex: 1;
+}
+
+.wrap > header.headerWrap > h1 > span {
+  margin-left: -40px;
 }
 
 main {

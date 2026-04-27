@@ -10,10 +10,8 @@ header > button.back {
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-size: 38px auto;
   -webkit-mask-position: center;
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
+  position: relative;
+  left: 0;
   border: 0;
   padding: 0;
   margin: 0;
