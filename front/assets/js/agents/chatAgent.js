@@ -117,9 +117,12 @@
           try {
             data = JSON.parse(text);
           } catch (parseErr) {
-            var pe = new Error(
-              "서버 응답이 JSON이 아니에요(프록시/연결 문제일 수 있음). 앞부분: " + text.replace(/\s+/g, " ").slice(0, 120)
-            );
+            var peMsg =
+              res.status === 413
+                ? "업로드 용량이 너무 커서 전송이 거절됐어요(413). 사진 크기를 줄인 뒤 다시 시도해 주세요."
+                : "서버 응답이 JSON이 아니에요(프록시/연결 문제일 수 있음). 앞부분: " +
+                  text.replace(/\s+/g, " ").slice(0, 120);
+            var pe = new Error(peMsg);
             pe.status = res.status;
             pe.code = "bad_json";
             throw pe;

@@ -100,6 +100,8 @@
   var isHistoryViewMode = false;
   var pendingImageBase64 = null;
   var pendingImageMediaType = "";
+  var IMAGE_MAX_DIM = 1280;
+  var IMAGE_JPEG_QUALITY = 0.78;
   var starterChipsTimer = null;
   var lastSendAt = 0;
   var isFinishing = false;
@@ -438,6 +440,9 @@
         (detail ? "상세: " + detail + "\n" : "") +
         "• API 키 형식(sk-ant-…)\n• 모델 이름(필요 시 콘솔에서 DAYFLOW_ANTHROPIC_MODEL 확인)"
       );
+    }
+    if (st === 413) {
+      return "사진 용량이 커서 전송이 거절됐어요(413). 사진 크기를 줄이거나 한 장만 첨부해 다시 보내 주세요.";
     }
     if (st === 403) {
       return "접근이 거부됐어요(403).\n" + (detail ? detail : "키 권한·결제·지역 제한을 확인해 주세요.");
@@ -1229,23 +1234,73 @@
     if (imgInput) imgInput.click();
   }
 
+  function readFileAsDataUrl(file) {
+    return new Promise(function (resolve, reject) {
+      var r = new FileReader();
+      r.onload = function (e) {
+        resolve(e.target && e.target.result ? String(e.target.result) : "");
+      };
+      r.onerror = function () {
+        reject(new Error("file_read_failed"));
+      };
+      r.readAsDataURL(file);
+    });
+  }
+
+  function downscaleImageDataUrl(dataUrl, mimeType) {
+    return new Promise(function (resolve) {
+      var img = new Image();
+      img.onload = function () {
+        var w = img.naturalWidth || img.width || 0;
+        var h = img.naturalHeight || img.height || 0;
+        if (!w || !h) {
+          resolve({ dataUrl: dataUrl, mediaType: mimeType || "image/jpeg" });
+          return;
+        }
+        var scale = Math.min(1, IMAGE_MAX_DIM / Math.max(w, h));
+        var tw = Math.max(1, Math.round(w * scale));
+        var th = Math.max(1, Math.round(h * scale));
+        var c = document.createElement("canvas");
+        c.width = tw;
+        c.height = th;
+        var ctx = c.getContext("2d");
+        if (!ctx) {
+          resolve({ dataUrl: dataUrl, mediaType: mimeType || "image/jpeg" });
+          return;
+        }
+        ctx.drawImage(img, 0, 0, tw, th);
+        var outType = "image/jpeg";
+        var outUrl = c.toDataURL(outType, IMAGE_JPEG_QUALITY);
+        resolve({ dataUrl: outUrl, mediaType: outType });
+      };
+      img.onerror = function () {
+        resolve({ dataUrl: dataUrl, mediaType: mimeType || "image/jpeg" });
+      };
+      img.src = dataUrl;
+    });
+  }
+
   function handleImageFile(ev) {
     if (isHistoryViewMode) return;
     var file = ev.target && ev.target.files && ev.target.files[0];
     if (!file) return;
-    var reader = new FileReader();
-    reader.onload = function (e) {
-      var dataUrl = e.target && e.target.result;
-      if (typeof dataUrl === "string") {
+    readFileAsDataUrl(file)
+      .then(function (rawDataUrl) {
+        var rawTypeMatch = String(rawDataUrl).match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,/);
+        var rawType = rawTypeMatch && rawTypeMatch[1] ? rawTypeMatch[1] : (file.type || "image/jpeg");
+        return downscaleImageDataUrl(rawDataUrl, rawType);
+      })
+      .then(function (result) {
+        if (!result || !result.dataUrl) return;
         removeChatIntroChrome();
-        addUserImage(dataUrl);
-        pendingImageBase64 = dataUrl.split(",")[1] || null;
-        var m = String(dataUrl).match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,/);
-        pendingImageMediaType = m && m[1] ? m[1] : "image/jpeg";
+        addUserImage(result.dataUrl);
+        pendingImageBase64 = result.dataUrl.split(",")[1] || null;
+        pendingImageMediaType = result.mediaType || "image/jpeg";
         addBotBubble("사진을 첨부했어요 📸 사진에 대해 궁금한 점을 같이 적어주세요. 예: 이 장면에서 제 감정 흐름을 분석해줘", false);
-      }
-    };
-    reader.readAsDataURL(file);
+      })
+      .catch(function () {
+        addBotBubble("사진을 읽지 못했어요. 다른 사진으로 다시 시도해 주세요.", false);
+      });
     ev.target.value = "";
   }
 
