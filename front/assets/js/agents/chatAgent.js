@@ -48,11 +48,41 @@
     return "";
   }
 
+  function normalizeMessages(messages, opts) {
+    var list = Array.isArray(messages) ? messages.slice() : [];
+    var imageBase64 = (opts && opts.imageBase64 ? String(opts.imageBase64) : "").trim();
+    var imageMediaType = (opts && opts.imageMediaType ? String(opts.imageMediaType) : "").trim() || "image/jpeg";
+    if (!imageBase64) return list;
+
+    for (var i = list.length - 1; i >= 0; i--) {
+      if (!list[i] || list[i].role !== "user") continue;
+      var txt = typeof list[i].content === "string" ? list[i].content : "";
+      list[i] = {
+        role: "user",
+        content: [
+          { type: "text", text: txt },
+          {
+            type: "image",
+            source: {
+              type: "base64",
+              media_type: imageMediaType,
+              data: imageBase64,
+            },
+          },
+        ],
+      };
+      break;
+    }
+    return list;
+  }
+
   /**
    * @param {Object} opts
    * @param {string} opts.apiKey
    * @param {string} opts.system
    * @param {Array<{role:string,content:string}>} opts.messages
+   * @param {string} [opts.imageBase64]
+   * @param {string} [opts.imageMediaType]
    * @returns {Promise<string>} assistant 텍스트
    */
   function sendMessages(opts) {
@@ -78,7 +108,7 @@
         model: model,
         max_tokens: 1024,
         system: opts.system,
-        messages: opts.messages,
+        messages: normalizeMessages(opts.messages, opts),
       }),
     }).then(function (res) {
       return res.text().then(function (text) {

@@ -99,6 +99,7 @@
   /** 감정기록에서 연 기록 보기 — 입력·새 전송 비활성 */
   var isHistoryViewMode = false;
   var pendingImageBase64 = null;
+  var pendingImageMediaType = "";
   var starterChipsTimer = null;
   var lastSendAt = 0;
   var isFinishing = false;
@@ -399,6 +400,8 @@
       apiKey: DayflowApiKey.get(),
       system: SYS_PROMPT(),
       messages: messages,
+      imageBase64: pendingImageBase64,
+      imageMediaType: pendingImageMediaType,
     });
   }
 
@@ -765,6 +768,8 @@
 
     callClaude()
       .then(function (reply) {
+        pendingImageBase64 = null;
+        pendingImageMediaType = "";
         removeTyping();
         addBotBubble(reply, false);
         chatHistory.push({ role: "assistant", content: reply });
@@ -914,6 +919,7 @@
     chatHistory = [];
     diaryText = "";
     pendingImageBase64 = null;
+    pendingImageMediaType = "";
     isFinishing = false;
     try {
       sessionStorage.removeItem(STORAGE_CHAT_SUMMARY);
@@ -1007,6 +1013,7 @@
     chatHistory = [];
     diaryText = "";
     pendingImageBase64 = null;
+    pendingImageMediaType = "";
     isFinishing = true;
     try {
       sessionStorage.removeItem(STORAGE_CHAT_SUMMARY);
@@ -1233,7 +1240,9 @@
         removeChatIntroChrome();
         addUserImage(dataUrl);
         pendingImageBase64 = dataUrl.split(",")[1] || null;
-        addBotBubble("사진을 받았어요 📸 메시지를 입력하고 전송해 주세요. (이미지 분석은 API 연동 후 가능해요)", false);
+        var m = String(dataUrl).match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,/);
+        pendingImageMediaType = m && m[1] ? m[1] : "image/jpeg";
+        addBotBubble("사진을 첨부했어요 📸 사진에 대해 궁금한 점을 같이 적어주세요. 예: 이 장면에서 제 감정 흐름을 분석해줘", false);
       }
     };
     reader.readAsDataURL(file);
