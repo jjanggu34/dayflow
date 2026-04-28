@@ -38,13 +38,31 @@
       });
   }
 
+  /** 로그인 후 돌아갈 경로(같은 origin 내). chat-list 등에서 sessionStorage 로 지정 */
+  function resolveOAuthRedirectTo() {
+    var origin = "";
+    try {
+      origin = window.location.origin || "";
+    } catch (e0) {
+      origin = "";
+    }
+    var path = "/main";
+    try {
+      var pr = sessionStorage.getItem("dayflow_post_login_redirect");
+      if (pr && pr.charAt(0) === "/" && pr.indexOf("//") === -1 && !/^[a-z]+:/i.test(pr)) {
+        path = pr;
+      }
+    } catch (e1) {}
+    return origin + path;
+  }
+
   /** 구글 OAuth 로그인 */
   function signInWithGoogle() {
     var client = getClient();
     if (!client) return Promise.reject(new Error("supabase_not_initialized"));
     return client.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: window.location.origin + "/main" },
+      options: { redirectTo: resolveOAuthRedirectTo() },
     }).then(function (res) {
       if (res.error) throw res.error;
     });

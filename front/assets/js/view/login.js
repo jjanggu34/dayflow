@@ -11,9 +11,34 @@
   var errorEl     = document.getElementById("loginError");
   var subtitleEl  = document.getElementById("loginSubtitle");
 
-  // 이미 로그인된 상태면 /main 으로 이동
+  function resolvePostLoginUrl() {
+    var origin = "";
+    try {
+      origin = window.location.origin || "";
+    } catch (e0) {
+      origin = "";
+    }
+    var path = "/main";
+    try {
+      var pr = sessionStorage.getItem("dayflow_post_login_redirect");
+      if (pr && pr.charAt(0) === "/" && pr.indexOf("//") === -1 && !/^[a-z]+:/i.test(pr)) {
+        path = pr;
+      }
+      sessionStorage.removeItem("dayflow_post_login_redirect");
+    } catch (e1) {}
+    return origin + path;
+  }
+
+  // 이미 로그인된 상태면 메인으로 (오래된 post_login_redirect 는 소비하지 않음)
   DayflowAuth.getCurrentUser().then(function (user) {
-    if (user) window.location.replace("/main");
+    if (user) {
+      try {
+        var o = window.location.origin || "";
+        window.location.replace(o + "/main");
+      } catch (e) {
+        window.location.replace("/main");
+      }
+    }
   });
 
   function setError(msg) {
@@ -61,7 +86,7 @@
 
     action
       .then(function () {
-        window.location.replace("/main");
+        window.location.replace(resolvePostLoginUrl());
       })
       .catch(function (err) {
         var msg = err.message || "오류가 발생했습니다.";

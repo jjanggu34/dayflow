@@ -23,6 +23,7 @@ const rewrites = [
   ["/report/report", "/views/report/report.html"],
   ["/advice/advice", "/views/advice/advice.html"],
   ["/advice", "/views/advice/advice.html"],
+  ["/my/chat-list", "/views/my/chat-list.html"],
   ["/my", "/views/my/my.html"],
   ["/", "/index.html"]
 ];
@@ -107,4 +108,5 @@ server.listen(PORT, () => {
   console.log(`  /main           → 메인(캘린더)`);
   console.log(`  /advice         → 조언`);
   console.log(`  /advice/advice  → 조언(별칭)`);
+  console.log(`  /my/chat-list   → 감정기록 목록`);
 });

@@ -524,7 +524,7 @@
   border-radius: 12px;
 }
 
-#bodyWrap.result-page footer.result-footer {
+#bodyWrap.result-page > footer {
   flex: 0 0 auto;
   min-height: 0;
   display: block;

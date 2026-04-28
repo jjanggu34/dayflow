@@ -54,6 +54,7 @@
     { "src": "/report", "dest": "/views/report/report.html" },
     { "src": "/advice/advice", "dest": "/views/advice/advice.html" },
     { "src": "/advice", "dest": "/views/advice/advice.html" },
+    { "src": "/my/chat-list", "dest": "/views/my/chat-list.html" },
     { "src": "/my", "dest": "/views/my/my.html" }
   ]
 }

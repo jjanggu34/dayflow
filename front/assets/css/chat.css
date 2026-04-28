@@ -645,3 +645,52 @@
   cursor: not-allowed;
   opacity: 0.95;
 }
+
+/* 감정기록에서 연 이전 대화 보기 — 입력 비활성 */
+#bodyWrap.chat .chat-composer.chat-composer--readonly {
+  opacity: 0.72;
+}
+
+/* 저장 일기 보기 — result와 같은 button-content 하단 안내 */
+#bodyWrap.chat .chat-history-dock {
+  flex: 0 0 auto;
+  padding: 12px 20px calc(12px + env(safe-area-inset-bottom, 0px));
+  background: var(--white, #fff);
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+#bodyWrap.chat .chat-history-dock__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#bodyWrap.chat .chat-history-dock__meta {
+  margin: 0;
+  font-size: var(--font14, 14px);
+  color: var(--text-default, #333);
+  text-align: center;
+  line-height: 1.35;
+}
+
+#bodyWrap.chat .chat-history-dock__meta strong {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+#bodyWrap.chat .chat-composer[hidden],
+#bodyWrap.chat .chat-history-dock[hidden] {
+  display: none !important;
+}
+
+#bodyWrap.chat a.chat-history-dock__detail {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  text-decoration: none;
+}
+
+#bodyWrap.chat a.chat-history-dock__detail:active {
+  opacity: 0.92;
+}

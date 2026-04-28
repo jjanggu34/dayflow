@@ -21,15 +21,15 @@
     <div class="wrap">
       <header class="headerWrap">
         <button type="button" class="back" id="resultBackBtn" aria-label="이전 화면으로">이전 화면으로</button>
-        <h1><span>오늘의 분석</span></h1>
+        <h1><span id="resultPageTitle">오늘의 분석</span></h1>
         <!--<p class="result-header__date" id="resultHeaderDate" aria-label="오늘 날짜"></p>-->
       </header>
       <div id="bodyWrap" class="result-page">
         <main class="result-main" id="resultMain">
           <section class="result-card result-summary" aria-labelledby="resultSummaryTitle">
             <h2>
-              <span id="" class="result-summary__sub">데일리 채팅 분석</span>
-              <em id="" class="result-summary__headline">오늘의 감정 점수</em>
+              <span id="resultSubline" class="result-summary__sub">데일리 채팅 분석</span>
+              <em id="resultHeadline" class="result-summary__headline">오늘의 감정 점수</em>
             </h2>
             <div class="result-summary__body result-summary__body--gauge">
               <div class="result-gauge" id="resultGauge" style="--gauge-score: 0">
@@ -126,7 +126,7 @@
           </section>-->
         </main>
 
-        <footer class="result-footer">
+        <footer>
           <div class="button-content">
             <button type="button" class="btn-ctp" id="resultAdviceBtn">홈으로</button>
           </div>
@@ -134,9 +134,10 @@
       </div>
     </div>
     <script src="../../assets/js/domain/emotionChatData.js"></script>
-    <script src="/assets/js/lib/dexie.min.js"></script>
-    <script src="../../assets/js/config/db-config.js"></script>
-    <script src="../../assets/js/domain/diaryStore.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="/assets/js/config/supabase-config.js"></script>
+    <script src="/assets/js/agents/authAgent.js"></script>
+    <script src="../../assets/js/domain/supabaseStore.js"></script>
     <script src="../../assets/js/domain/resultWeather.js"></script>
     <script src="../../assets/js/agents/apikeyManager.js"></script>
     <script src="../../assets/js/agents/chatAgent.js"></script>

@@ -36,15 +36,54 @@
     D = window.DayflowEmotionChat;
   }
 
+  /** 감정기록 목록 → /chat : diary id 또는 날짜로 이전 기록 보기 (보기 전용) */
+  function consumeHistoryIntent() {
+    try {
+      var hid = (sessionStorage.getItem("dayflow_chat_history_diary_id") || "").trim();
+      var hdt = (sessionStorage.getItem("dayflow_chat_history_date") || "").trim();
+      var hem = (sessionStorage.getItem("dayflow_chat_history_emotion") || "").trim();
+      var out = null;
+      if (/^\d+$/.test(hid)) {
+        out = { id: parseInt(hid, 10) };
+        sessionStorage.removeItem("dayflow_chat_history_diary_id");
+        sessionStorage.removeItem("dayflow_chat_history_date");
+      } else if (/^\d{4}-\d{2}-\d{2}$/.test(hdt)) {
+        out = { date: hdt };
+        sessionStorage.removeItem("dayflow_chat_history_diary_id");
+        sessionStorage.removeItem("dayflow_chat_history_date");
+      } else {
+        return null;
+      }
+      sessionStorage.removeItem("dayflow_chat_history_emotion");
+      if (hem && /^(best|good|normal|bad|worst)$/.test(hem)) {
+        sessionStorage.setItem(D.STORAGE_EMOTION_KEY, hem);
+      } else {
+        var cur = sessionStorage.getItem(D.STORAGE_EMOTION_KEY);
+        if (!cur || !/^(best|good|normal|bad|worst)$/.test(cur)) {
+          sessionStorage.setItem(D.STORAGE_EMOTION_KEY, "good");
+        }
+      }
+      return out;
+    } catch (eC) {
+      return null;
+    }
+  }
+
+  var HISTORY_LOAD = consumeHistoryIntent();
+
   try {
-    var emGate = sessionStorage.getItem(D.STORAGE_EMOTION_KEY);
-    if (!emGate || !/^(best|good|normal|bad|worst)$/.test(emGate)) {
+    if (!HISTORY_LOAD) {
+      var emGate = sessionStorage.getItem(D.STORAGE_EMOTION_KEY);
+      if (!emGate || !/^(best|good|normal|bad|worst)$/.test(emGate)) {
+        window.location.replace(D.urlChatFlow("emotion"));
+        return;
+      }
+    }
+  } catch (eGate) {
+    if (!HISTORY_LOAD) {
       window.location.replace(D.urlChatFlow("emotion"));
       return;
     }
-  } catch (eGate) {
-    window.location.replace(D.urlChatFlow("emotion"));
-    return;
   }
 
   window.__dayflowChatInit = true;
@@ -57,6 +96,8 @@
 
   var chatHistory = [];
   var diaryText = "";
+  /** 감정기록에서 연 기록 보기 — 입력·새 전송 비활성 */
+  var isHistoryViewMode = false;
   var pendingImageBase64 = null;
   var starterChipsTimer = null;
   var lastSendAt = 0;
@@ -697,6 +738,7 @@
   }
 
   function handleChat(text) {
+    if (isHistoryViewMode) return;
     var t = (text || "").trim();
     if (!t) return;
 
@@ -742,6 +784,7 @@
   }
 
   function submitChatMessage(text) {
+    if (isHistoryViewMode) return;
     var t = (text || "").trim();
     if (!t) return;
     var now = Date.now();
@@ -794,7 +837,7 @@
   }
 
   function finishDiary() {
-    if (isFinishing) return;
+    if (isHistoryViewMode || isFinishing) return;
     isFinishing = true;
 
     var text = diaryText.trim();
@@ -888,6 +931,158 @@
     }, 500);
   }
 
+  function escapeHtml(s) {
+    return String(s || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  function formatYmdDotShort(ymd) {
+    var p = String(ymd || "").split("-");
+    if (p.length !== 3) return ymd;
+    return String(p[0]).slice(-2) + "." + p[1] + "." + p[2];
+  }
+
+  function hideChatComposerChrome() {
+    var composer = document.querySelector("#bodyWrap .chat-composer");
+    if (composer) {
+      composer.setAttribute("hidden", "");
+      composer.setAttribute("aria-hidden", "true");
+    }
+    var voice = document.getElementById("chatVoiceBanner");
+    if (voice) voice.setAttribute("hidden", "");
+  }
+
+  /** 기록 보기 — 입력 대신 result.html 과 같은 button-content + 그날 분석 상세보기 링크 */
+  function showHistoryDockFooter(row) {
+    hideChatComposerChrome();
+    var dock = document.getElementById("chatHistoryDock");
+    var meta = document.getElementById("chatHistoryDockMeta");
+    var link = document.getElementById("chatHistoryDockDetail");
+    if (meta) {
+      if (row && row.date) {
+        meta.innerHTML =
+          "<strong>" + escapeHtml(formatYmdDotShort(row.date)) + "</strong> 그날의 분석";
+      } else {
+        meta.textContent = "그날의 분석";
+      }
+    }
+    if (link) {
+      if (row && row.date) {
+        var base =
+          typeof D.urlChatFlow === "function" ? D.urlChatFlow("result") : "/chat/result";
+        var q = "date=" + encodeURIComponent(row.date);
+        if (row.id) q += "&diary=" + encodeURIComponent(String(row.id));
+        link.href = base.indexOf("?") >= 0 ? base + "&" + q : base + "?" + q;
+        link.removeAttribute("hidden");
+      } else {
+        link.href = "/my/chat-list";
+        link.textContent = "감정기록으로";
+      }
+    }
+    if (dock) dock.removeAttribute("hidden");
+  }
+
+  function showHistoryDockError() {
+    hideChatComposerChrome();
+    var dock = document.getElementById("chatHistoryDock");
+    var meta = document.getElementById("chatHistoryDockMeta");
+    var link = document.getElementById("chatHistoryDockDetail");
+    if (meta) meta.textContent = "기록을 불러오지 못했어요.";
+    if (link) {
+      link.href = "/my/chat-list";
+      link.textContent = "감정기록으로";
+    }
+    if (dock) dock.removeAttribute("hidden");
+  }
+
+  function initHistoryView(loadSpec) {
+    isHistoryViewMode = true;
+    if (starterChipsTimer) {
+      clearTimeout(starterChipsTimer);
+      starterChipsTimer = null;
+    }
+    chatHistory = [];
+    diaryText = "";
+    pendingImageBase64 = null;
+    isFinishing = true;
+    try {
+      sessionStorage.removeItem(STORAGE_CHAT_SUMMARY);
+    } catch (eRm) {}
+    if (chatMessages) chatMessages.innerHTML = "";
+
+    function normalizeRow(row) {
+      if (!row) return null;
+      return {
+        id: row.id,
+        date: String(row.date || "").trim(),
+        emotion: row.emotion && /^(best|good|normal|bad|worst)$/.test(row.emotion) ? row.emotion : "good",
+        content: String(row.content || "").trim(),
+        summary: String(row.summary || "").trim(),
+      };
+    }
+
+    function applyDiaryRow(row) {
+      row = normalizeRow(row);
+      if (!row) {
+        addBotBubble("기록을 불러오지 못했어요. 감정기록 목록으로 돌아가 주세요.", false);
+        showHistoryDockError();
+        return;
+      }
+      try {
+        sessionStorage.setItem(D.STORAGE_EMOTION_KEY, row.emotion);
+      } catch (eS) {}
+      var em = getChatEmotion();
+      if (chatHeaderSub) {
+        chatHeaderSub.textContent = em.emoji + " " + em.name + " · " + row.date;
+      }
+      addBotBubble(
+        "저장된 기록을 보여 드려요. 지금은 쓰신 말만 저장돼 있고, AI 답변은 화면에 남지 않아요. 이어서 대화하기는 아직 지원하지 않아요.",
+        false
+      );
+      var lines = row.content ? row.content.split(/\n+/) : [];
+      var shown = 0;
+      lines.forEach(function (line) {
+        var t = (line || "").trim();
+        if (!t) return;
+        addUserMessage(t);
+        shown++;
+      });
+      if (!shown) {
+        addBotBubble("이날 저장된 본문이 비어 있어요.", false);
+      }
+      var sum = row.summary;
+      if (sum && sum.length && sum !== row.content) {
+        addBotBubble("요약: " + sum.slice(0, 1800), false);
+      }
+      showHistoryDockFooter(row);
+      scrollThreadToBottom();
+    }
+
+    if (!window.DayflowSupabaseStore) {
+      addBotBubble("저장소 연결이 없어 기록을 불러올 수 없어요.", false);
+      showHistoryDockError();
+      return;
+    }
+
+    var p;
+    if (loadSpec.id && typeof DayflowSupabaseStore.getDiaryById === "function") {
+      p = DayflowSupabaseStore.getDiaryById(loadSpec.id);
+    } else if (loadSpec.date && typeof DayflowSupabaseStore.getLatestDiaryForDate === "function") {
+      p = DayflowSupabaseStore.getLatestDiaryForDate(loadSpec.date);
+    } else {
+      p = Promise.resolve(null);
+    }
+    p.then(normalizeRow)
+      .then(applyDiaryRow)
+      .catch(function () {
+        applyDiaryRow(null);
+      });
+  }
+
+
   function openApiKeyPrompt() {
     if (DayflowApiKey.usesEmbeddedKey() || DayflowApiKey.usesServerProxy()) {
       return;
@@ -932,6 +1127,7 @@
   }
 
   function toggleVoice() {
+    if (isHistoryViewMode) return;
     if (!speechSupported()) {
       window.alert("음성 입력은 Chrome·Edge 등에서 지원됩니다.");
       return;
@@ -1022,10 +1218,12 @@
   }
 
   function attachImage() {
+    if (isHistoryViewMode) return;
     if (imgInput) imgInput.click();
   }
 
   function handleImageFile(ev) {
+    if (isHistoryViewMode) return;
     var file = ev.target && ev.target.files && ev.target.files[0];
     if (!file) return;
     var reader = new FileReader();
@@ -1064,6 +1262,10 @@
 
   if (backBtn) {
     backBtn.addEventListener("click", function () {
+      if (isHistoryViewMode) {
+        window.location.href = "/my/chat-list";
+        return;
+      }
       window.location.href = D.urlChatFlow("emotion");
     });
   }
@@ -1085,7 +1287,11 @@
     });
   }
 
-  initPage();
+  if (HISTORY_LOAD) {
+    initHistoryView(HISTORY_LOAD);
+  } else {
+    initPage();
+  }
   setSendEnabled();
   if (input) autosizeInput();
 })();

@@ -51,6 +51,45 @@
     }).catch(function () { return null; });
   }
 
+  /** 일기 단건 (감정기록 목록 → 채팅 보기용) */
+  function getDiaryById(id) {
+    var client = getClient();
+    if (!client) return Promise.resolve(null);
+    var n = Number(id);
+    if (!n || n < 1) return Promise.resolve(null);
+    return getUserId().then(function (uid) {
+      return client
+        .from("diaries")
+        .select("*")
+        .eq("user_id", uid)
+        .eq("id", n)
+        .maybeSingle()
+        .then(function (res) {
+          if (res.error) { console.error(res.error); return null; }
+          return res.data || null;
+        });
+    }).catch(function () { return null; });
+  }
+
+  /** 최근 일기 목록 (감정기록 리스트) */
+  function getRecentDiaries(limit) {
+    var client = getClient();
+    if (!client) return Promise.resolve([]);
+    var n = Math.max(1, Math.min(Number(limit) || 50, 200));
+    return getUserId().then(function (uid) {
+      return client
+        .from("diaries")
+        .select("id, date, emotion, summary, content, created_at")
+        .eq("user_id", uid)
+        .order("created_at", { ascending: false })
+        .limit(n)
+        .then(function (res) {
+          if (res.error) { console.error(res.error); return []; }
+          return res.data || [];
+        });
+    }).catch(function () { return []; });
+  }
+
   function getLatestDiaryForToday() {
     return getLatestDiaryForDate(toYmd());
   }
@@ -250,6 +289,8 @@
   global.DayflowSupabaseStore = {
     toYmd:                  toYmd,
     getLatestDiaryForDate:  getLatestDiaryForDate,
+    getDiaryById:           getDiaryById,
+    getRecentDiaries:       getRecentDiaries,
     getLatestDiaryForToday: getLatestDiaryForToday,
     getDiariesForDate:      getDiariesForDate,
     saveDiaryEntry:         saveDiaryEntry,

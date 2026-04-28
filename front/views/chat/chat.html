@@ -70,6 +70,13 @@
           </div>
           <input type="file" id="chatImgInput" accept="image/*" class="chat-visually-hidden" tabindex="-1" aria-hidden="true" />
         </footer>
+
+        <footer id="chatHistoryDock" class="chat-history-dock" hidden aria-label="그날 분석으로 이동">
+          <div class="button-content chat-history-dock__inner">
+            <p id="chatHistoryDockMeta" class="chat-history-dock__meta"></p>
+            <a href="/chat/result" id="chatHistoryDockDetail" class="btn-ctp chat-history-dock__detail">상세보기</a>
+          </div>
+        </footer>
       </div>
     </div>
     <!-- 로컬 전용: 주석 해제 후 키 입력 시 ⚙ 프롬프트 없이 동작. 키가 들어간 HTML/스크립트는 Git에 올리지 마세요. -->

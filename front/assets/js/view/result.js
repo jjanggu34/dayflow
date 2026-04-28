@@ -515,7 +515,137 @@
     if (lSub) lSub.textContent = "상승";
   }
 
+  function formatYmdDotShortForResult(ymd) {
+    var p = String(ymd || "").split("-");
+    if (p.length !== 3) return ymd;
+    return String(p[0]).slice(-2) + "." + p[1] + "." + p[2];
+  }
+
+  /** /chat/result?date=YYYY-MM-DD 또는 ?diary=숫자 — 지난 기록 분석 보기 */
+  function parseResultHistoryQuery() {
+    try {
+      var q = new URLSearchParams(window.location.search || "");
+      var date = (q.get("date") || "").trim();
+      var diary = (q.get("diary") || "").trim();
+      if (/^\d{4}-\d{2}-\d{2}$/.test(date)) return { date: date };
+      if (/^\d+$/.test(diary)) return { diaryId: parseInt(diary, 10) };
+    } catch (e) {}
+    return null;
+  }
+
+  function initResultHistoryView(spec) {
+    var Dflow = window.DayflowEmotionChat;
+    if (!window.DayflowSupabaseStore) {
+      window.location.href = "/main";
+      return;
+    }
+
+    function fetchRow() {
+      if (spec.diaryId && typeof DayflowSupabaseStore.getDiaryById === "function") {
+        return DayflowSupabaseStore.getDiaryById(spec.diaryId);
+      }
+      if (spec.date && typeof DayflowSupabaseStore.getLatestDiaryForDate === "function") {
+        return DayflowSupabaseStore.getLatestDiaryForDate(spec.date);
+      }
+      return Promise.resolve(null);
+    }
+
+    fetchRow().then(function (row) {
+      if (!row) {
+        window.location.href = "/main";
+        return;
+      }
+
+      var dateYmd = String(row.date || spec.date || "").trim().split("T")[0] || "";
+
+      var type =
+        row.emotion && Object.prototype.hasOwnProperty.call(PACKS, row.emotion)
+          ? row.emotion
+          : "good";
+      try {
+        if (Dflow && Dflow.STORAGE_EMOTION_KEY) {
+          sessionStorage.setItem(Dflow.STORAGE_EMOTION_KEY, type);
+        }
+        sessionStorage.setItem(STORAGE_DIARY, String(row.content || ""));
+        var sum = String(row.summary || "").trim();
+        if (sum) sessionStorage.setItem(STORAGE_CHAT_SUMMARY, sum.slice(0, 2000));
+        else sessionStorage.removeItem(STORAGE_CHAT_SUMMARY);
+      } catch (e2) {}
+
+      var pack = PACKS[type] || PACKS.good;
+      var bodyWrap = document.getElementById("bodyWrap");
+      if (bodyWrap) {
+        bodyWrap.classList.add("result-page--" + type);
+        bodyWrap.classList.add("result-page--history");
+      }
+
+      var titleEl = document.getElementById("resultPageTitle");
+      if (titleEl) titleEl.textContent = formatYmdDotShortForResult(dateYmd) + " 그날의 분석";
+      try {
+        document.title = "DAYFLOW — " + formatYmdDotShortForResult(dateYmd) + " 분석";
+      } catch (e3) {}
+
+      var headline = document.getElementById("resultHeadline");
+      var subline = document.getElementById("resultSubline");
+      var totalScore = document.getElementById("resultTotalScore");
+      var moodLabel = document.getElementById("resultMoodLabel");
+      var tags = document.getElementById("resultTags");
+      var metricsList = document.getElementById("resultMetricsList");
+      var insightsList = document.getElementById("resultInsightsList");
+      var diaryBody = document.getElementById("resultDiaryBody");
+
+      if (headline) headline.textContent = pack.headline;
+      if (subline) subline.textContent = pack.subline;
+      if (totalScore) totalScore.textContent = String(pack.total);
+      if (moodLabel) moodLabel.textContent = pack.moodLabel;
+      if (tags) renderTags(tags, pack.tags || []);
+      if (metricsList) renderMetrics(metricsList, pack.metrics || []);
+      applyGaugeScore(pack.total);
+
+      if (insightsList) {
+        insightsList.textContent = getInsightsFallbackText(pack);
+      }
+      renderTomorrowRecommendations(pack.tomorrowRecommendations || []);
+
+      if (diaryBody) {
+        var narrative =
+          String(row.summary || "").trim() ||
+          summarizeDiaryForResult(String(row.content || ""), 400) ||
+          pack.chatSummaryFallback ||
+          "";
+        diaryBody.textContent = narrative || "저장된 요약이 없어요.";
+        if (!narrative) diaryBody.classList.add("is-empty");
+        else diaryBody.classList.remove("is-empty");
+      }
+
+      if (typeof window.DayflowResultWeather !== "undefined" && DayflowResultWeather.fillResultStatusCards) {
+        DayflowResultWeather.fillResultStatusCards({ onFail: setPlaceholderStats });
+      } else {
+        setPlaceholderStats();
+      }
+
+      var back = document.getElementById("resultBackBtn");
+      if (back) {
+        back.addEventListener("click", function () {
+          window.location.href = "/my/chat-list";
+        });
+      }
+      var homeBtn = document.getElementById("resultAdviceBtn");
+      if (homeBtn) {
+        homeBtn.addEventListener("click", function () {
+          window.location.href = "/main";
+        });
+      }
+    });
+  }
+
   function init() {
+    var histSpec = parseResultHistoryQuery();
+    if (histSpec) {
+      initResultHistoryView(histSpec);
+      return;
+    }
+
     var Dflow = window.DayflowEmotionChat;
     if (Dflow) {
       try {
