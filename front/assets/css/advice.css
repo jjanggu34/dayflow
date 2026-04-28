@@ -35,6 +35,10 @@
   height: 100%;
 }
 
+#bodyWrap.advice-page #adviceMainContent[hidden] {
+  display:none;
+}
+
 #bodyWrap.advice-page .advice-empty-cta {
   max-width: 100%;
   align-self: stretch;
