@@ -1,193 +1,83 @@
-# DAYFLOW — plan.md
+# DAYFLOW — plan.md (현행 작업 계획)
 
-## AI 에이전트 역할·승인 게이트 (고정)
+## 승인 게이트
 
-- 구현 전 반드시 **`docs/research.md` → `docs/plan.md`** 작성 후 **사용자 승인**을 받는다.
-- **승인 전 코드 작성 금지.** (앱 코드·`vercel.json`·`views/`·`assets/` 구현; 문서만 수정하는 것은 예외)
+- 작업 순서는 `research -> plan -> implement`를 따른다.
+- 구현 전에는 `docs/research.md`와 `docs/plan.md`를 최신화하고 사용자 승인을 받는다.
+- 승인 전에는 앱 코드(`views`, `assets`, `index.html`, `vercel.json`) 수정 없이 문서만 갱신한다.
 
-## 목표
+## 현재 목표
 
-- Vercel 정적 배포 가능한 **모바일 웹** 골격을 갖춘다.
-- **jQuery + Dexie(CDN) + Claude(멀티모달) + Web Speech** 요구사항에 맞는 파일 구조·역할 분리를 확정한다.
-- **승인 단계별**로 스캐폴딩 → 공통 레이어 → DB → 로그인 → 화면별 순 구현한다.
-- 상세 명세(CSS 5분할, 공통 JS API, `chatAgent` 엔드포인트, `vercel.json` 매핑 등)는 **`docs/research.md`**에 보존한다.
+- 최신 코드베이스 기준으로 문서를 동기화한다.
+- 다음 구현 작업이 바로 가능하도록 우선순위/범위/검증 기준을 재정의한다.
+- `front/`를 기준 앱 소스로 고정하고, 관련 리스크를 명확히 관리한다.
 
-## 범위 / 비범위
+## 범위
 
-**범위**
+### 포함
 
-- 요청한 디렉토리·파일 트리 생성 및 단계별 구현.
-- `vercel.json` 라우팅, `views/common` 조합, CSS 5파일 + `main.css` 단일 로드.
-- Dexie 스키마(`DayflowDB`), `diaryStore` 추상화, `chatAgent`/`analysisAgent`/`apikeyManager` 기본 동작.
-- S2 감정 화면 스킵 로직(`diaryFlow.js`, 사진 유무 분기).
-- 탭 5개 네비게이션, 각 뷰 최소 UI 및 라우트 연결.
+- 문서 정합성 유지 (`docs/research.md`, `docs/plan.md`)
+- 기능 작업 시 우선 적용 대상
+  - 조언 포춘쿠키 노출 규칙 개선
+  - 마지막 일기 기반 AI 조언 개인화
+  - 조언 본문 6줄 제한 UI 보장
 
-**비범위 (초기 단계)**
+### 제외
 
-- Supabase 연동(추후 `diaryStore` 구현체만 교체).
-- 서버사이드 인증·결제·푸시.
-- PWA 오프라인 캐시 전략(필요 시 후속).
-- Claude API 프록시(필요해지면 별도 작업으로 범위 확장).
-- **추후 에이전트**(`voiceAgent`, `reportAgent`, `adviceAgent`) — `research.md`의 도입 시점 가이드 전까지 **파일 추가·구현 금지**.
+- 신규 인프라 도입(Supabase, 인증, 결제, 푸시)
+- 대규모 아키텍처 전환
+- 추후 에이전트(`voiceAgent`, `reportAgent`, `adviceAgent`) 신규 추가
 
-## 수정 파일 목록 (예상 전체)
+## 다음 구현 우선순위
 
-_승인 후 단계마다 실제 생성·수정됨._
+1. **조언 포춘쿠키 노출 규칙**
+   - 자동 오픈 제거
+   - 버튼 클릭 시만 오픈
+   - 당일 1회 제한, 익일 재오픈 허용
+2. **마지막 일기 기반 AI 조언**
+   - 최신 `diaries` 1건 조회
+   - 조언 날짜/본문 동적 반영
+   - 실패 시 폴백 메시지 유지
+3. **조언 본문 표시 안정화**
+   - 모바일 기준 6줄 제한(clamp)
+   - 긴 응답/줄바꿈/빈값 예외 처리
 
-| 단계       | 대상                                                                                     |
-| ---------- | ---------------------------------------------------------------------------------------- |
-| 스캐폴딩   | `index.html`, `vercel.json`, 전체 `views/**`, `assets/**` 빈 파일 또는 골격              |
-| CSS        | `assets/css/common.css`, `layout.css`, `button.css`, `form.css`, `popup.css`, `main.css` |
-| 공통 JS    | `assets/js/ui/com/layout.js`, `popup.js`, `input.js`, `calendar.js`                      |
-| DB         | `assets/js/config/db-config.js`, `assets/js/domain/diaryStore.js`                        |
-| 에이전트   | `assets/js/agents/chatAgent.js`, `analysisAgent.js`, `apikeyManager.js`                  |
-| 도메인     | `assets/js/domain/diaryFlow.js`                                                          |
-| 뷰         | `assets/js/view/*.js`, 각 `views/**/*.html`, `views/common/*.html`                       |
-| 라이브러리 | `assets/js/lib/jquery-1.12.4.js`                                                         |
+## 수정 대상 파일 (예상)
 
-## 단계별 작업 순서 (원문 요구사항, 승인 게이트 포함)
+- `front/assets/js/view/advice.js`
+- `front/assets/css/advice.css`
+- `front/views/advice/advice.html` (필요 시)
+- 연동 확인: `front/assets/js/agents/chatAgent.js`, `front/assets/js/config/db-config.js`
 
-각 단계마다 **사용자 승인**이 필요할 수 있다. 특히 **4번·9번**은 구현 전/중간 게이트로 둔다.
+## 데이터/상태 기준
 
-| 순서 | 작업                                                                                     |
-| ---- | ---------------------------------------------------------------------------------------- |
-| 1    | 전체 디렉토리 + 빈 파일 생성                                                             |
-| 2    | `docs/research.md` 작성                                                                  |
-| 3    | `docs/plan.md` 작성                                                                      |
-| 4    | **↓ 사용자 승인 대기 ↓**                                                                 |
-| 5    | `main.css` 및 CSS 5개 파일 (모바일 우선)                                                 |
-| 6    | 공통 JS: `layout.js`, `popup.js`, `input.js`, `calendar.js`                              |
-| 7    | `db-config.js` (Dexie.js 스키마)                                                         |
-| 8    | `login.html` + `login.js`                                                                |
-| 9    | **↓ 사용자 승인 대기 ↓**                                                                 |
-| 10   | 이후 화면별 순차 진행 (`home` → `chat` emotion/chat/result → `report` → `advice` → `my`) |
-
-**참고**: `vercel.json` 라우팅·`chatAgent` 스펙·S2 스킵 로직 등은 **`research.md`** 표와 동일하게 구현한다.
-
-## 상태 / 데이터 구조
-
-**IndexedDB (Dexie)**
-
-- `diaries`: 일기 본문·요약·이미지·날짜·감정 문자열 등.
-- `emotions`: 날짜·유형·점수 등 정량/분류 보조.
-- `settings`: 앱 설정 키-값.
-
-**localStorage**
-
-- Claude API 키: `apikeyManager.js` 전담(스키마 `settings`와 중복 저장은 지양, 단일 소스 권장).
-
-**챗봇 진행 상태**
-
-- `diaryFlow.js`: 현재 단계, **사진 첨부 여부**(S2 스킵), 선택 감정 등. 세션 스토어 vs 메모리는 구현 시 한 가지로 통일.
-
-## 예외 처리
-
-| 상황                        | 대응                                                                              |
-| --------------------------- | --------------------------------------------------------------------------------- |
-| API 키 없음                 | 조언/챗봇 진입 시 안내 오버레이 또는 설정 유도(`popup` + `apikeyManager`).        |
-| Claude API 오류·CORS        | 사용자 메시지 + 재시도; CORS 불가 시 문서화 후 프록시 작업을 별 승인 범위로 추가. |
-| STT 미지원/권한 거부        | 음성 버튼 비활성 또는 텍스트만 안내.                                              |
-| IndexedDB 열기 실패         | 저장 스킵 경고, 읽기 빈 상태.                                                     |
-| `fetch`로 partial HTML 실패 | `layout.js`에서 콘솔/토스트, 빈 레이아웃 방지용 폴백 메시지.                      |
-| 이미지 과대                 | 파일 크기 상한·압축(선택) 및 사용자 안내.                                         |
+- 영속 데이터: IndexedDB (`DayflowDB.diaries`, `DayflowDB.emotions`, `DayflowDB.settings`)
+- 일시 상태: `sessionStorage` (화면 플로우 상태)
+- 키 저장: `localStorage` (`apikeyManager` 관리 범위)
 
 ## 테스트 체크리스트
 
-- [ ] Vercel(또는 `vercel dev`)에서 `/`, `/login`, `/home`, `/chat`, `/chat/emotion`, `/chat/result`, `/report`, `/advice`, `/my` 모두 200.
-- [ ] `main.css` 한 번만 로드, 탭 전환 시 레이아웃 깨짐 없음.
-- [ ] Dexie 업그레이드 없이 최초 오픈 시 테이블 생성.
-- [ ] API 키 저장·삭제·조회 후 메시지 전송 가능(네트워크/CORS 환경 의존).
-- [ ] 사진 없음 → emotion 노출; 사진 있음 → emotion 스킵 → chat.
-- [ ] 음성: 지원 브라우저에서 STT 텍스트가 입력으로 전달(미지원 브라우저 폴백).
+- [ ] 조언 첫 진입 시 포춘쿠키 팝업 자동 노출 없음
+- [ ] 포춘쿠키 버튼 클릭 시 팝업 열림
+- [ ] 같은 날 재클릭 시 재오픈 차단
+- [ ] 익일(날짜 변경 후) 재클릭 시 다시 오픈 가능
+- [ ] 최신 일기 기준 날짜/조언 본문 반영
+- [ ] API 실패/키 없음 상황에서 폴백 메시지 정상 표시
+- [ ] 조언 본문이 모바일에서 최대 6줄 이내로 표시
+
+## 리스크 및 대응
+
+- **CORS/API 실패**: 사용자 안내 + 폴백 문구 + 재시도 흐름 유지
+- **저장값 불일치**: 날짜 비교 기준을 로컬 날짜 단위로 통일
+- **직접 URL 진입 예외**: 없는 상태값에서 안전한 기본 분기 유지
 
 ## 완료 기준
 
-- 상기 디렉토리 구조가 저장소에 반영되고, **모든 주요 라우트**가 HTML을 반환한다.
-- 공통 레이아웃·탭바·CSS 역할 분리 규칙이 문서와 일치한다.
-- `DayflowDB` 스키마가 명세와 일치하고 `diaryStore`가 교체 가능한 경계로 작성된다.
-- 챗봇 핵심 경로(감정 → 채팅 → 결과, 사진 시 S2 스킵)가 end-to-end로 동작한다( API 키·네트워크 조건 충족 시).
-- `research.md` 리스크(CORS 등)가 재현되면 이슈로 남기고 완화 방안이 `plan` 후속에 반영된다.
+- `research.md`와 `plan.md` 간 설명이 상충하지 않는다.
+- 다음 구현 작업(조언 기능 3건)을 바로 시작 가능한 수준으로 범위/검증 항목이 확정된다.
+- 문서만으로 신규 작업자가 작업 흐름을 이해할 수 있다.
 
 ---
 
-## 추가 변경 계획 — 조언 포춘쿠키 노출 규칙
-
-### 목표
-
-- 조언 화면 진입 시 포춘쿠키 팝업이 자동으로 뜨지 않게 한다.
-- 포춘쿠키 버튼 클릭으로만 팝업을 연다.
-- 당일 1회 확인 제한 후, 날짜가 바뀌면 다시 열 수 있게 한다.
-
-### 수정 파일
-
-- `assets/js/view/advice.js`
-- (필요 시) `assets/css/advice.css` 또는 `views/advice/advice.html`의 안내 문구 영역
-
-### 작업 순서
-
-1. `advice.js`에서 "저장값 없으면 자동 오픈" 분기 제거
-2. 저장 데이터의 `savedAt` 기준으로 로컬 날짜 비교 유틸 추가(YYYY-MM-DD 단위)
-3. 버튼 클릭 시:
-   - 오늘 이미 확인함: 팝업 미오픈, 안내 처리
-   - 오늘 미확인(미저장/익일): 팝업 오픈
-4. `dayflow:fortune-revealed` 수신 시 `savedAt`을 현재 시각으로 저장
-5. 새로고침/재진입 시 동일 규칙(당일 차단, 익일 허용) 검증
-
-### 테스트 체크리스트(추가)
-
-- [ ] 조언 첫 진입 시 팝업이 자동으로 열리지 않는다.
-- [ ] 버튼 클릭 시 팝업이 열린다.
-- [ ] 같은 날 재클릭 시 재오픈이 차단된다.
-- [ ] `savedAt`을 전날로 만든 뒤 재클릭 시 팝업이 다시 열린다.
-
----
-
-## 추가 변경 계획 — 마지막 일기 날짜 기준 AI 조언
-
-### 목표
-
-- 조언 페이지에서 마지막으로 저장된 일기(챗 기록) 날짜를 기준으로 개인화 조언을 생성한다.
-- AI 조언 본문은 모바일 뷰에서 최대 6줄만 표시한다.
-
-### 수정 파일
-
-- `views/advice/advice.html`
-- `assets/js/view/advice.js`
-- `assets/css/advice.css`
-
-### 작업 순서
-
-1. 조언 영역 DOM에 동적 갱신용 식별자(id/class) 보강
-2. `diaries` 최신 1건 조회 로직 추가
-3. `DayflowChatAgent` 호출 프롬프트 구성(6줄 이내 응답 강제)
-4. AI 응답을 조언 본문/날짜/헤드라인에 반영
-5. CSS line-clamp(6줄) 적용 및 폴백 텍스트 처리
-
-### 테스트 체크리스트(추가)
-
-- [ ] 마지막 일기 날짜가 조언 화면 상단 날짜에 반영된다.
-- [ ] AI 호출 성공 시 조언 본문이 동적으로 교체된다.
-- [ ] AI 실패/키 없음 상황에서 기본 폴백 조언이 표시된다.
-- [ ] 조언 본문이 모바일에서 6줄을 넘지 않는다.
-
----
-
-**승인 요청**: 디렉터리·골격이 이미 있다면 **5단계(CSS)**부터 승인 범위를 정하면 된다. 처음부터라면 **디렉터리 + 빈 파일**부터 진행한다. 수정·추가 요구는 본 `plan.md` 인라인 메모 또는 채팅으로 알려 주세요.
-
----
-
-## 요구사항 명세 보존 위치 (사라지지 않게)
-
-- **원문 수준의 고정 항목**(역할·승인, CSS/JS 규칙, `chatAgent`, `vercel.json` 매핑, Dexie CDN, `docs/` 형식)은 **`docs/research.md`**에 통합해 두었다.
-- 이 **`plan.md`**는 목표·범위·단계·테스트·완료 기준을 담는다.
-- 채팅 요약만으로 끝내지 않고, 변경 시 **두 문서 중 하나**를 반드시 갱신한다.
-
----
-
-## 운영 규칙 (커서 세션 관리)
-
-- **research → plan → implement** 를 가능하면 **하나의 긴 세션**으로 유지한다. 세션을 나누면 맥락 손실이 나기 쉽다.
-- 잘못된 방향이 보이면 **잔 패치로 끌고 가지 말고**, **Git reset** 등으로 되돌린 뒤 **`plan.md` 범위를 재설정**하고 다시 시작하는 편이 빠를 수 있다.
-- 프론트엔드 수정 요청은 **말로만 설명하기보다 스크린샷 첨부**를 우선한다.
-- `plan.md` 검토 시 에디터에 **인라인 메모**를 남긴 뒤, AI에는 예를 들어 다음처럼 지시한다:  
-  **「메모 반영해서 plan.md 업데이트해라. 아직 구현 금지」**
+마지막 업데이트: 2026-04-27  
+상태: 문서 정합화 완료, 구현 승인 대기

@@ -175,6 +175,265 @@
     }
   }
 
+  function collectExchangeSummaryFromResultPage() {
+    var diaryBody = document.getElementById("resultDiaryBody");
+    var domText = diaryBody && diaryBody.textContent ? String(diaryBody.textContent).trim() : "";
+    if (
+      domText &&
+      domText.indexOf("오늘의 대화를 한 줄로 정리하고 있어요") === -1 &&
+      domText.indexOf("아직 기록된 일기가 없어요") === -1 &&
+      domText.indexOf("저장된 요약이 없어요") === -1
+    ) {
+      return domText;
+    }
+    var stored = getStoredChatNarrativeSummary();
+    if (stored) return stored;
+    var diary = getDiaryText();
+    if (diary) return summarizeDiaryForResult(diary, 500);
+    return "";
+  }
+
+  function navigateToExchangeRoom(roomId) {
+    window.location.href = "/exchange/room?room=" + encodeURIComponent(roomId);
+  }
+
+  function buildExchangeInviteLink(inviteCode) {
+    return window.location.origin + "/exchange?invite=" + encodeURIComponent(String(inviteCode || "").trim());
+  }
+
+  function copyInviteFallback(fullText, inviteLink, onDone) {
+    if (typeof onDone !== "function") onDone = function () {};
+    var t = String(fullText || "").trim() || inviteLink;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard
+        .writeText(t)
+        .then(function () {
+          window.alert("초대 문구와 링크를 복사했어요. 카카오톡·문자에 붙여넣기 해 주세요.");
+          onDone();
+        })
+        .catch(function () {
+          window.prompt("아래를 복사해 공유해 주세요", t);
+          onDone();
+        });
+    } else {
+      window.prompt("아래를 복사해 공유해 주세요", t);
+      onDone();
+    }
+  }
+
+  function openSmsShare(text) {
+    var body = encodeURIComponent(String(text || ""));
+    var ua = (navigator.userAgent || "").toLowerCase();
+    var sep = ua.indexOf("iphone") > -1 || ua.indexOf("ipad") > -1 ? "&" : "?";
+    window.location.href = "sms:" + sep + "body=" + body;
+  }
+
+  function getKakaoJsKey() {
+    try {
+      var envKey = window.__ENV__ && window.__ENV__.DAYFLOW_KAKAO_JS_KEY ? String(window.__ENV__.DAYFLOW_KAKAO_JS_KEY).trim() : "";
+      if (envKey) return envKey;
+    } catch (e) {}
+    if (window.DayflowKakaoConfig && window.DayflowKakaoConfig.jsKey) {
+      return String(window.DayflowKakaoConfig.jsKey || "").trim();
+    }
+    return "";
+  }
+
+  function initKakaoShareSdk() {
+    var key = getKakaoJsKey();
+    if (!key || !window.Kakao || typeof window.Kakao.init !== "function") return false;
+    try {
+      if (!window.Kakao.isInitialized()) window.Kakao.init(key);
+      return !!(window.Kakao.Share && typeof window.Kakao.Share.sendDefault === "function");
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function openKakaoShare(inviteLink, text) {
+    var ok = initKakaoShareSdk();
+    if (!ok) return false;
+    try {
+      window.Kakao.Share.sendDefault({
+        objectType: "text",
+        text: String(text || ""),
+        link: {
+          mobileWebUrl: String(inviteLink || ""),
+          webUrl: String(inviteLink || ""),
+        },
+        buttonTitle: "교환일기 초대 열기",
+      });
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function pickShareChannel(onPick) {
+    if (typeof onPick !== "function") onPick = function () {};
+    var sheet = document.getElementById("resultShareSheet");
+    var backdrop = document.getElementById("resultShareSheetBackdrop");
+    var kakaoBtn = document.getElementById("resultShareKakaoBtn");
+    var smsBtn = document.getElementById("resultShareSmsBtn");
+    var moreBtn = document.getElementById("resultShareMoreBtn");
+    var cancelBtn = document.getElementById("resultShareCancelBtn");
+    if (!sheet || !backdrop || !kakaoBtn || !smsBtn || !moreBtn || !cancelBtn) {
+      onPick("default");
+      return;
+    }
+    var closed = false;
+    function cleanup() {
+      backdrop.removeEventListener("click", onCancel);
+      cancelBtn.removeEventListener("click", onCancel);
+      kakaoBtn.removeEventListener("click", onKakao);
+      smsBtn.removeEventListener("click", onSms);
+      moreBtn.removeEventListener("click", onMore);
+      document.removeEventListener("keydown", onEsc);
+      document.body.classList.remove("is-share-sheet-open");
+      sheet.classList.remove("is-open");
+      sheet.setAttribute("aria-hidden", "true");
+    }
+    function closeAndPick(channel) {
+      if (closed) return;
+      closed = true;
+      cleanup();
+      onPick(channel);
+    }
+    function onCancel() {
+      closeAndPick("default");
+    }
+    function onKakao() {
+      closeAndPick("kakao");
+    }
+    function onSms() {
+      closeAndPick("sms");
+    }
+    function onMore() {
+      closeAndPick("default");
+    }
+    function onEsc(e) {
+      if (e && e.key === "Escape") onCancel();
+    }
+    backdrop.addEventListener("click", onCancel);
+    cancelBtn.addEventListener("click", onCancel);
+    kakaoBtn.addEventListener("click", onKakao);
+    smsBtn.addEventListener("click", onSms);
+    moreBtn.addEventListener("click", onMore);
+    document.addEventListener("keydown", onEsc);
+    sheet.setAttribute("aria-hidden", "false");
+    sheet.classList.add("is-open");
+    document.body.classList.add("is-share-sheet-open");
+  }
+
+  function nativeOrFallbackShare(title, text, inviteLink, onDone) {
+    var sharePromise = null;
+    if (typeof navigator.share === "function") {
+      var payload = { title: title, text: text, url: inviteLink };
+      try {
+        if (typeof navigator.canShare === "function" && !navigator.canShare(payload)) {
+          sharePromise = null;
+        } else {
+          sharePromise = navigator.share(payload);
+        }
+      } catch (e) {
+        sharePromise = null;
+      }
+    }
+    if (sharePromise) {
+      sharePromise
+        .then(function () {
+          onDone();
+        })
+        .catch(function (err) {
+          if (err && err.name === "AbortError") {
+            onDone();
+            return;
+          }
+          copyInviteFallback(text, inviteLink, onDone);
+        });
+      return;
+    }
+    copyInviteFallback(text, inviteLink, onDone);
+  }
+
+  function shareExchangeInviteLink(inviteLink, onDone) {
+    if (typeof onDone !== "function") onDone = function () {};
+    var title = "DAYFLOW 교환일기";
+    var text = "오늘 대화로 일기 써봤어. 같이 한마디 남겨줄래?\n\n" + inviteLink;
+    pickShareChannel(function (channel) {
+      if (channel === "kakao") {
+        var sent = openKakaoShare(inviteLink, text);
+        if (!sent) {
+          window.alert("카카오 공유 설정이 없어 기타 공유로 진행할게요.");
+          nativeOrFallbackShare(title, text, inviteLink, onDone);
+          return;
+        }
+        onDone();
+        return;
+      }
+      if (channel === "sms") {
+        openSmsShare(text);
+        onDone();
+        return;
+      }
+      nativeOrFallbackShare(title, text, inviteLink, onDone);
+    });
+  }
+
+  function goExchangeRoomFromResult() {
+    var summary = collectExchangeSummaryFromResultPage();
+    if (!summary || summary.length < 8) {
+      window.alert("채팅 요약이 준비된 뒤에 다시 시도해 주세요.");
+      return;
+    }
+    try {
+      sessionStorage.setItem("dayflow_exchange_chat_summary", summary.slice(0, 8000));
+      sessionStorage.setItem("dayflow_exchange_nav_at", new Date().toISOString());
+      sessionStorage.setItem("dayflow_exchange_draft_text", "오늘 이렇게 보냈어요. 한마디 들려줄래요?");
+    } catch (e) {}
+    if (!window.DayflowExchangeStore || typeof DayflowExchangeStore.listMyRooms !== "function") {
+      window.location.href = "/exchange";
+      return;
+    }
+    DayflowExchangeStore.listMyRooms()
+      .then(function (rooms) {
+        if (!rooms || !rooms.length) {
+          window.alert("먼저 교환일기 방을 만들거나 입장해 주세요.");
+          window.location.href = "/exchange";
+          return;
+        }
+        var roomId = rooms[0].room_id;
+        var codeFromList = String(rooms[0].invite_code || "").trim();
+        var codePromise =
+          codeFromList || typeof DayflowExchangeStore.getRoomById !== "function"
+            ? Promise.resolve(codeFromList)
+            : DayflowExchangeStore.getRoomById(roomId).then(function (r) {
+                return String((r && r.invite_code) || "").trim();
+              });
+        return codePromise.then(function (inviteCode) {
+          if (!inviteCode) {
+            window.alert("초대 링크를 바로 만들 수 없어요. 방 안에서 링크 복사를 이용해 주세요.");
+            navigateToHome();
+            return;
+          }
+          var inviteLink = buildExchangeInviteLink(inviteCode);
+          shareExchangeInviteLink(inviteLink, function () {
+            navigateToHome();
+          });
+        });
+      })
+      .catch(function () {
+        window.location.href = "/exchange";
+      });
+  }
+
+  function attachResultExchangeButton() {
+    var btn = document.getElementById("resultExchangeBtn");
+    if (!btn || btn.dataset.bound === "1") return;
+    btn.dataset.bound = "1";
+    btn.addEventListener("click", goExchangeRoomFromResult);
+  }
+
   function requestChatNarrativeSummary(raw, onDone) {
     if (typeof onDone !== "function") onDone = function () {};
     var t = String(raw || "").trim();
@@ -636,6 +895,7 @@
           window.location.href = "/main";
         });
       }
+      attachResultExchangeButton();
     });
   }
 
@@ -837,6 +1097,7 @@
         window.location.href = "/main";
       });
     }
+    attachResultExchangeButton();
   }
 
   if (document.readyState === "loading") {

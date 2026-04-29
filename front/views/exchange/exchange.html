@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>DAYFLOW — 교환일기</title>
+    <link rel="stylesheet" href="/assets/css/main.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="headerWrap" role="banner">
+        <button type="button" class="back" id="exchangeBackBtn" aria-label="뒤로">뒤로</button>
+        <h1><span>교환일기</span></h1>
+      </header>
+      <div id="bodyWrap" style="padding: 16px;">
+        <main>
+          <section class="card-content">
+            <div class="card-item">
+              <h3><span></span>1) 방 만들기</h3>
+              <input id="exchangeNickCreate" class="input" placeholder="내 닉네임(선택)" />
+              <button id="exchangeCreateBtn" type="button" class="btn-ctp" style="margin-top: 10px;">새 방 생성</button>
+            </div>
+            <div class="card-item">
+              <h3><span></span>2) 코드로 입장</h3>
+              <input id="exchangeInviteCode" class="input" placeholder="초대코드 6자리" />
+              <input id="exchangeNickJoin" class="input" placeholder="내 닉네임(선택)" style="margin-top:8px;" />
+              <button id="exchangeJoinBtn" type="button" class="btn-ctp" style="margin-top: 10px;">방 입장</button>
+            </div>
+            <div class="card-item">
+              <h3><span></span>내 방 목록</h3>
+              <ul id="exchangeRoomList" style="list-style:none; padding:0; margin:0;"></ul>
+            </div>
+            <div class="card-item">
+              <h3><span></span>친구 추가</h3>
+              <input id="exchangeFriendUserId" class="input" placeholder="친구 user id 입력" />
+              <button id="exchangeFriendAddBtn" type="button" class="btn-sub" style="margin-top:8px; width:100%;">친구요청 보내기</button>
+              <p style="font-size:12px;color:#888;margin:8px 0 4px;">받은 요청</p>
+              <ul id="exchangeIncomingList" style="list-style:none; padding:0; margin:0;"></ul>
+              <p style="font-size:12px;color:#888;margin:8px 0 4px;">내 친구</p>
+              <ul id="exchangeFriendList" style="list-style:none; padding:0; margin:0;"></ul>
+            </div>
+          </section>
+          <p id="exchangeMsg" style="font-size:13px;color:#666;"></p>
+        </main>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="/assets/js/config/supabase-config.js"></script>
+    <script src="/assets/js/agents/authAgent.js"></script>
+    <script src="/assets/js/domain/exchangeStore.js"></script>
+    <script src="/assets/js/view/exchange.js"></script>
+  </body>
+</html>

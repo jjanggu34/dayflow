@@ -1,25 +1,36 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="manifest" href="/manifest.json" />
     <link rel="apple-touch-icon" href="/assets/img/pwa/icon-180.png" />
     <meta name="theme-color" content="#1D1D2E" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Dayflow" />
-  <title>DAYFLOW — 나</title>
-  <link rel="stylesheet" href="/assets/css/main.css" />
+    <title>DAYFLOW — 나</title>
+    <link rel="stylesheet" href="/assets/css/main.css" />
     <script>
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/sw.js');
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/sw.js");
       }
     </script>
   </head>
-<body>
-  <main class="page">프로필, 설정</main>
-  <script src="/assets/js/lib/jquery-1.12.4.js"></script>
-  <script src="/assets/js/view/my.js"></script>
-</body>
+  <body>
+    <main class="page" style="padding: 16px">
+      <section class="card-content">
+        <div class="card-item">
+          <h3><span></span>내 메뉴</h3>
+          <p style="margin: 0 0 8px 0; color: #666; font-size: 13px">개인 기록과 교환일기 기능을 사용할 수 있어요.</p>
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <a href="/my/chat-list" class="btn-sub" style="text-align: center; text-decoration: none">감정기록 목록</a>
+            <a href="/exchange" class="btn-ctp" style="text-align: center; text-decoration: none; line-height: 52px">교환일기 시작하기</a>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script src="/assets/js/lib/jquery-1.12.4.js"></script>
+    <script src="/assets/js/view/my.js"></script>
+  </body>
 </html>

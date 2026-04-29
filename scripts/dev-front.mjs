@@ -1,6 +1,6 @@
 /**
  * 로컬 정적 서버 — vercel.json 과 동일한 친숙 URL로 front/ 서빙
- * 예: http://localhost:5173/chat/emotion , http://localhost:5173/report
+ * 예: http://localhost:5182/chat/emotion , http://localhost:5182/report
  */
 import http from "node:http";
 import fs from "node:fs";
@@ -9,7 +9,7 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const frontRoot = path.resolve(__dirname, "..", "front");
-const PORT = Number(process.env.PORT || 5173);
+const PORT = Number(process.env.PORT || 5182);
 
 /** 긴 경로 우선 매칭 */
 const rewrites = [
@@ -23,6 +23,8 @@ const rewrites = [
   ["/report/report", "/views/report/report.html"],
   ["/advice/advice", "/views/advice/advice.html"],
   ["/advice", "/views/advice/advice.html"],
+  ["/exchange/room", "/views/exchange/room.html"],
+  ["/exchange", "/views/exchange/exchange.html"],
   ["/my/chat-list", "/views/my/chat-list.html"],
   ["/my", "/views/my/my.html"],
   ["/", "/index.html"]
@@ -65,8 +67,26 @@ function fileUnderRoot(filePath) {
   return resolved;
 }
 
+function serveEnvJs(res) {
+  var key = String(process.env.DAYFLOW_KAKAO_JS_KEY || "").trim();
+  var body =
+    "(function (g) {\n" +
+    '  g.__ENV__ = g.__ENV__ || {};\n' +
+    "  g.__ENV__.DAYFLOW_KAKAO_JS_KEY = " +
+    JSON.stringify(key) +
+    ";\n" +
+    "})(typeof window !== 'undefined' ? window : this);\n";
+  res.setHeader("Content-Type", "application/javascript; charset=utf-8");
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+  res.writeHead(200).end(body);
+}
+
 const server = http.createServer((req, res) => {
   const pathname = normalizePath(new URL(req.url || "/", `http://127.0.0.1`).pathname);
+  if (pathname === "/env.js") {
+    serveEnvJs(res);
+    return;
+  }
   const logical = resolvePath(pathname);
   const abs = fileUnderRoot(logical);
   if (!abs) {
@@ -102,6 +122,9 @@ server.on("error", (err) => {
 
 server.listen(PORT, () => {
   console.log(`DAYFLOW front — http://localhost:${PORT}/`);
+  if (!process.env.DAYFLOW_KAKAO_JS_KEY) {
+    console.log(`  (선택) Kakao: DAYFLOW_KAKAO_JS_KEY=... 를 설정하면 /env.js 로 주입됩니다.`);
+  }
   console.log(`  /chat/emotion → /chat → /chat/result (감정→대화→분석 순서)`);
   console.log(`  /report         → 리포트`);
   console.log(`  /report/report  → 리포트(별칭)`);
@@ -109,4 +132,5 @@ server.listen(PORT, () => {
   console.log(`  /advice         → 조언`);
   console.log(`  /advice/advice  → 조언(별칭)`);
   console.log(`  /my/chat-list   → 감정기록 목록`);
+  console.log(`  /exchange       → 교환일기(생성/입장)`);
 });
