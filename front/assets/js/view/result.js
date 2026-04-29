@@ -253,19 +253,43 @@
   function openKakaoShare(inviteLink, text) {
     var ok = initKakaoShareSdk();
     if (!ok) return false;
+    var link = String(inviteLink || "").trim();
+    if (!link) return false;
+    var origin = "";
+    try {
+      origin = window.location.origin || "";
+    } catch (e) {}
+    var imageUrl = origin ? origin + "/assets/img/pwa/icon-180.png" : "";
     try {
       window.Kakao.Share.sendDefault({
-        objectType: "text",
-        text: String(text || ""),
-        link: {
-          mobileWebUrl: String(inviteLink || ""),
-          webUrl: String(inviteLink || ""),
+        objectType: "feed",
+        content: {
+          title: "DAYFLOW 교환일기 초대",
+          description: String(text || "").replace(/\n+/g, " ").slice(0, 200) || "교환일기 방으로 초대했어요.",
+          imageUrl: imageUrl || link,
+          link: {
+            mobileWebUrl: link,
+            webUrl: link,
+          },
         },
-        buttonTitle: "교환일기 초대 열기",
+        buttons: [{ title: "열기", link: { mobileWebUrl: link, webUrl: link } }],
       });
       return true;
     } catch (e) {
-      return false;
+      try {
+        window.Kakao.Share.sendDefault({
+          objectType: "text",
+          text: String(text || ""),
+          link: {
+            mobileWebUrl: link,
+            webUrl: link,
+          },
+          buttonTitle: "교환일기 초대 열기",
+        });
+        return true;
+      } catch (e2) {
+        return false;
+      }
     }
   }
 
