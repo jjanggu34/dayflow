@@ -362,9 +362,12 @@
     var text = "오늘 대화로 일기 써봤어. 같이 한마디 남겨줄래?\n\n" + inviteLink;
     pickShareChannel(function (channel) {
       if (channel === "kakao") {
+        if (!getKakaoJsKey()) {
+          nativeOrFallbackShare(title, text, inviteLink, onDone);
+          return;
+        }
         var sent = openKakaoShare(inviteLink, text);
         if (!sent) {
-          window.alert("카카오 공유 설정이 없어 기타 공유로 진행할게요.");
           nativeOrFallbackShare(title, text, inviteLink, onDone);
           return;
         }
