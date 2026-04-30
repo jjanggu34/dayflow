@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0,viewport-fit=cover" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="apple-touch-icon" href="/assets/img/pwa/icon-180.png" />
+    <meta name="theme-color" content="#1D1D2E" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Dayflow" />
+    <title>DAYFLOW — 연령대 선택</title>
+    <link rel="stylesheet" href="/assets/css/main.css" />
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/sw.js");
+      }
+    </script>
+  </head>
+  <body>
+    <div class="wrap">
+      <div id="bodyWrap" class="login">
+        <main>
+          <section class="importance-content">
+            <div class="text-content">
+              <div class="text-group">
+                <h2>
+                  연령대를<br />
+                  선택해 주세요
+                  <span>맞춤 기록을 준비하는데 사용돼요.</span>
+                </h2>
+              </div>
+              <div class="form-content">
+                <div class="form-group">
+                  <fieldset class="tyep-button">
+                    <legend class="sr-only">연령대 선택</legend>
+
+                    <label class="radio" for="joinAge10">
+                      <input type="radio" id="joinAge10" name="joinAge" value="10대" checked />
+                      <span>10대</span>
+                    </label>
+
+                    <label class="radio" for="joinAge20">
+                      <input type="radio" id="joinAge20" name="joinAge" value="20대" />
+                      <span>20대</span>
+                    </label>
+
+                    <label class="radio" for="joinAge30">
+                      <input type="radio" id="joinAge30" name="joinAge" value="30대" />
+                      <span>30대</span>
+                    </label>
+
+                    <label class="radio" for="joinAge40">
+                      <input type="radio" id="joinAge40" name="joinAge" value="40대" />
+                      <span>40대</span>
+                    </label>
+
+                    <label class="radio" for="joinAge50">
+                      <input type="radio" id="joinAge50" name="joinAge" value="50대" />
+                      <span>50대</span>
+                    </label>
+
+                    <label class="radio" for="joinAge60">
+                      <input type="radio" id="joinAge60" name="joinAge" value="60대 이상" />
+                      <span>60대 이상</span>
+                    </label>
+                  </fieldset>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+        <footer class="button-ctp">
+          <div class="button-content">
+            <button type="button" id="joinStep02Next" class="btn-primary">다음</button>
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="/assets/js/config/supabase-config.js"></script>
+    <script src="/assets/js/agents/authAgent.js"></script>
+    <script src="/assets/js/domain/supabaseStore.js"></script>
+    <script src="/assets/js/view/join-flow.js"></script>
+  </body>
+</html>

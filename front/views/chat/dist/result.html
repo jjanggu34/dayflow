@@ -11,6 +11,7 @@
     <meta name="apple-mobile-web-app-title" content="Dayflow" />
     <title>DAYFLOW — 오늘의 분석</title>
     <link rel="stylesheet" href="../../assets/css/main.css" />
+    <script src="/env.js"></script>
     <script>
       if ("serviceWorker" in navigator) {
         navigator.serviceWorker.register("/sw.js");
@@ -129,18 +130,35 @@
         <footer>
           <div class="button-content">
             <button type="button" class="btn-ctp" id="resultAdviceBtn">홈으로</button>
+            <!--<button type="button" class="btn-ctp" id="resultExchangeBtn">한마디 해줘</button>-->
           </div>
         </footer>
       </div>
     </div>
+    <div class="result-share-sheet" id="resultShareSheet" aria-hidden="true">
+      <button type="button" class="result-share-sheet__backdrop" id="resultShareSheetBackdrop" aria-label="공유 시트 닫기"></button>
+      <section class="result-share-sheet__panel" role="dialog" aria-modal="true" aria-labelledby="resultShareSheetTitle">
+        <div class="result-share-sheet__handle" aria-hidden="true"></div>
+        <h3 id="resultShareSheetTitle">어디로 초대할까요?</h3>
+        <div class="result-share-sheet__actions">
+          <button type="button" class="result-share-sheet__btn" id="resultShareKakaoBtn">카카오톡</button>
+          <button type="button" class="result-share-sheet__btn" id="resultShareSmsBtn">문자 메시지</button>
+          <button type="button" class="result-share-sheet__btn" id="resultShareMoreBtn">기타 공유</button>
+        </div>
+        <button type="button" class="result-share-sheet__cancel" id="resultShareCancelBtn">닫기</button>
+      </section>
+    </div>
     <script src="../../assets/js/domain/emotionChatData.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <script src="/assets/js/config/supabase-config.js"></script>
+    <script src="/assets/js/config/kakao-config.js"></script>
     <script src="/assets/js/agents/authAgent.js"></script>
     <script src="../../assets/js/domain/supabaseStore.js"></script>
+    <script src="/assets/js/domain/exchangeStore.js"></script>
     <script src="../../assets/js/domain/resultWeather.js"></script>
     <script src="../../assets/js/agents/apikeyManager.js"></script>
     <script src="../../assets/js/agents/chatAgent.js"></script>
+    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.5/kakao.min.js"></script>
     <script src="../../assets/js/view/result.js"></script>
   </body>
 </html>

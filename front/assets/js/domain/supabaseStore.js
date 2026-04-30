@@ -198,6 +198,29 @@
     });
   }
 
+  /**
+   * 닉네임이 다른 사용자에게 쓰이지 않았는지 (settings.display_nickname 기준)
+   * RPC 미적용·오류 시 true 반환(차단하지 않음)
+   */
+  function isDisplayNicknameAvailable(nickname) {
+    var client = getClient();
+    if (!client) return Promise.resolve(true);
+    var nick = String(nickname || "").trim();
+    if (!nick) return Promise.resolve(false);
+    return client.rpc("is_display_nickname_available", { p_nickname: nick })
+      .then(function (res) {
+        if (res.error) {
+          console.warn("[DayflowSupabaseStore] is_display_nickname_available:", res.error.message || res.error);
+          return true;
+        }
+        return res.data === true;
+      })
+      .catch(function (err) {
+        console.warn("[DayflowSupabaseStore] is_display_nickname_available", err);
+        return true;
+      });
+  }
+
   // ── 리포트용 조회 (diaryStore에 없던 추가 기능) ───────────────
 
   /** 가장 최근 일기 1건 반환 (advice.js용 — 날짜 무관) */
@@ -298,6 +321,7 @@
     saveTodayDiary:         saveTodayDiary,
     getSetting:             getSetting,
     setSetting:             setSetting,
+    isDisplayNicknameAvailable: isDisplayNicknameAvailable,
     deleteDiary:            deleteDiary,
     getLatestDiary:         getLatestDiary,
     hasDiaries:             hasDiaries,

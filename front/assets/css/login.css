@@ -1,0 +1,64 @@
+#bodyWrap.login {
+  --img-login: url("../img/login/img-login.png");
+  --img-end: url("../img/login/img-end.png");
+}
+
+#bodyWrap.login {
+  background: var(--white);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+#bodyWrap.login > main {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  padding: 44px 0 0;
+}
+#bodyWrap.login .importance-content,
+#bodyWrap.login .text-content {
+  height: 100%;
+}
+
+#bodyWrap.login .text-content .text-group h2 {
+  padding: 0;
+  font-size: var(--font28);
+  font-weight: 600;
+  color: var(--title);
+}
+
+#bodyWrap.login .text-content .text-group h2 em {
+  color: var(--primary);
+}
+
+#bodyWrap.login .text-content .text-group h2 span {
+  font-size: var(--font16);
+  font-weight: 400;
+  color: var(--text-sub);
+  margin: 12px 0;
+}
+
+#bodyWrap.login .text-content.img-login::after {
+  content: "";
+  flex: 1;
+  display: block;
+  width: 100%;
+  max-width: 327px;
+  margin: 0 auto;
+  background: var(--img-login) no-repeat center center / 100%;
+}
+
+#bodyWrap.login .text-content.img-end::after {
+  content: "";
+  flex: 1;
+  display: block;
+  width: 100%;
+  max-width: 327px;
+  margin: 0 auto;
+  background: var(--img-end) no-repeat center center / 100%;
+}
+#bodyWrap.login > footer {
+  flex: 0 0 auto;
+}

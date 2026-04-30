@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0,viewport-fit=cover" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="apple-touch-icon" href="/assets/img/pwa/icon-180.png" />
+    <meta name="theme-color" content="#1D1D2E" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Dayflow" />
+    <title>DAYFLOW — 로그인</title>
+    <link rel="stylesheet" href="/assets/css/main.css" />
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/sw.js");
+      }
+    </script>
+  </head>
+  <body>
+    <div class="wrap">
+      <div id="bodyWrap" class="login">
+        <main>
+          <section class="importance-content">
+            <div class="text-content img-login">
+              <div class="text-group">
+                <h2>
+                  하루의 시작과 마무리를 함께 만들어요!
+                  <span>대화하며 쉽게 기록하고 함께 기록된 AI 인사이트를 확인해 보세요</span>
+                </h2>
+              </div>
+            </div>
+          </section>
+        </main>
+        <footer class="button-ctp">
+          <div class="button-content">
+            <button id="loginGoogleBtn" class="btn-line ico-google">Google 로그인</button>
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="/assets/js/config/supabase-config.js"></script>
+    <script src="/assets/js/agents/authAgent.js"></script>
+    <script src="/assets/js/view/login.js"></script>
+  </body>
+</html>

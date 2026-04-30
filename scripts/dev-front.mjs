@@ -16,7 +16,16 @@ const rewrites = [
   ["/chat/emotion", "/views/chat/emotion.html"],
   ["/chat/result", "/views/chat/result.html"],
   ["/chat", "/views/chat/chat.html"],
-  ["/login", "/views/login.html"],
+  ["/login/join-step04.html", "/views/login/join-step04.html"],
+  ["/login/join-step03.html", "/views/login/join-step03.html"],
+  ["/login/join-step02.html", "/views/login/join-step02.html"],
+  ["/login/join-step01.html", "/views/login/join-step01.html"],
+  ["/login/join-step04", "/views/login/join-step04.html"],
+  ["/login/join-step03", "/views/login/join-step03.html"],
+  ["/login/join-step02", "/views/login/join-step02.html"],
+  ["/login/join-step01", "/views/login/join-step01.html"],
+  ["/login/login.html", "/views/login/login.html"],
+  ["/login", "/views/login/login.html"],
   ["/home", "/views/home/home.html"],
   ["/main", "/views/main/main.html"],
   ["/report", "/views/report/report.html"],
@@ -27,7 +36,7 @@ const rewrites = [
   ["/exchange", "/views/exchange/exchange.html"],
   ["/my/chat-list", "/views/my/chat-list.html"],
   ["/my", "/views/my/my.html"],
-  ["/", "/index.html"]
+  ["/", "/views/login/login.html"]
 ];
 
 const mime = {
@@ -121,7 +130,7 @@ server.on("error", (err) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`DAYFLOW front — http://localhost:${PORT}/`);
+  console.log(`DAYFLOW front — http://localhost:${PORT}/  (로그인)`);
   if (!process.env.DAYFLOW_KAKAO_JS_KEY) {
     console.log(`  (선택) Kakao: DAYFLOW_KAKAO_JS_KEY=... 를 설정하면 /env.js 로 주입됩니다.`);
   }

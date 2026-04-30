@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0,viewport-fit=cover" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="apple-touch-icon" href="/assets/img/pwa/icon-180.png" />
+    <meta name="theme-color" content="#1D1D2E" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Dayflow" />
+    <title>DAYFLOW — 닉네임 설정</title>
+    <link rel="stylesheet" href="/assets/css/main.css" />
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/sw.js");
+      }
+    </script>
+  </head>
+  <body>
+    <div class="wrap">
+      <div id="bodyWrap" class="login">
+        <main>
+          <section class="importance-content">
+            <div class="text-content">
+              <div class="text-group">
+                <h2>
+                  닉네임을<br />
+                  입력해 주세요
+                  <span>안다미로가 부를 이름이에요.</span>
+                </h2>
+              </div>
+              <div class="form-content">
+                <div class="form-group">
+                  <label class="sr-only" for="joinNickname">닉네임</label>
+                  <input type="text" id="joinNickname" name="nickname" maxlength="20" autocomplete="nickname" placeholder="닉네임을 입력해주세요" />
+                  <p id="joinNicknameError" class="form-msg form-msg--error" role="alert" hidden></p>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+        <footer class="button-ctp">
+          <div class="button-content">
+            <button type="button" id="joinStep01Next" class="btn-primary" disabled>다음</button>
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="/assets/js/config/supabase-config.js"></script>
+    <script src="/assets/js/agents/authAgent.js"></script>
+    <script src="/assets/js/domain/supabaseStore.js"></script>
+    <script src="/assets/js/view/join-flow.js"></script>
+  </body>
+</html>

@@ -28,7 +28,16 @@ _PATH_REWRITES: list[tuple[str, str]] = [
     ("/chat/emotion", "/views/chat/emotion.html"),
     ("/chat/result", "/views/chat/result.html"),
     ("/chat", "/views/chat/chat.html"),
-    ("/login", "/views/login.html"),
+    ("/login/join-step04.html", "/views/login/join-step04.html"),
+    ("/login/join-step03.html", "/views/login/join-step03.html"),
+    ("/login/join-step02.html", "/views/login/join-step02.html"),
+    ("/login/join-step01.html", "/views/login/join-step01.html"),
+    ("/login/join-step04", "/views/login/join-step04.html"),
+    ("/login/join-step03", "/views/login/join-step03.html"),
+    ("/login/join-step02", "/views/login/join-step02.html"),
+    ("/login/join-step01", "/views/login/join-step01.html"),
+    ("/login/login.html", "/views/login/login.html"),
+    ("/login", "/views/login/login.html"),
     ("/home", "/views/home/home.html"),
     ("/main", "/views/main/main.html"),
     ("/report/report", "/views/report/report.html"),
@@ -36,7 +45,7 @@ _PATH_REWRITES: list[tuple[str, str]] = [
     ("/advice/advice", "/views/advice/advice.html"),
     ("/advice", "/views/advice/advice.html"),
     ("/my", "/views/my/my.html"),
-    ("/", "/index.html"),
+    ("/", "/views/login/login.html"),
 ]
 
 

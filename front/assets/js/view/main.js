@@ -343,14 +343,73 @@
     });
   }
 
+  /** Supabase settings.display_nickname > 로컬 캐시 > 구글 이름 */
+  var STORAGE_DISPLAY_NICK = "dayflow_display_nickname";
+  var STORAGE_JOIN_PROFILE = "dayflow_join_profile_v1";
+  var SETTING_DISPLAY_NICK = "display_nickname";
+
+  function trimDisplayName(s) {
+    var t = String(s || "").trim();
+    return t ? t.slice(0, 40) : "";
+  }
+
+  function getPreferredDisplayName() {
+    try {
+      var direct = localStorage.getItem(STORAGE_DISPLAY_NICK);
+      var d = trimDisplayName(direct);
+      if (d) return d;
+    } catch (e0) {}
+    try {
+      var raw = sessionStorage.getItem(STORAGE_JOIN_PROFILE);
+      if (raw) {
+        var o = JSON.parse(raw);
+        var n = trimDisplayName(o && o.nickname);
+        if (n) return n;
+      }
+    } catch (e1) {}
+    return "";
+  }
+
+  /** settings: onboarding_complete 또는 join_profile(닉네임·연령·성별) 있으면 가입 스텝 생략 */
+  function isOnboardingComplete(flag, jp) {
+    if (flag === true || flag === "true") return true;
+    if (jp && typeof jp === "object") {
+      var n = trimDisplayName(jp.nickname != null ? String(jp.nickname) : "");
+      if (n && String(jp.ageRange || "").trim() && String(jp.gender || "").trim()) return true;
+    }
+    return false;
+  }
+
   function loadUserName() {
     var nameEl = document.getElementById("mainUserName");
     if (!nameEl || !window.DayflowAuth) return;
     DayflowAuth.getCurrentUser().then(function (user) {
       if (!user) { window.location.replace("/login"); return; }
-      var name = (user.user_metadata && (user.user_metadata.full_name || user.user_metadata.name))
-        || user.email.split("@")[0];
-      nameEl.textContent = name + "님";
+      var fallback =
+        (user.user_metadata && (user.user_metadata.full_name || user.user_metadata.name)) ||
+        String(user.email || "").split("@")[0];
+      var localNick = getPreferredDisplayName();
+
+      var remoteP = Promise.resolve("");
+      if (window.DayflowSupabaseStore && typeof window.DayflowSupabaseStore.getSetting === "function") {
+        remoteP = window.DayflowSupabaseStore.getSetting(SETTING_DISPLAY_NICK).then(function (v) {
+          if (v == null || v === undefined) return "";
+          return trimDisplayName(typeof v === "string" ? v : String(v));
+        });
+      }
+
+      remoteP.then(function (remoteNick) {
+        var name = remoteNick || localNick || trimDisplayName(fallback) || "회원";
+        nameEl.textContent = name + "님";
+
+        if (remoteNick) {
+          try {
+            localStorage.setItem(STORAGE_DISPLAY_NICK, remoteNick);
+          } catch (e) {}
+        } else if (localNick && window.DayflowSupabaseStore && typeof window.DayflowSupabaseStore.setSetting === "function") {
+          window.DayflowSupabaseStore.setSetting(SETTING_DISPLAY_NICK, localNick).catch(function () {});
+        }
+      });
     });
   }
 
@@ -367,8 +426,40 @@
       });
     }
 
-    loadUserName();
-    initCalendar();
+    if (!window.DayflowAuth) {
+      loadUserName();
+      initCalendar();
+      return;
+    }
+
+    if (!window.DayflowSupabaseStore || typeof window.DayflowSupabaseStore.getSetting !== "function") {
+      loadUserName();
+      initCalendar();
+      return;
+    }
+
+    DayflowAuth.getCurrentUser().then(function (user) {
+      if (!user) {
+        window.location.replace("/login");
+        return;
+      }
+      Promise.all([
+        window.DayflowSupabaseStore.getSetting("onboarding_complete"),
+        window.DayflowSupabaseStore.getSetting("join_profile"),
+      ])
+        .then(function (arr) {
+          if (isOnboardingComplete(arr[0], arr[1])) {
+            loadUserName();
+            initCalendar();
+            return;
+          }
+          window.location.replace("/login/join-step01");
+        })
+        .catch(function () {
+          loadUserName();
+          initCalendar();
+        });
+    });
   }
 
   if (document.readyState === "loading") {
