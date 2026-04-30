@@ -32,6 +32,10 @@ body.main-page {
   mask-position: center;
 }
 
+.main-page .wrap > header.headerWrap > button#mainLogoutBtn {
+  background: transparent;
+  color: var(--white);
+}
 /* 히어로: 장식만 (배경 블루는 body 그라데이션) */
 .main-page .importance-content:first-of-type {
   background: url("../img/main/bg.png") no-repeat left bottom / 100%;
@@ -410,7 +414,10 @@ body.main-page {
   font-size: var(--font12);
   font-family: inherit;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    border-color 0.15s;
 }
 
 .main-page .calendar-list__delete:hover {
